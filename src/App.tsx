@@ -4,6 +4,8 @@ import { BRANDING, NAVIGATION } from "./constants";
 import theme from "./themes/ThemeMUI";
 import { useMemo, useState } from "react";
 
+import Header from "./components/Shared/Header";
+
 const demoSession = {
   user: {
     name: "Demo session",
@@ -33,6 +35,7 @@ export default function App() {
       authentication={authentication}
       session={session}
     >
+      <Header />
       <Outlet />
     </ReactRouterAppProvider>
   );
