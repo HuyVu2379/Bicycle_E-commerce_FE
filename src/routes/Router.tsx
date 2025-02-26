@@ -2,10 +2,11 @@
 import { createBrowserRouter } from "react-router-dom";
 import LoginTemplate from "@/pages/auth/Login";
 import NotFoundTemplate from "@/pages/404";
+import Banner from "@/components/Shared/Banner";
 const router = createBrowserRouter([
   {
     path: "/",
-    Component: NotFoundTemplate,
+    // Component: NotFoundTemplate,
     children: [
       {
         path: "/auth",
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "banner",
+    Component: (props) => <Banner PageName="Home" PlaceHolder="Register" {...props} />
+  }
 ]);
 
 export default router;
