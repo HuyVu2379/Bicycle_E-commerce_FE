@@ -5,10 +5,6 @@ import { Chip } from "@mui/material";
 
 export const APP_ROUTES = {
   DASHBOARD: "/",
-  FILE_UPLOADED: "/files",
-  PC: "/pc",
-  CHAT: "/chat",
-  FRIEND: "/friends",
   USER: {
     MANAGEMENT: "/users",
     DETAIL: "/users/:userId",
