@@ -58,9 +58,9 @@ const RegisterTemplate = () => {
                     placeholder="Enter Your Email"
                     margin="dense"
                     sx={{
-                        height: "50px", // Chiều cao tổng thể
+                        height: "50px",
                         "& .MuiOutlinedInput-root": {
-                            height: "50px", // Điều chỉnh chiều cao của phần nhập
+                            height: "50px",
                         },
                     }}
                 />
