@@ -1,6 +1,5 @@
 .header {
   background-color: white;
-  
   display: flex;
   justify-content: space-between;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -8,6 +7,24 @@
   padding-right: 40px;
   height: auto;
 }
+
+/*heder cuộn theo khi cuộn trang*/
+/*Lưu ý: khi sử dụng ui này phải để padding-top: 40px; ở phần index.css (phần bọc toàn bộ trang hiển thị) 
+  để không bị header che các thành phần khác hoặc banner*/
+/* .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding-left: 40px;
+  padding-right: 40px;
+  height: auto;
+  z-index: 1000;
+} */
 
 .header-container {
   display: flex;
@@ -39,7 +56,7 @@
 /* Dropdown Danh mục */
 .nav {
   display: flex;
-  gap: 100px;
+  gap: 50px;
   position: relative;
 }
 

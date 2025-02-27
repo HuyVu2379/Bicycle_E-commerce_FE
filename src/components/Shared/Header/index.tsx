@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import "./header.css";
 import { Link } from "react-router-dom";
-import { FaSearch, FaUser, FaShoppingCart } from "react-icons/fa";
+import { FaUser, FaShoppingCart } from "react-icons/fa";
+import SearchBar from "@/components/SearchBar";
 
 const Header: React.FC = () => {
   const [showBikesDropdown, setShowBikesDropdown] = useState(false);
   const [showAccessoriesDropdown, setShowAccessoriesDropdown] = useState(false);
+
   return (
     <header className="header">
       <div className="header-container">
@@ -51,10 +53,11 @@ const Header: React.FC = () => {
         </nav>
 
         {/* Ô tìm kiếm */}
-        <div className="search-box">
+        {/* <div className="search-box">
           <input type="text" placeholder="Search Bikes, Gear & Accessories" />
           <FaSearch className="search-icon" />
-        </div>
+        </div> */}
+        <SearchBar />
 
         {/* Icon user, cart, logout */}
         <div className="actions">
