@@ -25,6 +25,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "@/App";
 import LoginTemplate from "@/pages/auth/Login";
 import NotFoundTemplate from "@/pages/404";
+import RegisterTemplate from "@/pages/auth/Register";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "auth/login",
         element: <LoginTemplate />,
+      },
+      {
+        path: "auth/register",
+        element: <RegisterTemplate />,
       },
       {
         path: "*",
