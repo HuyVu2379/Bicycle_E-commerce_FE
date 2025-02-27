@@ -3,10 +3,11 @@ import { createBrowserRouter } from "react-router-dom";
 import LoginTemplate from "@/pages/auth/Login";
 import NotFoundTemplate from "@/pages/404";
 import Banner from "@/components/Shared/Banner";
+import Footer from "@/components/Shared/Footer/index";
 const router = createBrowserRouter([
   {
     path: "/",
-    // Component: NotFoundTemplate,
+    Component: Footer,
     children: [
       {
         path: "/auth",
