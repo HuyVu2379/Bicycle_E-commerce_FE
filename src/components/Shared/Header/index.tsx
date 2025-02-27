@@ -1,4 +1,4 @@
-import React,{ useState } from "react";
+import React, { useState } from "react";
 import "./header.css";
 import { Link } from "react-router-dom";
 import { FaSearch, FaUser, FaShoppingCart } from "react-icons/fa";
@@ -11,7 +11,7 @@ const Header: React.FC = () => {
       <div className="header-container">
         {/* Logo */}
         <div className="logo">
-          <img src="./public/assets/images/logo.jpg" alt="logo" className="logo-img" />
+          <img src="/public/assets/images/logo.jpg" alt="logo" className="logo-img" />
           <span className="logo-text">CycleCity</span>
         </div>
 
@@ -58,7 +58,10 @@ const Header: React.FC = () => {
 
         {/* Icon user, cart, logout */}
         <div className="actions">
-          <FaUser className="icon" />
+          <Link to="/auth/login">
+            <FaUser className="icon" />
+          </Link>
+
           <div className="cart">
             <FaShoppingCart className="icon" />
             <span className="cart-badge">4</span>

@@ -22,7 +22,7 @@
 
 // export default router;
 import { createBrowserRouter } from "react-router-dom";
-import App from "@/App"; // Đừng quên import App.tsx
+import App from "@/App";
 import LoginTemplate from "@/pages/auth/Login";
 import NotFoundTemplate from "@/pages/404";
 
