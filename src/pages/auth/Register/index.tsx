@@ -2,7 +2,6 @@ import { Box, Button, TextField, Typography, IconButton, InputAdornment } from "
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import GoogleIcon from "@mui/icons-material/Google";
 
 const RegisterTemplate = () => {
     const [showPassword, setShowPassword] = useState(false);
