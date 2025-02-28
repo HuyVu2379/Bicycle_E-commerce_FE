@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./header.css";
 import { Link } from "react-router-dom";
 import { FaUser, FaShoppingCart } from "react-icons/fa";
+import { ImProfile } from "react-icons/im";
 import SearchBar from "@/components/SearchBar";
 
 const Header: React.FC = () => {
@@ -12,10 +13,13 @@ const Header: React.FC = () => {
     <header className="header">
       <div className="header-container">
         {/* Logo */}
-        <div className="logo">
-          <img src="/public/assets/images/logo.jpg" alt="logo" className="logo-img" />
-          <span className="logo-text">CycleCity</span>
-        </div>
+        <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+          <div className="logo">
+            <img src="/public/assets/images/logo.jpg" alt="logo" className="logo-img" />
+            <span className="logo-text">Cycle</span>
+            <span className="logo-text" style={{color: "red"}}>City</span>
+          </div>
+        </Link>
 
         {/* Dropdown Danh mục */}
         <nav className="nav">
@@ -64,7 +68,9 @@ const Header: React.FC = () => {
           <Link to="/auth/login">
             <FaUser className="icon" />
           </Link>
-
+          <Link to="/profile">
+            <ImProfile className="icon" />
+          </Link>
           <div className="cart">
             <FaShoppingCart className="icon" />
             <span className="cart-badge">4</span>
