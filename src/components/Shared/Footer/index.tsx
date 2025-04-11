@@ -29,7 +29,7 @@ const MapEmbed = () => (
         sx={{
             border: 0,
             width: "100%",
-            height: 180,
+            height: 120,
             borderRadius: 1,
         }}
         allowFullScreen
@@ -46,14 +46,14 @@ const Footer = () => {
         <Box sx={{
             bgcolor: "#161616",
             color: "black",
-            py: 6,
-            px: 10,
+            py: 3,
+            px: 4,
         }}>
             <Box
                 sx={{
                     bgcolor: "#7b7b7b",
                     color: "white",
-                    py: 4,
+                    py: 2,
                     mt: "auto",
                 }}
             >
@@ -73,8 +73,8 @@ const Footer = () => {
                                     sx={{
                                         bgcolor: "white",
                                         "&:hover": { bgcolor: "grey.300" },
-                                        width: 36,
-                                        height: 36,
+                                        width: 28,
+                                        height: 28,
                                     }}
                                 >
                                     <FacebookIcon sx={{ color: "grey.800" }} />
@@ -84,8 +84,8 @@ const Footer = () => {
                                     sx={{
                                         bgcolor: "white",
                                         "&:hover": { bgcolor: "grey.300" },
-                                        width: 36,
-                                        height: 36,
+                                        width: 28,
+                                        height: 28,
                                     }}
                                 >
                                     <TwitterIcon sx={{ color: "grey.800" }} />
@@ -95,8 +95,8 @@ const Footer = () => {
                                     sx={{
                                         bgcolor: "white",
                                         "&:hover": { bgcolor: "grey.300" },
-                                        width: 36,
-                                        height: 36,
+                                        width: 28,
+                                        height: 28,
                                     }}
                                 >
                                     <InstagramIcon sx={{ color: "grey.800" }} />
@@ -106,8 +106,8 @@ const Footer = () => {
                                     sx={{
                                         bgcolor: "white",
                                         "&:hover": { bgcolor: "grey.300" },
-                                        width: 36,
-                                        height: 36,
+                                        width: 28,
+                                        height: 28,
                                     }}
                                 >
                                     <YouTubeIcon sx={{ color: "grey.800" }} />
@@ -160,7 +160,7 @@ const Footer = () => {
                     </Grid>
 
                     {/* Copyright */}
-                    <Typography variant="body2" sx={{ mt: 4, textAlign: "center", color: "grey.400" }}>
+                    <Typography variant="body2" sx={{ mb: 1, fontSize: 13, color: '#161616' }}>
                         © {new Date().getFullYear()} CycleCity. All rights reserved.
                     </Typography>
                 </Container>

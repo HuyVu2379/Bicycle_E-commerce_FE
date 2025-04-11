@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./header.css";
 import { Link } from "react-router-dom";
-import { FaUser, FaShoppingCart } from "react-icons/fa";
+import { FaUser, FaShoppingCart,FaSearch } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
 import SearchBar from "@/components/SearchBar";
 import theme from "@/themes/ThemeMUI";
@@ -57,21 +57,21 @@ const Header: React.FC = () => {
         </nav>
 
         {/* Ô tìm kiếm */}
-        {/* <div className="search-box">
+        <div className="search-box">
           <input type="text" placeholder="Search Bikes, Gear & Accessories" />
           <FaSearch className="search-icon" />
-        </div> */}
-        <SearchBar />
+        </div>
+        {/* <SearchBar /> */}
 
         {/* Icon user, cart, logout */}
         <div className="actions">
-          <Link to="/auth/login">
+          <Link to="/auth/login" className="icons">
             <FaUser className="icon" />
           </Link>
-          <Link to="/profile">
+          <Link to="/profile" className="icons">
             <ImProfile className="icon" />
           </Link>
-          <div className="cart">
+          <div className="cart icons">
             <FaShoppingCart className="icon" />
             <span className="cart-badge">4</span>
           </div>
