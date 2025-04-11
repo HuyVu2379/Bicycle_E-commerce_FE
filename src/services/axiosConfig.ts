@@ -1,7 +1,7 @@
 import { getValueFromLocalStorage } from "@/utils/localStorage";
 import axios from "axios";
 const axiosConfig = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "http://localhost:8080",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -18,8 +18,8 @@ axiosConfig.interceptors.request.use(
   },
 );
 axiosConfig.interceptors.response.use(
-  function (response) {
-    return response;
+  function (response: any) {
+    return response.data;
   },
   function (error) {
     return Promise.reject(error);

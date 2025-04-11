@@ -139,14 +139,14 @@ const RegisterTemplate = () => {
                 <Typography mt={2}>
                     Already have an account?{" "}
                     <Link to="/auth/login" style={{ color: "red", fontWeight: "bold" }}>
-                       Login
+                        Login
                     </Link>
                 </Typography>
 
                 {/* GG sign in */}
                 <Typography mt={2}>
                     Or sign in with {" "}
-                    <Link to="/" style={{fontWeight: "bold"}}>
+                    <Link to="/" style={{ fontWeight: "bold" }}>
                         Google
                     </Link>
                 </Typography>

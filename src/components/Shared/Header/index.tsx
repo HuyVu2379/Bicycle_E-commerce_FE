@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { FaUser, FaShoppingCart } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
 import SearchBar from "@/components/SearchBar";
-
+import theme from "@/themes/ThemeMUI";
 const Header: React.FC = () => {
   const [showBikesDropdown, setShowBikesDropdown] = useState(false);
   const [showAccessoriesDropdown, setShowAccessoriesDropdown] = useState(false);
@@ -17,7 +17,7 @@ const Header: React.FC = () => {
           <div className="logo">
             <img src="/public/assets/images/logo.jpg" alt="logo" className="logo-img" />
             <span className="logo-text">Cycle</span>
-            <span className="logo-text" style={{color: "red"}}>City</span>
+            <span className="logo-text" style={{ color: "red" }}>City</span>
           </div>
         </Link>
 
