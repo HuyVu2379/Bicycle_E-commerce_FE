@@ -23,7 +23,7 @@ const LoginTemplate = () => {
                 borderRadius={2}
                 boxShadow={3}
                 textAlign="center"
-                padding={10}
+                padding={5}
             >
                 {/* Logo */}
                 <Typography variant="h3" fontWeight="bold" mb={2}>

@@ -13,7 +13,7 @@ const RegisterTemplate = () => {
             alignItems="center"
             minHeight="auto"
             bgcolor="#f3f8f3"
-            padding={10}
+            padding={5}
         >
             <Box
                 height={800}
@@ -23,7 +23,7 @@ const RegisterTemplate = () => {
                 borderRadius={2}
                 boxShadow={3}
                 textAlign="center"
-                padding={10}
+                padding={5}
             >
                 {/* Logo */}
                 <Typography variant="h3" fontWeight="bold" mb={2}>
