@@ -4,10 +4,11 @@ import LoginTemplate from "@/pages/auth/Login";
 import NotFoundTemplate from "@/pages/404";
 import Banner from "@/components/Shared/Banner";
 import Footer from "@/components/Shared/Footer/index";
+import YourCart from "@/components/Shared/YourCart/index";
 const router = createBrowserRouter([
   {
     path: "/",
-    Component: Footer,
+    Component: YourCart,
     children: [
       {
         path: "/auth",
