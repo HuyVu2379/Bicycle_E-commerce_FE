@@ -1,40 +1,31 @@
-import { APP_ROUTES } from '@/constants';
-import { getMe, login } from '@/services/Auth';
-import { RootState } from '@/store'
-import { setMe } from '@/store/slices/user.slice';
-import { setValueInLocalStorage } from '@/utils/localStorage';
+import { setMe } from '@/store/slices/user.slice'
+import { login } from '@/services/Auth.service'
+import { getUserById } from '@/services/User.service'
+import { useDispatch } from 'react-redux'
 import { useSnackbar } from 'notistack';
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom';
-function useAuth() {
-    const userStore = useSelector((state: RootState) => state.userSlice)
-    const { me } = userStore
+import { APP_ROUTES } from '@/constants';
+import { setValueInLocalStorage } from '@/utils/localStorage';
+function useUser() {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
+    const handleLogin = async (email: string, password: string) => {
+        const response = await login(email, password);
+        console.log("check response login: ", response);
+        if (response.statusCode === 200 && response.success === true) {
+            console.log("Check userId: ", response.data.userId);
 
-    const handleLogin = async (phone: string, password: string) => {
-        const response = await login(phone, password)
-        if (response.success === true) {
-            dispatch(setMe(response.data.user))
-            navigate(APP_ROUTES.DASHBOARD);
-            setValueInLocalStorage("userId", response.data.user.id);
-            setValueInLocalStorage("accessToken", response.data?.tokens?.accessToken);
-            setValueInLocalStorage("refreshToken", response.data?.tokens?.refreshToken);
-            enqueueSnackbar({ variant: 'success', message: "Login success" })
+            const user = await getUserById(response.data.userId);
+            console.log("check user fetch: ", user);
+            dispatch(setMe(user.data));
+            setValueInLocalStorage('accessToken', response.data.accessToken);
+            setValueInLocalStorage('refreshToken', response.data.refreshToken);
+            enqueueSnackbar({ message: 'Login successful!', variant: 'success' });
+        } else {
+            enqueueSnackbar('Login failed. Please try again.', { variant: 'error' });
         }
-        else {
-            enqueueSnackbar({ variant: 'error', message: "Login failed" })
-        }
+        return response.data;
     }
-    const handleGetMe = async () => {
-        const response: any = await getMe();
-        console.log("check me in useAuth: ", response);
-
-        if (response && response.success)
-            dispatch(setMe(response.data.user));
-    }
-    return { handleLogin, me, handleGetMe }
+    return { handleLogin };
 }
 
-export default useAuth
+export default useUser;

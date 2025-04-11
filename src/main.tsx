@@ -5,11 +5,14 @@ import { ThemeProvider } from "@mui/material";
 import theme from "./themes/ThemeMUI.ts";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes/Router.tsx";
-
+import { Provider } from "react-redux";
+import store from "./store/index.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider theme={theme}>
-      <RouterProvider router={router} />
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
     </ThemeProvider>
   </StrictMode>,
 );
