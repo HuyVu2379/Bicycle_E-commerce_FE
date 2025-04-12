@@ -5,10 +5,11 @@ import NotFoundTemplate from "@/pages/404";
 import Banner from "@/components/Shared/Banner";
 import Footer from "@/components/Shared/Footer/index";
 import YourCart from "@/components/Shared/YourCart/index";
+import Payment from "@/components/Shared/Payment/index";
 const router = createBrowserRouter([
   {
     path: "/",
-    Component: YourCart,
+    Component: Payment,
     children: [
       {
         path: "/auth",
