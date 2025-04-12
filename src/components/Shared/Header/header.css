@@ -1,39 +1,61 @@
+/* ===== Base Styles ===== */
 .header {
   background-color: white;
-  display: flex;
-  justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px 20px;
-  height: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .header-container {
   display: flex;
   align-items: center;
-  width: 100%;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
-/* Logo */
+/* ===== Logo ===== */
 .logo {
   display: flex;
   align-items: center;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   cursor: pointer;
 }
 
 .logo-img {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
 }
 
 .logo-text {
-  margin-left: 5px;
-  font-size: 28px;
+  margin-left: 6px;
+  font-size: 26px;
 }
 
-/* Dropdown Danh mục */
+/* ===== Hamburger Icon ===== */
+.hamburger {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  user-select: none;
+  color: #333;
+}
+
+/* ===== Menu ===== */
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  transition: all 0.3s ease-in-out;
+}
+
+.menu.open {
+  display: flex;
+}
+
+/* ===== Dropdown ===== */
 .nav {
   display: flex;
   gap: 30px;
@@ -42,29 +64,38 @@
 
 .dropdown {
   position: relative;
-  cursor: pointer;
   font-size: 18px;
-  padding: 8px;
+  cursor: pointer;
+  padding: 6px 10px;
 }
 
 .dropdown-menu {
   position: absolute;
   top: 100%;
   left: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
-  min-width: 180px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.25s ease;
   z-index: 10;
 }
 
+.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
 .dropdown-menu a {
-  padding: 10px;
+  padding: 12px 16px;
   text-decoration: none;
-  color: black;
+  color: #222;
   font-size: 16px;
 }
 
@@ -72,48 +103,48 @@
   background: #f5f5f5;
 }
 
-/* Search Box */
+/* ===== Search Box ===== */
 .search-box {
   display: flex;
   align-items: center;
   background: #f0f0f0;
-  padding: 10px 15px;
-  height: 40px;
   border-radius: 20px;
+  padding: 8px 14px;
 }
 
 .search-box input {
   border: none;
   background: none;
   outline: none;
-  width: 250px;
-  font-size: 16px;
+  width: 200px;
+  font-size: 15px;
 }
 
 .search-icon {
-  color: gray;
+  font-size: 16px;
+  color: #888;
+  margin-left: 8px;
   cursor: pointer;
-  font-size: 18px;
 }
 
-/* Actions */
+/* ===== Actions ===== */
 .actions {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 25px;
+  gap: 20px;
 }
 
 .icon {
   font-size: 18px;
+  color: #333;
   cursor: pointer;
 }
- .icons{
+
+.icons {
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: black;
- }
+  gap: 6px;
+}
 
 .cart {
   position: relative;
@@ -121,18 +152,80 @@
 
 .cart-badge {
   position: absolute;
-  top: -5px;
+  top: -6px;
   right: -10px;
   background: red;
   color: white;
-  font-size: 10px;
   border-radius: 50%;
-  padding: 1px 6px;
+  font-size: 10px;
+  padding: 2px 5px;
 }
 
 .logout {
   color: red;
   font-weight: bold;
   text-decoration: none;
-  font-size: 18px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .menu {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+  }
+
+  .menu.open {
+    max-height: 1000px;
+    opacity: 1;
+  }
+
+  .nav {
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    padding-top: 10px;
+  }
+
+  .dropdown-menu {
+    position: relative;
+    top: auto;
+    left: auto;
+    box-shadow: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    margin-top: 4px;
+  }
+
+  .search-box {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .search-box input {
+    width: 100%;
+  }
+
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 15px;
+    padding-bottom: 10px;
+  }
+
+  .logout {
+    margin-top: 5px;
+  }
 }

@@ -3,10 +3,19 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import GoogleIcon from "@mui/icons-material/Google";
-
+import useAuth from "@/hook/api/useAuth";
 const LoginTemplate = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-
+    const { handleLogin } = useAuth();
+    const handleChangeText = (name: string, value: string) => {
+        if (name === "email") {
+            setEmail(value);
+        } else if (name === "password") {
+            setPassword(value);
+        }
+    }
     return (
         <Box
             display="flex"
@@ -36,6 +45,7 @@ const LoginTemplate = () => {
                     Email
                 </Typography>
                 <TextField
+                    onChange={(e) => handleChangeText("email", e.target.value)}
                     fullWidth
                     variant="outlined"
                     placeholder="Enter Your Email"
@@ -53,6 +63,7 @@ const LoginTemplate = () => {
                     Enter Password
                 </Typography>
                 <TextField
+                    onChange={(e) => handleChangeText("password", e.target.value)}
                     fullWidth
                     variant="outlined"
                     type={showPassword ? "text" : "password"}
@@ -80,6 +91,7 @@ const LoginTemplate = () => {
 
                 {/* Login Button */}
                 <Button
+                    onClick={() => handleLogin(email, password)}
                     fullWidth
                     variant="contained"
                     color="error"
