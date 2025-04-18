@@ -6,10 +6,11 @@ import Banner from "@/components/Shared/Banner";
 import Footer from "@/components/Shared/Footer/index";
 import YourCart from "@/components/Shared/YourCart/index";
 import Payment from "@/components/Shared/Payment/index";
+import ProductDetail from "@/components/Shared/ProductDetail/index";
 const router = createBrowserRouter([
   {
     path: "/",
-    Component: Payment,
+    Component: ProductDetail,
     children: [
       {
         path: "/auth",
