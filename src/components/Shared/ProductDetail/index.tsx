@@ -29,10 +29,10 @@ const SpecificationLabel = styled(Typography)(({ theme }) => ({
   paddingRight: theme.spacing(3),
 }));
 
-const SpecificationValue = styled(Typography)(({ theme }) => ({
+const SpecificationValue = styled(Typography)({
   flex: 1,
   color: '#666',
-}));
+});
 
 const specifications: Specification[] = [
   { label: 'Brakes', value: 'Shimano Ultegra BR-R8000, 2-piston hydraulic Brake Caliper, Shimano 170 (BR-R7000, SRAM Force 22 Brake Calipers, Pad Components Non-Resin, Shimano Deore XT M8000, Input Tech 3 EA, BP Sync-C (Mechanical Disc))' },
