@@ -7,10 +7,11 @@ import Footer from "@/components/Shared/Footer/index";
 import YourCart from "@/components/Shared/YourCart/index";
 import Payment from "@/components/Shared/Payment/index";
 import ProductDetail from "@/components/Shared/ProductDetail/index";
+import Service from "@/components/Shared/Service/index";
 const router = createBrowserRouter([
   {
     path: "/",
-    Component: ProductDetail,
+    Component: Service,
     children: [
       {
         path: "/auth",
