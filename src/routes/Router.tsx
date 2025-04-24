@@ -6,10 +6,13 @@ import Footer from "@/components/Shared/Footer/index";
 import YourCart from "@/components/Shared/YourCart/index";
 import Payment from "@/components/Shared/Payment/index";
 import ProductDetail from "@/components/Shared/ProductDetail/index";
+import ProductList from "@/components/Shared/ProductList/index";
 import Service from "@/components/Shared/Service/index";
 import RegisterTemplate from "@/pages/auth/Register";
+
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
+import HomeTemplate from "@/pages/home/index";
 
 const router = createBrowserRouter([
   {
@@ -31,29 +34,17 @@ const router = createBrowserRouter([
       {
         path: "register", // Bỏ dấu / ở đầu
         Component: RegisterTemplate
-      }
+      },
     ]
   },
   {
     Component: HomeLayout,
-    path: "/auth",
+    path: "/home",
     children: [
-      // {
-      //   path: "forgot-password", // Bỏ dấu / ở đầu
-      //   Component: ForgotPasswordTemplate
-      // },
-      // {
-      //   path: "reset-password", // Bỏ dấu / ở đầu
-      //   Component: ResetPasswordTemplate
-      // },
       {
-        path: "login", // Bỏ dấu / ở đầu
-        Component: LoginTemplate
+        path: "home", // Bỏ dấu / ở đầu
+        Component: HomeTemplate
       },
-      {
-        path: "register", // Bỏ dấu / ở đầu
-        Component: RegisterTemplate
-      }
     ]
   },
 ]);

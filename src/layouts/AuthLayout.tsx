@@ -9,6 +9,7 @@ function AuthLayout() {
             <Header />
             <Banner PageName="Login" PlaceHolder="Login" />
             <Outlet />
+            
             <Footer />
         </Box>
     );
