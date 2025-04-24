@@ -13,20 +13,20 @@ import RegisterTemplate from "@/pages/auth/Register";
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
 import UserProfile from "@/components/Shared/Profile";
-import ProductDetailTemplate from "@/pages/ProductDetail";
+import ProductDetailTemplate from "@/pages/productDetail";
 import HomeTemplate from "@/pages/home/index";
-
+import CheckoutPage from "@/pages/YourCart";
 const router = createBrowserRouter([
   {
     Component: AuthLayout,
     path: "/auth",
     children: [
       {
-        path: "login", // Bỏ dấu / ở đầu
+        path: "login",
         Component: LoginTemplate
       },
       {
-        path: "register", // Bỏ dấu / ở đầu
+        path: "register",
         Component: RegisterTemplate
       },
       {
@@ -47,11 +47,16 @@ const router = createBrowserRouter([
   },
   {
     path: "/home",
+    Component: HomeLayout,
     children: [
       {
         path: "home",
         Component: HomeTemplate
       },
+      {
+        path: 'yourCart',
+        Component: CheckoutPage
+      }
     ]
   }
 ]);

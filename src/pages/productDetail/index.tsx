@@ -3,7 +3,7 @@ import ProductInformation from "@/components/Shared/ProductInfomation";
 import SpecificationsComponent from "@/components/Shared/Specification";
 import ReviewsComponent from "@/components/Shared/Review/customerReview";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
-
+import ProductList from '@/components/Shared/ProductList';
 const product = {
   name: 'GIANT DEFY ADVANCED',
   rating: 4.5,
@@ -116,9 +116,9 @@ const ProductDetailTemplate = () => {
           <ReviewsComponent />
         </TabPanel>
       </Box>
-      <Box>
-        <Typography sx={{ fontWeight: 'bold' }} variant="h4">RELATED PRODUCTS</Typography>
-
+      <Box sx={{ width: '100%' }}>
+        <Typography sx={{ fontWeight: 'bold', marginLeft: 5 }} variant="h4">RELATED PRODUCTS</Typography>
+        <ProductList products={sampleProducts} />
       </Box>
     </Box>
   );
