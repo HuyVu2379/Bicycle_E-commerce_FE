@@ -41,29 +41,42 @@ const CardGloves = styled(Card)({
   color: '#fff',
 });
 
+const StyledImage = styled('img')({
+  width: '100%',
+  height: 'auto',
+  objectFit: 'contain',
+  marginTop: '16px',
+});
+
 const MarqueeContainer = styled(Box)({
   backgroundColor: '#d4ed91',
-  width: '100vw', // Use viewport width to span the full width of the screen
-  position: 'relative', // Ensure it breaks out of any parent constraints
+  width: '100vw',
+  position: 'relative',
   marginLeft: '-50vw',
   marginRight: '-50vw',
-  padding: '15px 0',
+  padding: '8px 0',
   marginTop: '3vw',
   overflow: 'hidden',
   whiteSpace: 'nowrap',
 });
 
-const Marquee = styled(Box)({
-  display: 'inline-block',
-  animation: 'marquee 20s linear infinite',
+const MarqueeContent = styled(Box)({
+  display: 'flex',
   '& span': {
     margin: '0 32px',
     fontSize: '14px',
     textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
   },
+});
+
+const Marquee = styled(Box)({
+  display: 'flex',
+  width: 'fit-content',
+  animation: 'marquee 15s linear infinite',
   '@keyframes marquee': {
-    from: { transform: 'translateX(100%)' },
-    to: { transform: 'translateX(-100%)' },
+    '0%': { transform: 'translateX(0)' },
+    '100%': { transform: 'translateX(-50%)' },
   },
 });
 
@@ -73,6 +86,15 @@ const StyledButton = styled(Button)({
 });
 
 const AdvertisementSection = () => {
+  const marqueeItems = [
+    'SPECIAL DISCOUNT',
+    'SHIPPING THROUGH ALL EUROPE',
+    'EXPERT ADVICE',
+    'RETURNS EXTEND OVER A PERIOD OF 14 DAYS',
+    'CHECK OUT TRENDY E-BIKES',
+    'EXPLORE OUR LATEST MOUNTAIN BIKES',
+  ];
+
   return (
     <>
       <Container>
@@ -87,10 +109,9 @@ const AdvertisementSection = () => {
             <StyledButton variant="contained">Shop Bikes</StyledButton>
             <Button variant="text">Learn More</Button>
           </Box>
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="body2">[Placeholder for Bike Image]</Typography>
-          </Box>
+          <StyledImage src="/public/assets/images/hero-swiper-3.png" alt="Bike" />
         </MainSection>
+
         <SideSection>
           <CardHelmet>
             <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
@@ -100,10 +121,9 @@ const AdvertisementSection = () => {
               Enjoy 40% off everything!
             </Typography>
             <StyledButton variant="contained">Shop Now</StyledButton>
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body2">[Placeholder for Helmet Image]</Typography>
-            </Box>
+            <StyledImage src="/public/assets/images/hero-swiper-3.png" alt="Helmet" />
           </CardHelmet>
+
           <CardGloves>
             <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
               CITY SPRINT GRIPWEAR
@@ -112,20 +132,23 @@ const AdvertisementSection = () => {
               Experience ultimate comfort and control
             </Typography>
             <StyledButton variant="contained">Shop Now</StyledButton>
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body2">[Placeholder for Gloves Image]</Typography>
-            </Box>
+            <StyledImage src="/public/assets/images/hero-swiper-3.png" alt="Gloves" />
           </CardGloves>
         </SideSection>
       </Container>
+
       <MarqueeContainer>
         <Marquee>
-          <span>SPECIAL DISCOUNT </span>
-          <span>SHIPPING THROUGH ALL EUROPE</span>
-          <span>EXPERT ADVICE</span>
-          <span>RETURNS EXTEND OVER A PERIOD OF 14 DAYS</span>
-          <span>CHECK OUT TRENDY E-BIKES</span>
-          <span>EXPLORE OUR LATEST MOUNTAIN BIKES</span>
+          <MarqueeContent>
+            {marqueeItems.map((item, index) => (
+              <span key={index}>{item}</span>
+            ))}
+          </MarqueeContent>
+          <MarqueeContent>
+            {marqueeItems.map((item, index) => (
+              <span key={`duplicate-${index}`}>{item}</span>
+            ))}
+          </MarqueeContent>
         </Marquee>
       </MarqueeContainer>
     </>

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Card, CardContent, Typography, Button, Stack, Box } from "@mui/material";
 import { styled } from "@mui/system";
+import VanillaTilt from "vanilla-tilt";
 
 interface Product {
   name: string;
@@ -13,23 +14,29 @@ interface Product {
 interface ProductComponentProps extends Product {}
 
 const ProductCard = styled(Card)(({ theme }) => ({
-  maxWidth: 345,
+  width: "100%",
+  maxWidth: "none",
   margin: "auto",
-  boxShadow: "none", // Remove shadow to match the image
-  position: "relative", // For positioning the "NEW" badge
-  border: "1px solid #e0e0e0", // Add a light border to match the image
+  boxShadow: "none",
+  position: "relative",
+  border: "1px solid #e0e0e0",
+  backgroundColor: "#fff",
+  transition: "transform 0.3s ease",
+  "&:hover": {
+    zIndex: 10,
+  }
 }));
 
 const NewBadge = styled(Box)(({ theme }) => ({
   position: "absolute",
-  top: 10,
-  left: 10,
-  backgroundColor: "red",
+  backgroundColor: "#EB453B",
+  left: "-9px",
   color: "white",
-  padding: "2px 8px",
-  fontSize: "12px",
+  padding: "15px 25px 15px 25px",
+  fontSize: "14px",
   fontWeight: "bold",
   textTransform: "uppercase",
+  clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)",
 }));
 
 const PriceStack = styled(Stack)(({ theme }) => ({
@@ -51,9 +58,10 @@ const DiscountPrice = styled(Typography)(({ theme }) => ({
 }));
 
 const BikeImage = styled("img")(({ theme }) => ({
-  height: 200, // Adjusted height to match the image proportions
+  height: 200,
   width: "100%",
-  objectFit: "contain", // Use "contain" to avoid cropping and match the image
+  objectFit: "contain",
+  padding: "16px",
 }));
 
 const ProductComponent: React.FC<ProductComponentProps> = ({
@@ -63,12 +71,37 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
   discountedPrice,
   imageUrl,
 }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (cardRef.current) {
+      VanillaTilt.init(cardRef.current, {
+        max: 10,
+        speed: 700,
+        glare: true,
+        "max-glare": 0.2,
+        scale: 1.03,
+      });
+    }
+
+    return () => {
+      if (cardRef.current && (cardRef.current as any).vanillaTilt) {
+        (cardRef.current as any).vanillaTilt.destroy();
+      }
+    };
+  }, []);
+
   return (
-    <ProductCard>
+    <ProductCard ref={cardRef}>
       <NewBadge>NEW</NewBadge>
       <BikeImage src={imageUrl} alt={`${name} ${type} Bike`} />
       <CardContent sx={{ padding: 2 }}>
-        <Typography variant="h6" component="div" gutterBottom sx={{ fontWeight: "bold" }}>
+        <Typography
+          variant="h6"
+          component="div"
+          gutterBottom
+          sx={{ fontWeight: "bold" }}
+        >
           {name}
         </Typography>
         <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -82,12 +115,8 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
           sx={{ paddingTop: 1 }}
         >
           <PriceStack>
-            <OriginalPrice>
-              $ {originalPrice.toFixed(2)} USD
-            </OriginalPrice>
-            <DiscountPrice>
-              $ {discountedPrice.toFixed(2)} USD
-            </DiscountPrice>
+            <OriginalPrice>${originalPrice.toFixed(2)} USD</OriginalPrice>
+            <DiscountPrice>${discountedPrice.toFixed(2)} USD</DiscountPrice>
           </PriceStack>
           <Button
             variant="outlined"
