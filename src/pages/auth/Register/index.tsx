@@ -2,30 +2,21 @@ import { Box, Button, TextField, Typography, IconButton, InputAdornment } from "
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import GoogleIcon from "@mui/icons-material/Google";
-import useAuth from "@/hook/api/useAuth";
-const LoginTemplate = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+
+const RegisterTemplate = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const { handleLogin } = useAuth();
-    const handleChangeText = (name: string, value: string) => {
-        if (name === "email") {
-            setEmail(value);
-        } else if (name === "password") {
-            setPassword(value);
-        }
-    }
+
     return (
         <Box
             display="flex"
             justifyContent="center"
             alignItems="center"
-            minHeight="100vh"
+            minHeight="auto"
             bgcolor="#f3f8f3"
+            padding={5}
         >
             <Box
-                height={600}
+                height={800}
                 width={600}
                 bgcolor="white"
                 p={4}
@@ -40,20 +31,36 @@ const LoginTemplate = () => {
                     <span style={{ color: "red" }}>City</span>
                 </Typography>
 
-                {/* Email Input */}
+                {/* Name Input */}
                 <Typography align="left" fontWeight="bold" marginTop={5}>
+                    Name
+                </Typography>
+                <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Enter Your Name"
+                    margin="dense"
+                    sx={{
+                        height: "50px",
+                        "& .MuiOutlinedInput-root": {
+                            height: "50px",
+                        },
+                    }}
+                />
+
+                {/* Email Input */}
+                <Typography align="left" fontWeight="bold" mt={2}>
                     Email
                 </Typography>
                 <TextField
-                    onChange={(e) => handleChangeText("email", e.target.value)}
                     fullWidth
                     variant="outlined"
                     placeholder="Enter Your Email"
                     margin="dense"
                     sx={{
-                        height: "50px", // Chiều cao tổng thể
+                        height: "50px",
                         "& .MuiOutlinedInput-root": {
-                            height: "50px", // Điều chỉnh chiều cao của phần nhập
+                            height: "50px",
                         },
                     }}
                 />
@@ -63,7 +70,6 @@ const LoginTemplate = () => {
                     Enter Password
                 </Typography>
                 <TextField
-                    onChange={(e) => handleChangeText("password", e.target.value)}
                     fullWidth
                     variant="outlined"
                     type={showPassword ? "text" : "password"}
@@ -79,9 +85,9 @@ const LoginTemplate = () => {
                         ),
                     }}
                     sx={{
-                        height: "50px", // Chiều cao tổng thể
+                        height: "50px",
                         "& .MuiOutlinedInput-root": {
-                            height: "50px", // Điều chỉnh chiều cao của phần nhập
+                            height: "50px",
                         },
                         "&::-ms-reveal, &::-ms-clear": {
                             display: "none",
@@ -89,37 +95,64 @@ const LoginTemplate = () => {
                     }}
                 />
 
-                {/* Login Button */}
+                {/*Comfirm Password Input */}
+                <Typography align="left" fontWeight="bold" mt={2}>
+                    Enter Password Again
+                </Typography>
+                <TextField
+                    fullWidth
+                    variant="outlined"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter Password"
+                    margin="dense"
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
+                    sx={{
+                        height: "50px",
+                        "& .MuiOutlinedInput-root": {
+                            height: "50px",
+                        },
+                        "&::-ms-reveal, &::-ms-clear": {
+                            display: "none",
+                        },
+                    }}
+                />
+
+                {/* Register Button */}
                 <Button
-                    onClick={() => handleLogin(email, password)}
                     fullWidth
                     variant="contained"
                     color="error"
-                    sx={{ mt: 2, py: 1.5, fontWeight: "bold", fontSize: "16px" }}
+                    sx={{ mt: 4, py: 1.5, fontWeight: "bold", fontSize: "16px" }}
                 >
-                    Login
+                    Register
                 </Button>
 
-                {/* Register Link */}
+                {/* Login Link */}
                 <Typography mt={2}>
-                    Don't have an account?{" "}
-                    <Link to="/auth/register" style={{ color: "red", fontWeight: "bold" }}>
-                        Register
+                    Already have an account?{" "}
+                    <Link to="/auth/login" style={{ color: "red", fontWeight: "bold" }}>
+                        Login
                     </Link>
                 </Typography>
 
-                {/* Google Login Button */}
-                <Button
-                    fullWidth
-                    variant="outlined"
-                    sx={{ mt: 2, py: 1.5, fontWeight: "bold" }}
-                    startIcon={<GoogleIcon />}
-                >
-                    <span style={{ fontSize: 16, color: 'black' }}>Login with Google</span>
-                </Button>
+                {/* GG sign in */}
+                <Typography mt={2}>
+                    Or sign in with {" "}
+                    <Link to="/" style={{ fontWeight: "bold" }}>
+                        Google
+                    </Link>
+                </Typography>
             </Box>
         </Box>
     );
 };
 
-export default LoginTemplate;
+export default RegisterTemplate;
