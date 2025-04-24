@@ -12,14 +12,12 @@ function useUser() {
         const response = await login(email, password);
         console.log("check response login: ", response);
         if (response.statusCode === 200 && response.success === true) {
-            console.log("Check userId: ", response.data.userId);
-
             const user = await getUserById(response.data.userId);
             console.log("check user fetch: ", user);
+            enqueueSnackbar({ message: 'Login successful!', variant: 'success' });
             dispatch(setMe(user.data));
             setValueInLocalStorage('accessToken', response.data.accessToken);
             setValueInLocalStorage('refreshToken', response.data.refreshToken);
-            enqueueSnackbar({ message: 'Login successful!', variant: 'success' });
         } else {
             enqueueSnackbar('Login failed. Please try again.', { variant: 'error' });
         }

@@ -253,7 +253,7 @@ const ReviewsComponent: React.FC = () => {
           key={review.id}
           sx={{ mb: 3, pb: 3, borderBottom: "1px solid #eee" }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent:'space-between', mb: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between', mb: 1 }}>
             <StyledRating value={review.rating} size="small" readOnly />
             <Typography variant="caption" color="text.secondary" sx={{ ml: 2 }}>
               {review.date}

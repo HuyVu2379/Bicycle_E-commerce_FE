@@ -3,8 +3,9 @@ import "./header.css";
 import { Link } from "react-router-dom";
 import { FaUser, FaShoppingCart, FaSearch, FaBars, FaTimes } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
-
+import { useNavigate } from "react-router-dom";
 const Header: React.FC = () => {
+  const navigate = useNavigate();
   const [showBikesDropdown, setShowBikesDropdown] = useState(false);
   const [showAccessoriesDropdown, setShowAccessoriesDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -71,7 +72,7 @@ const Header: React.FC = () => {
 
           {/* Icon user, cart, logout */}
           <div className="actions">
-            <Link to="/auth/login" className="icons">
+            <Link to="/auth/profile" className="icons">
               <FaUser className="icon" />
             </Link>
             <Link to="/profile" className="icons">

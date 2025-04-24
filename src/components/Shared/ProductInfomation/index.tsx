@@ -1,6 +1,3 @@
-import React from 'react';
-import { Box, Typography, Paper } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
 import {
   Box,
@@ -17,88 +14,8 @@ import {
   CardMedia,
 } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
-interface Specification {
-  label: string;
-  value: string;
-}
 
-const SpecificationPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  borderRadius: theme.spacing(1),
-  backgroundColor: '#fff',
-}));
-
-const SpecificationRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  borderBottom: '1px solid #eee',
-  padding: theme.spacing(2, 0),
-  '&:last-child': {
-    borderBottom: 'none',
-  },
-}));
-
-const SpecificationLabel = styled(Typography)(({ theme }) => ({
-  flex: '0 0 200px', 
-  fontWeight: 700,
-  color: '#000',
-  paddingRight: theme.spacing(3),
-}));
-
-const SpecificationValue = styled(Typography)({
-  flex: 1,
-  color: '#666',
-});
-
-const specifications: Specification[] = [
-  { label: 'Brakes', value: 'Shimano Ultegra BR-R8000, 2-piston hydraulic Brake Caliper, Shimano 170 (BR-R7000, SRAM Force 22 Brake Calipers, Pad Components Non-Resin, Shimano Deore XT M8000, Input Tech 3 EA, BP Sync-C (Mechanical Disc))' },
-  { label: 'Fork', value: 'Fox Grade: UHC Performance carbon fiber with aluminum steerer tube' },
-  { label: 'Colors', value: 'Green & Black' },
-  { label: 'Rear', value: 'Tyre Maxxis Refuse, 700x40 mm,' },
-  { label: 'Cassete', value: 'Shimano Ultegra BR-R8000' },
-  { label: 'Crankset', value: 'Shimano 105 BR-R7000,' },
-  { label: 'Wheel', value: 'Size 24' },
-  { label: 'Wheelset', value: 'Deore WheelBTR A1, Tubeless ready, Center Lock, 12x100/12x142 mm' },
-  { label: 'Handlebars', value: 'Deore DBR-A2 (204 31.8 mm, 440 mm' },
-  { label: 'Model', value: 'Year 2024' },
-  { label: 'Frame', value: 'Year 2024' },
-  { label: 'Saddle', value: 'Selle Royal Essenza Gel' },
-  { label: 'Shifter', value: 'Shimano GRX, ST-R4000' },
-];
-
-const SpecificationsComponent: React.FC = () => {
-  return (
-    <Box sx={{ p: 2, maxWidth: '1200px', margin: '0 auto' }}>
-      <Box sx={{ mb: 3 }}>
-        <Typography
-          variant="h6"
-          sx={{
-            backgroundColor: '#000',
-            color: '#fff',
-            display: 'inline-block',
-            padding: '8px 16px',
-            borderRadius: '20px',
-            fontSize: '0.9rem',
-          }}
-        >
-          Specifications
-        </Typography>
-      </Box>
-
-      <SpecificationPaper elevation={0}>
-        {specifications.map((spec, index) => (
-          <SpecificationRow key={index}>
-            <SpecificationLabel variant="body2">
-              {spec.label}
-            </SpecificationLabel>
-            <SpecificationValue variant="body2">
-              {spec.value}
-            </SpecificationValue>
-          </SpecificationRow>
-        ))}
-      </SpecificationPaper>
-      )};
-
-const ProductDetail = ({ productData }) => {
+const ProductInformation = ({ productData }) => {
   // Giả lập dữ liệu từ API, bạn sẽ thay bằng dữ liệu thực từ API
   const product = productData || {
     name: 'GIANT DEFY ADVANCED',
@@ -271,5 +188,4 @@ const ProductDetail = ({ productData }) => {
   );
 };
 
-export default SpecificationsComponent;
-export default ProductDetail;
+export default ProductInformation;

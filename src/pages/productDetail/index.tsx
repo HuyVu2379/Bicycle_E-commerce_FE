@@ -1,101 +1,127 @@
-import React, { useState } from "react";
-import "./index.css";
+import React, { useState } from 'react';
+import ProductInformation from "@/components/Shared/ProductInfomation";
+import SpecificationsComponent from "@/components/Shared/Specification";
+import ReviewsComponent from "@/components/Shared/Review/customerReview";
+import { Box, Tabs, Tab, Typography } from "@mui/material";
 
-const ProductDetail = () => {
-  const [quantity, setQuantity] = useState(1);
-
-  // Dữ liệu mẫu
-  const productData = {
-    id: "1",
-    name: "Giant Defy Advanced",
-    categoryId: "1",
-    supplierId: "2",
-    description:
-      "Experience unmatched comfort and performance with the Giant Defy Advanced. This endurance race bike features a lightweight carbon frame, advanced compliance technology.",
-    price: 299.0,
-    priceReduced: 249.0,
-    promotionId: "PROMO123",
-    createdAt: "2025-03-25T03:58:01.035Z",
-    updatedAt: "2025-03-25T03:58:01.035Z",
-    images: "https://api.xedap.vn/products/HYPER/rider-3-charcoal_2.jpg",
-  };
-
-  const specifications = [
+const product = {
+    name: 'GIANT DEFY ADVANCED',
+    rating: 4.5,
+    reviews: 129,
+    price: 2990.00,
+    description: 'Experience unmatched comfort and performance with the GIANT Defy Advanced. This endurance road bike features a lightweight carbon frame, advanced compliance technology.',
+    colors: ['Green', 'Red', 'Yellow'],
+    images: [
+        '/assets/images/product-1.png',
+        '/assets/images/product-3.png',
+        '/assets/images/product-3.png',
+        '/assets/images/product-3.png',
+        '/assets/images/product-3.png',
+        '/assets/images/product-3.png',
+    ],
+};
+const sampleProducts = [
     {
-      specificationId: "1",
-      productId: "1",
-      key: "Color",
-      value: "Silver",
+        name: "Urban Explorer",
+        type: "Enduro",
+        originalPrice: 21599.0,
+        discountedPrice: 14599.0,
+        imageUrl:
+            "https://create.microsoft.com/_next/image?url=https%3A%2F%2Fcdn.create.microsoft.com%2Fimages%2Fimage-creator-T03_cat.webp&w=1920&q=90",
     },
-  ];
+    {
+        name: "Mountain Blazer",
+        type: "Trail",
+        originalPrice: 18999.0,
+        discountedPrice: 12999.0,
+        imageUrl:
+            "https://create.microsoft.com/_next/image?url=https%3A%2F%2Fcdn.create.microsoft.com%2Fimages%2Fimage-creator-T03_cat.webp&w=1920&q=90",
+    },
+    {
+        name: "City Sprinter",
+        type: "Urban",
+        originalPrice: 15999.0,
+        discountedPrice: 9999.0,
+        imageUrl:
+            "https://create.microsoft.com/_next/image?url=https%3A%2F%2Fcdn.create.microsoft.com%2Fimages%2Fimage-creator-T03_cat.webp&w=1920&q=90",
+    },
+];
 
-  const handleQuantityChange = (type: "increment" | "decrement") => {
-    setQuantity((prev) =>
-      type === "increment" ? prev + 1 : Math.max(1, prev - 1)
+const ProductDetailTemplate = () => {
+    const [value, setValue] = useState(0);
+
+    // Xử lý thay đổi tab
+    const handleChange = (event: any, newValue: number) => {
+        setValue(newValue);
+    };
+
+    // Component TabPanel để hiển thị nội dung tương ứng với tab
+    const TabPanel = ({ children, value, index }: { children: React.ReactNode; value: number; index: number }) => (
+        <div role="tabpanel" hidden={value !== index} id={`tabpanel-${index}`}>
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    {children}
+                </Box>
+            )}
+        </div>
     );
-  };
 
-  const colorSpec = specifications.find((spec) => spec.key === "Color");
+    return (
+        <Box display="flex" flexDirection="column" alignItems="center" padding={2} bgcolor="#f3f8f3">
+            <ProductInformation productData={product} />
+            <Box sx={{ width: '100%', maxWidth: 1200 }}>
+                <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    aria-label="product tabs"
+                    sx={{
+                        '& .MuiTab-root': {
+                            textTransform: 'none',
+                            fontWeight: 'bold',
+                            fontSize: '1rem',
+                            padding: '10px 20px',
+                            borderRadius: '20px',
+                            marginRight: '8px',
+                        },
+                        '& .Mui-selected': {
+                            backgroundColor: '#000',
+                            color: '#fff !important',
+                        },
+                        '& .MuiTabs-indicator': {
+                            display: 'none',
+                        },
+                    }}
+                >
+                    <Tab label="Description" id="tab-0" />
+                    <Tab label="Specifications" id="tab-1" />
+                    <Tab label="Video" id="tab-2" />
+                    <Tab label="Customer Reviews" id="tab-3" />
+                </Tabs>
 
-  return (
-    <div className="product-detail-container">
-      {/* Left Section: Product Images */}
-      <div className="product-images">
-        <img
-          src={productData.images}
-          alt="Main Product"
-          className="main-product-image"
-        />
-      </div>
+                {/* Nội dung của từng tab */}
+                <TabPanel value={value} index={0}>
+                    <div>
+                        The Giant Defy Advanced is designed to redefine long-distance cycling with its exceptional blend of comfort and performance. Crafted from advanced-grade carbon fiber, this endurance road bike features a lightweight and responsive frame that absorbs road vibrations, allowing for a smoother ride over varied terrain. The Defy Advanced is equipped with a precise and reliable drivetrain, ensuring effortless shifting and optimal power transfer.
+                    </div>
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    <SpecificationsComponent />
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                    <div>
+                        Video content goes here. (e.g., Embed a YouTube video or a video player.)
+                    </div>
+                </TabPanel>
+                <TabPanel value={value} index={3}>
+                    <ReviewsComponent />
+                </TabPanel>
+            </Box>
+            <Box>
+                <Typography sx={{ fontWeight: 'bold' }} variant="h4">RELATED PRODUCTS</Typography>
 
-      {/* Right Section: Product Details */}
-      <div className="product-details">
-        <h1>{productData.name}</h1>
-        <p className="reviews">★ ★ ★ ★ ★ 5 Reviews</p>
-        <h2 className="price">${productData.price.toFixed(2)} USD</h2>
-        <p className="description">{productData.description}</p>
-
-        {/* Display Product Color */}
-        {colorSpec && (
-          <div className="product-color-display">
-            <h4>
-              Color:
-              <span style={{marginLeft: 5}}>{colorSpec.value}</span>
-            </h4>
-          </div>
-        )}
-
-        {/* Quantity Selector */}
-        <div className="quantity-selector">
-          <h4>Quantity:</h4>
-          <div className="quantity-controls">
-            <button onClick={() => handleQuantityChange("decrement")}>-</button>
-            <input type="text" value={quantity} readOnly />
-            <button onClick={() => handleQuantityChange("increment")}>+</button>
-          </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="action-buttons">
-          <button className="add-to-cart">Add to Cart</button>
-          <button className="buy-now">Buy Now</button>
-        </div>
-
-        {/* Payment Options */}
-        <div className="payment-options">
-          <h4>Guaranteed Safe Checkout:</h4>
-          <div className="payment-logos">
-            <img src="../public/assets/images/logo_VISA.png" alt="Visa" />
-            <img src="../public/assets/images/logo_MOMO.png" alt="Momo" />
-            <img src="../public/assets/images/logo_COD.png" alt="Cash on Delivery" />
-          </div>
-          <p className="shipping-info">
-            Orders ship within 5 to 10 business days.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+            </Box>
+        </Box>
+    );
 };
 
-export default ProductDetail;
+export default ProductDetailTemplate;
