@@ -76,7 +76,7 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
   useEffect(() => {
     if (cardRef.current) {
       VanillaTilt.init(cardRef.current, {
-        max: 10,
+        max: 4,
         speed: 700,
         glare: true,
         "max-glare": 0.2,

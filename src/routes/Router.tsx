@@ -12,41 +12,53 @@ import RegisterTemplate from "@/pages/auth/Register";
 
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
+import UserProfile from "@/components/Shared/Profile";
+import ProductDetailTemplate from "@/pages/productDetail";
 import HomeTemplate from "@/pages/home/index";
-
+import CheckoutPage from "@/pages/YourCart";
 const router = createBrowserRouter([
   {
     Component: AuthLayout,
     path: "/auth",
     children: [
-      // {
-      //   path: "forgot-password", // Bỏ dấu / ở đầu
-      //   Component: ForgotPasswordTemplate
-      // },
-      // {
-      //   path: "reset-password", // Bỏ dấu / ở đầu
-      //   Component: ResetPasswordTemplate
-      // },
       {
-        path: "login", // Bỏ dấu / ở đầu
+        path: "login",
         Component: LoginTemplate
       },
       {
-        path: "register", // Bỏ dấu / ở đầu
+        path: "register",
         Component: RegisterTemplate
       },
+      {
+        path: 'profile',
+        Component: UserProfile
+      }
     ]
   },
   {
     Component: HomeLayout,
-    path: "/home",
+    path: "/product",
     children: [
       {
-        path: "home", // Bỏ dấu / ở đầu
-        Component: HomeTemplate
+        path: "detail",
+        Component: ProductDetailTemplate
       },
     ]
   },
+  {
+    path: "/home",
+    Component: HomeLayout,
+    children: [
+      {
+        path: "home",
+        Component: HomeTemplate
+      },
+      {
+        path: 'yourCart',
+        Component: CheckoutPage
+      }
+    ]
+  }
 ]);
 
 export default router;

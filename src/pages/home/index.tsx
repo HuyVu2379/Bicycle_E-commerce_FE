@@ -12,7 +12,7 @@ const sampleProducts = [
     originalPrice: 21599.0,
     discountedPrice: 14599.0,
     imageUrl:
-      "https://create.microsoft.com/_next/image?url=https%3A%2F%2Fcdn.create.microsoft.com%2Fimages%2Fimage-creator-T03_cat.webp&w=1920&q=90",
+      "/public/assets/images/hero-swiper-3.png",
   },
   {
     name: "Mountain Blazer",
@@ -20,7 +20,7 @@ const sampleProducts = [
     originalPrice: 18999.0,
     discountedPrice: 12999.0,
     imageUrl:
-      "https://create.microsoft.com/_next/image?url=https%3A%2F%2Fcdn.create.microsoft.com%2Fimages%2Fimage-creator-T03_cat.webp&w=1920&q=90",
+      "/public/assets/images/hero-swiper-3.png",
   },
   {
     name: "City Sprinter",
@@ -28,7 +28,7 @@ const sampleProducts = [
     originalPrice: 15999.0,
     discountedPrice: 9999.0,
     imageUrl:
-      "https://create.microsoft.com/_next/image?url=https%3A%2F%2Fcdn.create.microsoft.com%2Fimages%2Fimage-creator-T03_cat.webp&w=1920&q=90",
+      "/public/assets/images/hero-swiper-3.png",
   },
 ];
 

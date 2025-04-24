@@ -39,7 +39,7 @@ const MoreShopButton = styled(Button)({
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
   return (
-    <Box sx={{ width: "100%",pb:'5vw', backgroundColor: "#f5f5f5", display: "flex",flexDirection: "column", justifyContent: "center",alignItems: "center",}}>
+    <Box sx={{ width: "100%", pb: '5vw', backgroundColor: "#f5f5f5", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", }}>
       <HeaderContainer>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
           NEW ARRIVALS

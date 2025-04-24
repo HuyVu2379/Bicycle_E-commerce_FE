@@ -4,6 +4,7 @@ import { styled } from '@mui/system';
 
 const Container = styled(Box)({
   margin: '120px 0',
+  width: '100%',
   padding: '64px 32px',
   display: 'flex',
   flexDirection: 'column',
