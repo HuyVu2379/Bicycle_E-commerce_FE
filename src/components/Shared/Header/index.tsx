@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import "./header.css";
 import { Link } from "react-router-dom";
-import { FaUser, FaShoppingCart, FaSearch, FaBars, FaTimes } from "react-icons/fa";
+import { FaUser, FaShoppingCart, FaSearch, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
-import { useNavigate } from "react-router-dom";
+
 const Header: React.FC = () => {
-  const navigate = useNavigate();
-  const [showBikesDropdown, setShowBikesDropdown] = useState(false);
-  const [showAccessoriesDropdown, setShowAccessoriesDropdown] = useState(false);
+  const [showShopDropdown, setShowShopDropdown] = useState(false);
+  const [showPagesDropdown, setShowPagesDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -29,50 +28,59 @@ const Header: React.FC = () => {
 
         {/* Menu */}
         <div className={`menu ${menuOpen ? "open" : ""}`}>
-          {/* Dropdown Danh mục */}
+          {/* Navigation Links */}
           <nav className="nav">
+            <Link to="/" className="nav-link">HOME</Link>
+            <Link to="/about" className="nav-link">ABOUT US</Link>
+            <Link to="/services" className="nav-link">SERVICES</Link>
+
+            {/* SHOP Dropdown */}
             <div
               className="dropdown"
-              onMouseEnter={() => setShowBikesDropdown(true)}
-              onMouseLeave={() => setShowBikesDropdown(false)}
+              onMouseEnter={() => setShowShopDropdown(true)}
+              onMouseLeave={() => setShowShopDropdown(false)}
             >
-              Xe đạp ▼
-              {showBikesDropdown && (
+              SHOP <FaChevronDown className="dropdown-icon" />
+              {showShopDropdown && (
                 <div className="dropdown-menu">
-                  <Link to="/bikes/common">Xe đạp phổ thông</Link>
-                  <Link to="/bikes/kids">Xe đạp trẻ em</Link>
-                  <Link to="/bikes/mountain">Xe đạp địa hình</Link>
-                  <Link to="/bikes/racing">Xe đạp đua</Link>
-                  <Link to="/bikes/stunt">Xe đạp biểu diễn</Link>
+                  <Link to="/shop/common-bikes">Common Bikes</Link>
+                  <Link to="/shop/kids-bikes">Kids Bikes</Link>
+                  <Link to="/shop/mountain-bikes">Mountain Bikes</Link>
+                  <Link to="/shop/racing-bikes">Racing Bikes</Link>
+                  <Link to="/shop/stunt-bikes">Stunt Bikes</Link>
                 </div>
               )}
             </div>
 
+            {/* PAGES Dropdown */}
             <div
               className="dropdown"
-              onMouseEnter={() => setShowAccessoriesDropdown(true)}
-              onMouseLeave={() => setShowAccessoriesDropdown(false)}
+              onMouseEnter={() => setShowPagesDropdown(true)}
+              onMouseLeave={() => setShowPagesDropdown(false)}
             >
-              Phụ kiện ▼
-              {showAccessoriesDropdown && (
+              PAGES <FaChevronDown className="dropdown-icon" />
+              {showPagesDropdown && (
                 <div className="dropdown-menu">
-                  <Link to="/accessories/clothing">Trang phục</Link>
-                  <Link to="/accessories/bottle">Chai nước/Gọng kẹp</Link>
-                  <Link to="/accessories/lights">Đèn</Link>
+                  <Link to="/pages/clothing">Clothing</Link>
+                  <Link to="/pages/bottles">Bottles & Holders</Link>
+                  <Link to="/pages/lights">Lights</Link>
                 </div>
               )}
             </div>
+
+            <Link to="/news" className="nav-link">NEWS</Link>
+            <Link to="/contact" className="nav-link">CONTACT</Link>
           </nav>
 
-          {/* Ô tìm kiếm */}
+          {/* Search Box */}
           <div className="search-box">
-            <input type="text" placeholder="Search Bikes, Gear & Accessories" />
+            <input type="text" placeholder="Search..." />
             <FaSearch className="search-icon" />
           </div>
 
-          {/* Icon user, cart, logout */}
+          {/* Action Icons */}
           <div className="actions">
-            <Link to="/auth/profile" className="icons">
+            <Link to="/auth/login" className="icons">
               <FaUser className="icon" />
             </Link>
             <Link to="/profile" className="icons">
