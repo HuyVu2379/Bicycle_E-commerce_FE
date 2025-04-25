@@ -14,7 +14,7 @@ import {
   Grid,
 } from "@mui/material";
 
-const Checkout = () => {
+const Payment = () => {
   const [contact, setContact] = useState("");
   const [country, setCountry] = useState("United States");
   const [firstName, setFirstName] = useState("");
@@ -440,4 +440,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default Payment;

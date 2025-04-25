@@ -83,7 +83,7 @@ const ImageCard = ({ src, label }) => {
 
 const ImageGrid = () => {
   return (
-    <Box sx={{ padding: "20px", backgroundColor: "#f5f5f5" }}>
+    <Box sx={{width:'97%',mt:6, padding: "20px" }}>
       <Grid container spacing={2} justifyContent="center">
         {imageData.map((item) => (
           <Grid item xs={12} sm={6} md={4} key={item.id}>

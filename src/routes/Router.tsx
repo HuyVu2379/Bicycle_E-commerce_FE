@@ -7,7 +7,6 @@ import YourCart from "@/components/Shared/YourCart/index";
 import Payment from "@/components/Shared/Payment/index";
 import ProductDetail from "@/components/Shared/ProductDetail/index";
 import ProductList from "@/components/Shared/ProductList/index";
-import Service from "@/components/Shared/Service/index";
 import RegisterTemplate from "@/pages/auth/Register";
 
 import AuthLayout from "@/layouts/AuthLayout";
@@ -15,7 +14,13 @@ import HomeLayout from "@/layouts/HomeLayout";
 import UserProfile from "@/components/Shared/Profile";
 import ProductDetailTemplate from "@/pages/productDetail";
 import HomeTemplate from "@/pages/home/index";
-import CheckoutPage from "@/pages/YourCart";
+import ServiceLayout from "@/layouts/ServiceLayout";
+import CheckoutPage from "@/components/Shared/YourCart/index";
+import ServiceTemplate from "@/pages/service/index";
+import PaymentLayout from "@/layouts/PaymentLayout";
+import PaymentTemplate from "@/pages/payment/index";
+import AboutLayout from "@/layouts/AboutLayout";
+import AboutTemplate from "@/pages/about/index";
 const router = createBrowserRouter([
   {
     Component: AuthLayout,
@@ -50,15 +55,50 @@ const router = createBrowserRouter([
     Component: HomeLayout,
     children: [
       {
-        path: "home",
+        path: "home", // Bỏ dấu / ở đầu
         Component: HomeTemplate
       },
       {
         path: 'yourCart',
         Component: CheckoutPage
       }
+      {
+        path: 'yourCart',
+        Component: CheckoutPage
+      }
+    ]
+  },
+  {
+    path: "/service",
+    Component: ServiceLayout,
+    children: [
+      {
+        path: '',
+        Component: ServiceTemplate  
+      }
+    ]
+  },
+  {
+    path: "/payment",
+    Component: PaymentLayout,
+    children: [
+      {
+        path: '',
+        Component: PaymentTemplate  
+      }
+    ]
+  },
+  {
+    path: "/about",
+    Component: AboutLayout,
+    children: [
+      {
+        path: '',
+        Component: AboutTemplate  
+      }
     ]
   }
+  
 ]);
 
 export default router;

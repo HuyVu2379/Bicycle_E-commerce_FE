@@ -30,9 +30,9 @@ const Header: React.FC = () => {
         <div className={`menu ${menuOpen ? "open" : ""}`}>
           {/* Navigation Links */}
           <nav className="nav">
-            <Link to="/" className="nav-link">HOME</Link>
+            <Link to="/home" className="nav-link">HOME</Link>
             <Link to="/about" className="nav-link">ABOUT US</Link>
-            <Link to="/services" className="nav-link">SERVICES</Link>
+            <Link to="/service" className="nav-link">SERVICES</Link>
 
             {/* SHOP Dropdown */}
             <div
