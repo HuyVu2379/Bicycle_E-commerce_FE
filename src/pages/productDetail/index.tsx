@@ -117,7 +117,6 @@ const ProductDetailTemplate = () => {
         </TabPanel>
       </Box>
       <Box sx={{ width: '100%' }}>
-        <Typography sx={{ fontWeight: 'bold', marginLeft: 5 }} variant="h4">RELATED PRODUCTS</Typography>
         <ProductList products={sampleProducts} />
       </Box>
     </Box>

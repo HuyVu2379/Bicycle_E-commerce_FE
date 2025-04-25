@@ -12,7 +12,6 @@ import RegisterTemplate from "@/pages/auth/Register";
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
 import UserProfile from "@/components/Shared/Profile";
-import ProductDetailTemplate from "@/pages/productDetail";
 import HomeTemplate from "@/pages/home/index";
 import ServiceLayout from "@/layouts/ServiceLayout";
 import CheckoutPage from "@/components/Shared/YourCart/index";
@@ -21,6 +20,10 @@ import PaymentLayout from "@/layouts/PaymentLayout";
 import PaymentTemplate from "@/pages/payment/index";
 import AboutLayout from "@/layouts/AboutLayout";
 import AboutTemplate from "@/pages/about/index";
+import ContactLayout from "@/layouts/ContactLayout";
+import ContactTemplate from "@/pages/contact/index";
+import ProductDetailLayout from "@/layouts/ProductDetailLayout";
+import ProductDetailTemplate from "@/pages/productDetail/index";
 const router = createBrowserRouter([
   {
     Component: AuthLayout,
@@ -41,7 +44,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    Component: HomeLayout,
+    Component: ProductDetailLayout,
     path: "/product",
     children: [
       {
@@ -91,6 +94,16 @@ const router = createBrowserRouter([
       {
         path: '',
         Component: AboutTemplate  
+      }
+    ]
+  },
+  {
+    path: "/contact",
+    Component: ContactLayout,
+    children: [
+      {
+        path: '',
+        Component: ContactTemplate  
       }
     ]
   }

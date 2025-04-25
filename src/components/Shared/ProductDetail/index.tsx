@@ -1,4 +1,4 @@
-import React from 'react';
+Bimport React from 'react';
 import { Box, Typography, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
@@ -96,7 +96,8 @@ const SpecificationsComponent: React.FC = () => {
           </SpecificationRow>
         ))}
       </SpecificationPaper>
-      )};
+    </Box>
+  )};
 
 const ProductDetail = ({ productData }) => {
   // Giả lập dữ liệu từ API, bạn sẽ thay bằng dữ liệu thực từ API

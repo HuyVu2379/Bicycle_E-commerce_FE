@@ -52,22 +52,6 @@ const Header: React.FC = () => {
               )}
             </div>
 
-            {/* PAGES Dropdown */}
-            <div
-              className="dropdown"
-              onMouseEnter={() => setShowPagesDropdown(true)}
-              onMouseLeave={() => setShowPagesDropdown(false)}
-            >
-              PAGES <FaChevronDown className="dropdown-icon" />
-              {showPagesDropdown && (
-                <div className="dropdown-menu">
-                  <Link to="/pages/clothing">Clothing</Link>
-                  <Link to="/pages/bottles">Bottles & Holders</Link>
-                  <Link to="/pages/lights">Lights</Link>
-                </div>
-              )}
-            </div>
-
             <Link to="/news" className="nav-link">NEWS</Link>
             <Link to="/contact" className="nav-link">CONTACT</Link>
           </nav>
