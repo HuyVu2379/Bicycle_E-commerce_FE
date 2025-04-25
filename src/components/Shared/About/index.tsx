@@ -187,7 +187,7 @@ const AboutComponent = () => {
             <Box>
               <Typography
                 variant="h4"
-                sx={{ fontWeight: "bold", marginTop: "3vw", mb: 17 }}
+                sx={{ width: "45%",fontWeight: "bold", marginTop: "3vw", mb: 12 }}
               >
                 Meet the Team Behind Your Ride.
               </Typography>
@@ -208,7 +208,8 @@ const AboutComponent = () => {
                       color: "#fff",
                       borderRadius: "50px",
                       textTransform: "none",
-                      px: 4,
+                      px: 5,
+                      fontSize: '18px',
                       "&:hover": { bgcolor: "#e64446" },
                     }}
                   >
@@ -220,6 +221,9 @@ const AboutComponent = () => {
                       color: "#000",
                       textTransform: "none",
                       fontWeight: "medium",
+                      fontSize: '15px',
+                      textDecoration:'underline',
+                      mx:2
                     }}
                   >
                     About Us
