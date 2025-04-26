@@ -43,11 +43,11 @@ const Header: React.FC = () => {
               SHOP <FaChevronDown className="dropdown-icon" />
               {showShopDropdown && (
                 <div className="dropdown-menu">
-                  <Link to="/shop/common-bikes">Common Bikes</Link>
-                  <Link to="/shop/kids-bikes">Kids Bikes</Link>
-                  <Link to="/shop/mountain-bikes">Mountain Bikes</Link>
-                  <Link to="/shop/racing-bikes">Racing Bikes</Link>
-                  <Link to="/shop/stunt-bikes">Stunt Bikes</Link>
+                  <Link to="/shop">Common Bikes</Link>
+                  <Link to="/shop">Kids Bikes</Link>
+                  <Link to="/shop">Mountain Bikes</Link>
+                  <Link to="/shop">Racing Bikes</Link>
+                  <Link to="/shop">Stunt Bikes</Link>
                 </div>
               )}
             </div>

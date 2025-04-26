@@ -3,15 +3,15 @@ import Footer from "@/components/Shared/Footer/index";
 import Header from "@/components/Shared/Header/index";
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
-function PaymentLayout() {
+function NewsLayout() {
     return (
         <Box>
             <Header />
-            <Banner PageName="Payment" PlaceHolder="Payment" />
+            <Banner PageName="News" PlaceHolder="News" />
             <Outlet />
             <Footer />
         </Box>
     );
 }
 
-export default PaymentLayout;
+export default NewsLayout;

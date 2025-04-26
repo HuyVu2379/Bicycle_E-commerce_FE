@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoginTemplate from "@/pages/auth/Login";
 import NotFoundTemplate from "@/pages/404";
 import Banner from "@/components/Shared/Banner";
@@ -24,6 +24,9 @@ import ContactLayout from "@/layouts/ContactLayout";
 import ContactTemplate from "@/pages/contact/index";
 import ProductDetailLayout from "@/layouts/ProductDetailLayout";
 import ProductDetailTemplate from "@/pages/productDetail/index";
+import NewsLayout from "@/layouts/NewsLayout";
+import NewsTemplate from "@/pages/news";
+import NewsDetailsTemplate from "@/pages/news/NewsDetail";
 const router = createBrowserRouter([
   {
     Component: AuthLayout,
@@ -54,7 +57,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    path: "/home",
+    path: "/",
     Component: HomeLayout,
     children: [
       {
@@ -67,6 +70,7 @@ const router = createBrowserRouter([
       }
     ]
   },
+  
   {
     path: "/service",
     Component: ServiceLayout,
@@ -104,6 +108,20 @@ const router = createBrowserRouter([
       {
         path: '',
         Component: ContactTemplate  
+      }
+    ]
+  },
+  {
+    path: "/news",
+    Component: NewsLayout,
+    children: [
+      {
+        path: '',
+        Component: NewsTemplate
+      },
+      {
+        path: ":id" ,
+        Component: NewsDetailsTemplate
       }
     ]
   }

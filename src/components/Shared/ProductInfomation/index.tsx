@@ -14,6 +14,7 @@ import {
   CardMedia,
 } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 const ProductInformation = ({ productData }) => {
   // Giả lập dữ liệu từ API, bạn sẽ thay bằng dữ liệu thực từ API
@@ -162,9 +163,9 @@ const ProductInformation = ({ productData }) => {
             >
               Add to Cart
             </Button>
-            <Button variant="outlined" color="primary">
-              Buy Now
-            </Button>
+            <Link to="/payment" style={{ textDecoration: 'none', color: 'inherit' }}>
+                Buy Now
+            </Link>
           </Box>
 
           {/* Thanh toán an toàn */}
