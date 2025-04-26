@@ -1,12 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 import LoginTemplate from "@/pages/auth/Login";
-import NotFoundTemplate from "@/pages/404";
-import Banner from "@/components/Shared/Banner";
-import Footer from "@/components/Shared/Footer/index";
-import YourCart from "@/components/Shared/YourCart/index";
-import Payment from "@/components/Shared/Payment/index";
-import ProductDetail from "@/components/Shared/ProductDetail/index";
-import ProductList from "@/components/Shared/ProductList/index";
+// import NotFoundTemplate from "@/pages/404";
+// import Banner from "@/components/Shared/Banner";
+// import Footer from "@/components/Shared/Footer/index";
+// import YourCart from "@/components/Shared/YourCart/index";
+// import Payment from "@/components/Shared/Payment/index";
+// import ProductDetail from "@/components/Shared/ProductDetail/index";
+// import ProductList from "@/components/Shared/ProductList/index";
 import RegisterTemplate from "@/pages/auth/Register";
 
 import AuthLayout from "@/layouts/AuthLayout";
@@ -55,13 +55,9 @@ const router = createBrowserRouter([
     Component: HomeLayout,
     children: [
       {
-        path: "home", // Bỏ dấu / ở đầu
+        path: "", // Bỏ dấu / ở đầu
         Component: HomeTemplate
       },
-      {
-        path: 'yourCart',
-        Component: CheckoutPage
-      }
       {
         path: 'yourCart',
         Component: CheckoutPage
@@ -74,7 +70,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        Component: ServiceTemplate  
+        Component: ServiceTemplate
       }
     ]
   },
@@ -84,7 +80,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        Component: PaymentTemplate  
+        Component: PaymentTemplate
       }
     ]
   },
@@ -94,11 +90,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        Component: AboutTemplate  
+        Component: AboutTemplate
       }
     ]
   }
-  
+
 ]);
 
 export default router;

@@ -6,7 +6,10 @@ import { Outlet } from "react-router-dom";
 function PaymentLayout() {
     return (
         <Box>
+            <Header />
+            <Banner PageName="Payment" PlaceHolder="Payment" />
             <Outlet />
+            <Footer />
         </Box>
     );
 }
