@@ -27,6 +27,8 @@ import ProductDetailTemplate from "@/pages/productDetail/index";
 import NewsLayout from "@/layouts/NewsLayout";
 import NewsTemplate from "@/pages/news";
 import NewsDetailsTemplate from "@/pages/news/NewsDetail";
+import ShopLayout from "@/layouts/ShopLayout";
+import ShopTemplate from "@/pages/shop";
 const router = createBrowserRouter([
   {
     Component: AuthLayout,
@@ -124,6 +126,20 @@ const router = createBrowserRouter([
         Component: NewsDetailsTemplate
       }
     ]
+  },
+  {
+    path: "/shop",
+    Component: ShopLayout,
+    children: [
+      {
+        path: '',
+        Component: ShopTemplate
+      },
+    ]
+  },
+  {
+    path: "/notfound",
+    Component: NotFoundTemplate,
   }
   
 ]);

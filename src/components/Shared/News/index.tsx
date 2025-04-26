@@ -11,7 +11,6 @@ import NewsCard from '../NewsCard';
 const News = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   const apiKey = import.meta.env.VITE_KEY_API_NEWS;
 
   useEffect(() => {
@@ -42,11 +41,7 @@ const News = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }}>
-      <Typography variant="h4" component="h2" gutterBottom align="center">
-        📰 Tin Tức Xe Đạp Mới Nhất
-      </Typography>
-
+    <Container maxWidth="lg" sx={{ py: 9 }}>
       <Grid container sx={{ py: 5 }} spacing={4}>
         {articles.map((article, idx) => (
           <Grid item xs={12} sm={6} md={4} key={idx}>
