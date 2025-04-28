@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoginTemplate from "@/pages/auth/Login";
 // import NotFoundTemplate from "@/pages/404";
 // import Banner from "@/components/Shared/Banner";
@@ -12,7 +12,6 @@ import RegisterTemplate from "@/pages/auth/Register";
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
 import UserProfile from "@/components/Shared/Profile";
-import ProductDetailTemplate from "@/pages/productDetail";
 import HomeTemplate from "@/pages/home/index";
 import ServiceLayout from "@/layouts/ServiceLayout";
 import CheckoutPage from "@/components/Shared/YourCart/index";
@@ -21,6 +20,15 @@ import PaymentLayout from "@/layouts/PaymentLayout";
 import PaymentTemplate from "@/pages/payment/index";
 import AboutLayout from "@/layouts/AboutLayout";
 import AboutTemplate from "@/pages/about/index";
+import ContactLayout from "@/layouts/ContactLayout";
+import ContactTemplate from "@/pages/contact/index";
+import ProductDetailLayout from "@/layouts/ProductDetailLayout";
+import ProductDetailTemplate from "@/pages/productDetail/index";
+import NewsLayout from "@/layouts/NewsLayout";
+import NewsTemplate from "@/pages/news";
+import NewsDetailsTemplate from "@/pages/news/NewsDetail";
+import ShopLayout from "@/layouts/ShopLayout";
+import ShopTemplate from "@/pages/shop";
 const router = createBrowserRouter([
   {
     Component: AuthLayout,
@@ -41,7 +49,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    Component: HomeLayout,
+    Component: ProductDetailLayout,
     path: "/product",
     children: [
       {
@@ -51,7 +59,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    path: "/home",
+    path: "/",
     Component: HomeLayout,
     children: [
       {
@@ -64,6 +72,7 @@ const router = createBrowserRouter([
       }
     ]
   },
+  
   {
     path: "/service",
     Component: ServiceLayout,
@@ -93,6 +102,44 @@ const router = createBrowserRouter([
         Component: AboutTemplate
       }
     ]
+  },
+  {
+    path: "/contact",
+    Component: ContactLayout,
+    children: [
+      {
+        path: '',
+        Component: ContactTemplate  
+      }
+    ]
+  },
+  {
+    path: "/news",
+    Component: NewsLayout,
+    children: [
+      {
+        path: '',
+        Component: NewsTemplate
+      },
+      {
+        path: ":id" ,
+        Component: NewsDetailsTemplate
+      }
+    ]
+  },
+  {
+    path: "/shop",
+    Component: ShopLayout,
+    children: [
+      {
+        path: '',
+        Component: ShopTemplate
+      },
+    ]
+  },
+  {
+    path: "/notfound",
+    Component: NotFoundTemplate,
   }
 
 ]);

@@ -2,6 +2,7 @@ import React from "react";
 import { Grid, Box, Typography, Button } from "@mui/material";
 import ProductComponent from "../Product/index";
 import { styled } from "@mui/system";
+import { Link } from "react-router-dom";
 
 interface Product {
   name: string;
@@ -39,19 +40,29 @@ const MoreShopButton = styled(Button)({
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
   return (
-    <Box sx={{ width: "100%", pb: '5vw', backgroundColor: "#f5f5f5", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", }}>
+    <Box
+      sx={{
+        width: "100%",
+        pb: "5vw",
+        backgroundColor: "#f5f5f5",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <HeaderContainer>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
           NEW ARRIVALS
         </Typography>
-        <MoreShopButton variant="outlined">
-          More Shop
-        </MoreShopButton>
+        <MoreShopButton variant="outlined">More Shop</MoreShopButton>
       </HeaderContainer>
       <Grid container justifyContent="center" sx={{ padding: "0 32px" }}>
         {products.map((product, index) => (
           <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
-            <ProductComponent {...product} />
+            <Link sx={{ width: "100%" }} to="/product/detail">
+              <ProductComponent {...product} />
+            </Link>
           </Grid>
         ))}
       </Grid>

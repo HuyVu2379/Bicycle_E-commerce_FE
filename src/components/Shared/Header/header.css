@@ -70,6 +70,7 @@
   transition: color 0.2s ease;
 }
 
+.dropdown:hover,
 .nav-link:hover {
   color: #888;
 }
@@ -81,6 +82,8 @@
   padding: 6px 10px;
   display: inline-flex;
   align-items: center;
+  text-decoration: none;
+  color: #222;
 }
 
 .dropdown-icon {

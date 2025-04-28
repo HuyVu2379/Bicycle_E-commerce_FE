@@ -33,15 +33,24 @@ const UserProfile = () => {
           label="Họ tên"
           variant="outlined"
           margin="normal"
+       
           sx={{
             backgroundColor: "white",
             borderRadius: 1,
-            "& .MuiInputLabel-root": { color: "black" },
+            "& .MuiInputLabel-root": {
+              color: "black",
+            },
             "& .MuiOutlinedInput-root": {
-              "&.Mui-focused fieldset": { borderColor: "blue" },
+              "& input": {
+                paddingY: "26px", // điều chỉnh để label nằm ở giữa khi chưa focus
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "blue",
+              },
             },
           }}
         />
+
         <TextField
           fullWidth
           id="gioiTinh"
@@ -51,9 +60,16 @@ const UserProfile = () => {
           sx={{
             backgroundColor: "white",
             borderRadius: 1,
-            "& .MuiInputLabel-root": { color: "black" },
+            "& .MuiInputLabel-root": {
+              color: "black",
+            },
             "& .MuiOutlinedInput-root": {
-              "&.Mui-focused fieldset": { borderColor: "blue" },
+              "& input": {
+                paddingY: "26px", // điều chỉnh để label nằm ở giữa khi chưa focus
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "blue",
+              },
             },
           }}
         />
@@ -66,9 +82,16 @@ const UserProfile = () => {
           sx={{
             backgroundColor: "white",
             borderRadius: 1,
-            "& .MuiInputLabel-root": { color: "black" },
+            "& .MuiInputLabel-root": {
+              color: "black",
+            },
             "& .MuiOutlinedInput-root": {
-              "&.Mui-focused fieldset": { borderColor: "blue" },
+              "& input": {
+                paddingY: "26px", // điều chỉnh để label nằm ở giữa khi chưa focus
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "blue",
+              },
             },
           }}
         />
@@ -80,9 +103,16 @@ const UserProfile = () => {
           margin="normal" sx={{
             backgroundColor: "white",
             borderRadius: 1,
-            "& .MuiInputLabel-root": { color: "black" },
+            "& .MuiInputLabel-root": {
+              color: "black",
+            },
             "& .MuiOutlinedInput-root": {
-              "&.Mui-focused fieldset": { borderColor: "blue" },
+              "& input": {
+                paddingY: "26px", // điều chỉnh để label nằm ở giữa khi chưa focus
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "blue",
+              },
             },
           }}
         />
@@ -95,9 +125,16 @@ const UserProfile = () => {
           sx={{
             backgroundColor: "white",
             borderRadius: 1,
-            "& .MuiInputLabel-root": { color: "black" },
+            "& .MuiInputLabel-root": {
+              color: "black",
+            },
             "& .MuiOutlinedInput-root": {
-              "&.Mui-focused fieldset": { borderColor: "blue" },
+              "& input": {
+                paddingY: "26px", // điều chỉnh để label nằm ở giữa khi chưa focus
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "blue",
+              },
             },
           }}
         />
@@ -110,9 +147,16 @@ const UserProfile = () => {
           sx={{
             backgroundColor: "white",
             borderRadius: 1,
-            "& .MuiInputLabel-root": { color: "black" },
+            "& .MuiInputLabel-root": {
+              color: "black",
+            },
             "& .MuiOutlinedInput-root": {
-              "&.Mui-focused fieldset": { borderColor: "blue" },
+              "& input": {
+                paddingY: "26px", // điều chỉnh để label nằm ở giữa khi chưa focus
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "blue",
+              },
             },
           }}
         />

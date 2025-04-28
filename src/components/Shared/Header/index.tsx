@@ -30,43 +30,28 @@ const Header: React.FC = () => {
         <div className={`menu ${menuOpen ? "open" : ""}`}>
           {/* Navigation Links */}
           <nav className="nav">
-            <Link to="/home" className="nav-link">HOME</Link>
+            <Link to="/" className="nav-link">HOME</Link>
             <Link to="/about" className="nav-link">ABOUT US</Link>
             <Link to="/service" className="nav-link">SERVICES</Link>
 
             {/* SHOP Dropdown */}
-            <div
+            <Link
               className="dropdown"
+              to="/shop"
               onMouseEnter={() => setShowShopDropdown(true)}
               onMouseLeave={() => setShowShopDropdown(false)}
             >
               SHOP <FaChevronDown className="dropdown-icon" />
               {showShopDropdown && (
                 <div className="dropdown-menu">
-                  <Link to="/shop/common-bikes">Common Bikes</Link>
-                  <Link to="/shop/kids-bikes">Kids Bikes</Link>
-                  <Link to="/shop/mountain-bikes">Mountain Bikes</Link>
-                  <Link to="/shop/racing-bikes">Racing Bikes</Link>
-                  <Link to="/shop/stunt-bikes">Stunt Bikes</Link>
+                  <Link to="/shop">Common Bikes</Link>
+                  <Link to="/shop">Kids Bikes</Link>
+                  <Link to="/shop">Mountain Bikes</Link>
+                  <Link to="/shop">Racing Bikes</Link>
+                  <Link to="/shop">Stunt Bikes</Link>
                 </div>
               )}
-            </div>
-
-            {/* PAGES Dropdown */}
-            <div
-              className="dropdown"
-              onMouseEnter={() => setShowPagesDropdown(true)}
-              onMouseLeave={() => setShowPagesDropdown(false)}
-            >
-              PAGES <FaChevronDown className="dropdown-icon" />
-              {showPagesDropdown && (
-                <div className="dropdown-menu">
-                  <Link to="/pages/clothing">Clothing</Link>
-                  <Link to="/pages/bottles">Bottles & Holders</Link>
-                  <Link to="/pages/lights">Lights</Link>
-                </div>
-              )}
-            </div>
+            </Link>
 
             <Link to="/news" className="nav-link">NEWS</Link>
             <Link to="/contact" className="nav-link">CONTACT</Link>
