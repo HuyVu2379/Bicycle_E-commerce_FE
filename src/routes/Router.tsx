@@ -3,7 +3,7 @@ import LoginTemplate from "@/pages/auth/Login";
 import RegisterTemplate from "@/pages/auth/Register";
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
-import UserProfile from "@/components/Shared/Profile";
+import UserProfile from "@/pages/auth/Profile";
 import HomeTemplate from "@/pages/home/index";
 import ServiceLayout from "@/layouts/ServiceLayout";
 import CheckoutPage from "@/components/Shared/YourCart/index";

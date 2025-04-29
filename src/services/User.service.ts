@@ -11,10 +11,11 @@ export const register = async (data: any) => {
         return { success: false };
     }
 }
-export const getUserById = async (id: string) => {
+export const getUserById = async (userId: string) => {
     try {
-        const url = `${api}/${id}`;
-        return await axiosConfig.get(url);
+        const url = `${api}/${userId}`;
+        const result = await axiosConfig.get(url);
+        return result;
     } catch (error) {
         console.error("Error fetching user:", error);
         return { success: false };
