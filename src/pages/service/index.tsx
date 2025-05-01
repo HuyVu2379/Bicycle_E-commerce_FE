@@ -6,7 +6,7 @@ import { Box } from "@mui/material";
 
 export default function ServiceTemplate() {
   return (
-    <Box sx={{ width:'100%',display: 'flex',flexDirection: 'column',justifyContent:'center',alignItems:'center' }}>
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <Service />
     </Box>
   );

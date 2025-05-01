@@ -187,7 +187,7 @@ const AboutComponent = () => {
             <Box>
               <Typography
                 variant="h4"
-                sx={{ width: "45%",fontWeight: "bold", marginTop: "3vw", mb: 12 }}
+                sx={{ width: "45%", fontWeight: "bold", marginTop: "3vw", mb: 12 }}
               >
                 Meet the Team Behind Your Ride.
               </Typography>
@@ -222,8 +222,8 @@ const AboutComponent = () => {
                       textTransform: "none",
                       fontWeight: "medium",
                       fontSize: '15px',
-                      textDecoration:'underline',
-                      mx:2
+                      textDecoration: 'underline',
+                      mx: 2
                     }}
                   >
                     About Us
@@ -348,7 +348,7 @@ const AboutComponent = () => {
       </Box>
 
       {/* Meet Our Team Section */}
-      <Box sx={{ overflow: 'hidden',py: { xs: 4, md: 6 }, width: '100%' }}>
+      <Box sx={{ overflow: 'hidden', py: { xs: 4, md: 6 }, width: '100%' }}>
         <Box
           sx={{
             display: "flex",
@@ -357,7 +357,7 @@ const AboutComponent = () => {
             mb: 4,
           }}
         >
-          <Typography variant="h4" sx={{ px: { xs: 2, md: 4 },fontWeight: "bold" }}>
+          <Typography variant="h4" sx={{ px: { xs: 2, md: 4 }, fontWeight: "bold" }}>
             Meet Our Team
           </Typography>
         </Box>

@@ -1,14 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoginTemplate from "@/pages/auth/Login";
-import NotFoundTemplate from "@/pages/404";
-import Banner from "@/components/Shared/Banner";
-import Footer from "@/components/Shared/Footer/index";
-import YourCart from "@/components/Shared/YourCart/index";
-import Payment from "@/components/Shared/Payment/index";
-import ProductDetail from "@/components/Shared/ProductDetail/index";
-import ProductList from "@/components/Shared/ProductList/index";
 import RegisterTemplate from "@/pages/auth/Register";
-
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
 import UserProfile from "@/components/Shared/Profile";
@@ -29,119 +21,96 @@ import NewsTemplate from "@/pages/news";
 import NewsDetailsTemplate from "@/pages/news/NewsDetail";
 import ShopLayout from "@/layouts/ShopLayout";
 import ShopTemplate from "@/pages/shop";
+import NotFoundPage from "@/pages/404/index";
+import { APP_ROUTES } from "@/constants";
+
 const router = createBrowserRouter([
-  {
-    Component: AuthLayout,
-    path: "/auth",
-    children: [
-      {
-        path: "login",
-        Component: LoginTemplate
-      },
-      {
-        path: "register",
-        Component: RegisterTemplate
-      },
-      {
-        path: 'profile',
-        Component: UserProfile
-      }
-    ]
-  },
-  {
-    Component: ProductDetailLayout,
-    path: "/product",
-    children: [
-      {
-        path: "detail",
-        Component: ProductDetailTemplate
-      },
-    ]
-  },
+  // Redirect root to dashboard
   {
     path: "/",
+    element: <Navigate to={APP_ROUTES.DASHBOARD} replace />,
+  },
+
+  // Auth Routes
+  {
+    Component: AuthLayout,
+    path: APP_ROUTES.AUTH_ROUTE,
+    children: [
+      { path: APP_ROUTES.USER.LOGIN, Component: LoginTemplate },
+      { path: APP_ROUTES.USER.REGISTER, Component: RegisterTemplate },
+      { path: APP_ROUTES.USER.PROFILE, Component: UserProfile },
+    ],
+  },
+
+  // Product Routes
+  {
+    Component: ProductDetailLayout,
+    path: APP_ROUTES.PRODUCT_ROUTE,
+    children: [
+      { path: APP_ROUTES.PRODUCT.DETAIL, Component: ProductDetailTemplate },
+    ],
+  },
+
+  // Home Routes
+  {
+    path: APP_ROUTES.DASHBOARD,
     Component: HomeLayout,
     children: [
-      {
-        path: "",
-        Component: HomeTemplate
-      },
-      {
-        path: 'yourCart',
-        Component: CheckoutPage
-      }
-    ]
+      { path: "", Component: HomeTemplate },
+      { path: APP_ROUTES.CART, Component: CheckoutPage }, // Use constant
+    ],
   },
-  
+
+  // Service Route
   {
-    path: "/service",
+    path: APP_ROUTES.SERVICE,
     Component: ServiceLayout,
-    children: [
-      {
-        path: '',
-        Component: ServiceTemplate  
-      }
-    ]
+    element: <ServiceTemplate />,
   },
+
+  // Payment Route
   {
-    path: "/payment",
+    path: APP_ROUTES.PAYMENT,
     Component: PaymentLayout,
-    children: [
-      {
-        path: '',
-        Component: PaymentTemplate  
-      }
-    ]
+    element: <PaymentTemplate />,
   },
+
+  // About Route
   {
-    path: "/about",
+    path: APP_ROUTES.ABOUT,
     Component: AboutLayout,
-    children: [
-      {
-        path: '',
-        Component: AboutTemplate  
-      }
-    ]
+    element: <AboutTemplate />,
   },
+
+  // Contact Route
   {
-    path: "/contact",
+    path: APP_ROUTES.CONTACT,
     Component: ContactLayout,
-    children: [
-      {
-        path: '',
-        Component: ContactTemplate  
-      }
-    ]
+    element: <ContactTemplate />,
   },
+
+  // News Routes
   {
-    path: "/news",
+    path: APP_ROUTES.NEWS,
     Component: NewsLayout,
     children: [
-      {
-        path: '',
-        Component: NewsTemplate
-      },
-      {
-        path: ":id" ,
-        Component: NewsDetailsTemplate
-      }
-    ]
+      { path: "", Component: NewsTemplate },
+      { path: ":id", Component: NewsDetailsTemplate },
+    ],
   },
+
+  // Shop Route
   {
-    path: "/shop",
+    path: APP_ROUTES.SHOP,
     Component: ShopLayout,
-    children: [
-      {
-        path: '',
-        Component: ShopTemplate
-      },
-    ]
+    element: <ShopTemplate />,
   },
+
+  // 404 Route
   {
-    path: "/notfound",
-    Component: NotFoundTemplate,
-  }
-  
+    path: "*",
+    element: <NotFoundPage />,
+  },
 ]);
 
 export default router;
