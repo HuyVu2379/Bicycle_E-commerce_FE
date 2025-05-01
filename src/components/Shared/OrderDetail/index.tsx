@@ -46,7 +46,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order, onClose }) => {
 
   return (
     <Dialog open={!!order} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Chi tiết đơn hàng</DialogTitle>
+      <DialogTitle>Order detail</DialogTitle>
       <DialogContent>
         <Typography variant="subtitle1">
           Order ID: {order.orderId}
@@ -57,9 +57,9 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order, onClose }) => {
             <TableHead>
               <TableRow>
                 <TableCell>Product ID</TableCell>
-                <TableCell>Số lượng</TableCell>
-                <TableCell>Đơn giá</TableCell>
-                <TableCell>Thành tiền</TableCell>
+                <TableCell>Quantity</TableCell>
+                <TableCell>Price</TableCell>
+                <TableCell>Subtotal</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -77,18 +77,18 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order, onClose }) => {
 
         <Box sx={{ mt: 2 }}>
           <Typography variant="h6">
-            Tổng tiền: {calculateTotalBeforeDiscount().toLocaleString()}₫
+            Total price: {calculateTotalBeforeDiscount().toLocaleString()}₫
           </Typography>
           <Typography variant="h6" color="error">
-            Giảm giá: {calculateDiscount().toLocaleString()}₫
+            Discount: {calculateDiscount().toLocaleString()}₫
           </Typography>
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            Thanh toán: {order.totalPrice.toLocaleString()}₫
+            Pay: {order.totalPrice.toLocaleString()}₫
           </Typography>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Đóng</Button>
+        <Button onClick={onClose}>Close</Button>
       </DialogActions>
     </Dialog>
   );
