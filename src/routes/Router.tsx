@@ -28,17 +28,17 @@ const router = createBrowserRouter([
     children: [
       {
         path: "login",
-        Component: LoginTemplate
+        Component: LoginTemplate,
       },
       {
         path: "register",
-        Component: RegisterTemplate
+        Component: RegisterTemplate,
       },
       {
-        path: 'profile',
-        Component: UserProfile
-      }
-    ]
+        path: "profile",
+        Component: UserProfile,
+      },
+    ],
   },
   {
     Component: HomeLayout,
@@ -46,9 +46,9 @@ const router = createBrowserRouter([
     children: [
       {
         path: "detail",
-        Component: ProductDetailTemplate
+        Component: ProductDetailTemplate,
       },
-    ]
+    ],
   },
   {
     path: "/home",
@@ -56,49 +56,48 @@ const router = createBrowserRouter([
     children: [
       {
         path: "home", // Bỏ dấu / ở đầu
-        Component: HomeTemplate
+        Component: HomeTemplate,
       },
       {
-        path: 'yourCart',
-        Component: CheckoutPage
-      }
+        path: "yourCart",
+        Component: CheckoutPage,
+      },
       {
-        path: 'yourCart',
-        Component: CheckoutPage
-      }
-    ]
+        path: "yourCart",
+        Component: CheckoutPage,
+      },
+    ],
   },
   {
     path: "/service",
     Component: ServiceLayout,
     children: [
       {
-        path: '',
-        Component: ServiceTemplate  
-      }
-    ]
+        path: "",
+        Component: ServiceTemplate,
+      },
+    ],
   },
   {
     path: "/payment",
     Component: PaymentLayout,
     children: [
       {
-        path: '',
-        Component: PaymentTemplate  
-      }
-    ]
+        path: "",
+        Component: PaymentTemplate,
+      },
+    ],
   },
   {
     path: "/about",
     Component: AboutLayout,
     children: [
       {
-        path: '',
-        Component: AboutTemplate  
-      }
-    ]
-  }
-  
+        path: "",
+        Component: AboutTemplate,
+      },
+    ],
+  },
 ]);
 
 export default router;
