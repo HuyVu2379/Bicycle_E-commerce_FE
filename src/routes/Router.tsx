@@ -22,8 +22,6 @@ import NewsDetailsTemplate from "@/pages/news/NewsDetail";
 import ShopLayout from "@/layouts/ShopLayout";
 import ShopTemplate from "@/pages/shop";
 import NotFoundPage from "@/pages/404/index";
-import OrderList from "@/components/Shared/OrderList/index";
-import OrderLayout from "@/layouts/OrderLayout";
 import { APP_ROUTES } from "@/constants";
 
 const router = createBrowserRouter([
@@ -106,15 +104,6 @@ const router = createBrowserRouter([
     path: APP_ROUTES.SHOP,
     Component: ShopLayout,
     element: <ShopTemplate />,
-  },
-
-  // Order Route
-  {
-    path: APP_ROUTES.ORDER,
-    Component: OrderLayout,
-    children: [
-      { path: "", Component: OrderList },
-    ],
   },
 
   // 404 Route
