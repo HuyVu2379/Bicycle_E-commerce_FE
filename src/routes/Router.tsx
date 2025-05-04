@@ -24,7 +24,11 @@ import ShopTemplate from "@/pages/shop";
 import NotFoundPage from "@/pages/404/index";
 import { APP_ROUTES } from "@/constants";
 import AdminLayout from "@/layouts/Admin/AdminLayout";
-
+import Dashboard from "@/components/Shared/Dashboard";
+import PromotionTemplate from "@/components/Shared/DataTable";
+import OrderList from "@/components/Shared/OrderList";
+import OrderDetail from "@/components/Shared/OrderDetail";
+import SupplierList from "@/components/Shared/SupplierList";
 const router = createBrowserRouter([
   // Redirect root to dashboard
   {
@@ -148,6 +152,24 @@ const router = createBrowserRouter([
   {
     path: APP_ROUTES.ADMIN_ROUTE,
     Component: AdminLayout,
+    children: [
+      {
+        path: APP_ROUTES.ADMIN.DASHBOARD,
+        Component: Dashboard
+      },
+      {
+        path: APP_ROUTES.ADMIN.PROMOTION,
+        Component: PromotionTemplate
+      },
+      {
+        path: APP_ROUTES.ADMIN.ORDER,
+        Component: OrderList
+      },
+      {
+        path: APP_ROUTES.ADMIN.SUPLIER,
+        Component: SupplierList
+      },
+    ]
   },
   // 404 Route
   {

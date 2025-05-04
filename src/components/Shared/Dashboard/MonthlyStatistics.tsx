@@ -27,12 +27,12 @@ const MonthlyStatistics: React.FC<MonthlyStatisticsProps> = ({ data }) => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis 
-            dataKey="name" 
+          <XAxis
+            dataKey="name"
             axisLine={false}
             tickLine={false}
           />
-          <YAxis 
+          <YAxis
             axisLine={false}
             tickLine={false}
             tickFormatter={(value) => `${value}%`}

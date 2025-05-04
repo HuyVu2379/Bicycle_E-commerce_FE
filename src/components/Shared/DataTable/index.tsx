@@ -109,7 +109,7 @@ const initialData: DataRow[] = [
   },
 ];
 
-const DataTable: React.FC = () => {
+const PromotionTemplate: React.FC = () => {
   const [data, setData] = useState<DataRow[]>(initialData);
   const [selected, setSelected] = useState<number[]>([]);
 
@@ -311,4 +311,4 @@ const DataTable: React.FC = () => {
   );
 };
 
-export default DataTable;
+export default PromotionTemplate;

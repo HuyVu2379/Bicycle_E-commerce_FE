@@ -102,7 +102,7 @@ const AdvertisementSection = () => {
   return (
     <>
       <Container>
-        <MainSection sx>
+        <MainSection>
           <Typography variant="h3" sx={{ fontWeight: "bold", mb: 2 }}>
             FREEDOM RIDE
           </Typography>

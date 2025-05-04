@@ -51,7 +51,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order, onClose }) => {
         <Typography variant="subtitle1">
           Order ID: {order.orderId}
         </Typography>
-        
+
         <TableContainer component={Paper} sx={{ mt: 2 }}>
           <Table>
             <TableHead>

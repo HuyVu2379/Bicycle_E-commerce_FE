@@ -50,88 +50,88 @@ const suppliers = {
   "message": "Suppliers retrieved successfully",
   "success": true,
   "data": {
-      "content": [
-          {
-              "supplierId": "67e22228907a031f3b32f442",
-              "name": "ABC Supplies",
-              "phone": "0123456789",
-              "email": "contact@abc.com",
-              "description": "sell bike",
-              "address": {
-                  "addressId": "69cb9927-45d2-49c1-b8b2-a3ec98b267db",
-                  "city": "Ho Chi Minh",
-                  "district": "Quan Go Vap",
-                  "street": "12 Nguyen Van Bao",
-                  "ward": "Phuong 4",
-                  "country": "Viet Nam"
-              }
-          },
-          {
-              "supplierId": "67e22360907a031f3b32f447",
-              "name": "Thống Nhất",
-              "phone": "1111-2222-3334",
-              "email": "thongnhat@gmail.com",
-              "description": "vn bike",
-              "address": {
-                  "addressId": "8b1d5675-2d74-48f0-8d50-ec2271286c8a",
-                  "city": "Ho Chi Minh",
-                  "district": "Huyen Binh Chanh",
-                  "street": "Lien Ap 123",
-                  "ward": "Vinh Loc B",
-                  "country": "Viet Nam"
-              }
-          },
-          {
-              "supplierId": "680c30a20162751f7cbd88a5",
-              "name": "martin supplier",
-              "phone": "0123456789",
-              "email": "martin@gmail.com",
-              "description": "sell bike",
-              "address": {
-                  "addressId": "9cbee659-0fb8-468e-b987-f93a9fc8e71a",
-                  "city": "Ho Chi Minh",
-                  "district": "Binh tan",
-                  "street": "HL 2",
-                  "ward": "Binh tri dong a",
-                  "country": "Viet Nam"
-              }
-          }
-      ],
-      "pageable": {
-          "pageNumber": 0,
-          "pageSize": 10,
-          "sort": [
-              {
-                  "direction": "DESC",
-                  "property": "orderDate",
-                  "ignoreCase": false,
-                  "nullHandling": "NATIVE",
-                  "ascending": false,
-                  "descending": true
-              }
-          ],
-          "offset": 0,
-          "paged": true,
-          "unpaged": false
+    "content": [
+      {
+        "supplierId": "67e22228907a031f3b32f442",
+        "name": "ABC Supplies",
+        "phone": "0123456789",
+        "email": "contact@abc.com",
+        "description": "sell bike",
+        "address": {
+          "addressId": "69cb9927-45d2-49c1-b8b2-a3ec98b267db",
+          "city": "Ho Chi Minh",
+          "district": "Quan Go Vap",
+          "street": "12 Nguyen Van Bao",
+          "ward": "Phuong 4",
+          "country": "Viet Nam"
+        }
       },
-      "last": true,
-      "totalElements": 3,
-      "totalPages": 1,
-      "size": 10,
-      "number": 0,
+      {
+        "supplierId": "67e22360907a031f3b32f447",
+        "name": "Thống Nhất",
+        "phone": "1111-2222-3334",
+        "email": "thongnhat@gmail.com",
+        "description": "vn bike",
+        "address": {
+          "addressId": "8b1d5675-2d74-48f0-8d50-ec2271286c8a",
+          "city": "Ho Chi Minh",
+          "district": "Huyen Binh Chanh",
+          "street": "Lien Ap 123",
+          "ward": "Vinh Loc B",
+          "country": "Viet Nam"
+        }
+      },
+      {
+        "supplierId": "680c30a20162751f7cbd88a5",
+        "name": "martin supplier",
+        "phone": "0123456789",
+        "email": "martin@gmail.com",
+        "description": "sell bike",
+        "address": {
+          "addressId": "9cbee659-0fb8-468e-b987-f93a9fc8e71a",
+          "city": "Ho Chi Minh",
+          "district": "Binh tan",
+          "street": "HL 2",
+          "ward": "Binh tri dong a",
+          "country": "Viet Nam"
+        }
+      }
+    ],
+    "pageable": {
+      "pageNumber": 0,
+      "pageSize": 10,
       "sort": [
-          {
-              "direction": "DESC",
-              "property": "orderDate",
-              "ignoreCase": false,
-              "nullHandling": "NATIVE",
-              "ascending": false,
-              "descending": true
-          }
+        {
+          "direction": "DESC",
+          "property": "orderDate",
+          "ignoreCase": false,
+          "nullHandling": "NATIVE",
+          "ascending": false,
+          "descending": true
+        }
       ],
-      "first": true,
-      "numberOfElements": 3,
-      "empty": false
+      "offset": 0,
+      "paged": true,
+      "unpaged": false
+    },
+    "last": true,
+    "totalElements": 3,
+    "totalPages": 1,
+    "size": 10,
+    "number": 0,
+    "sort": [
+      {
+        "direction": "DESC",
+        "property": "orderDate",
+        "ignoreCase": false,
+        "nullHandling": "NATIVE",
+        "ascending": false,
+        "descending": true
+      }
+    ],
+    "first": true,
+    "numberOfElements": 3,
+    "empty": false
   }
 };
 
@@ -307,7 +307,7 @@ const SupplierList: React.FC = () => {
             label="Name"
             fullWidth
             value={formData.name}
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
           <TextField
             sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
@@ -315,7 +315,7 @@ const SupplierList: React.FC = () => {
             label="Email"
             fullWidth
             value={formData.email}
-            onChange={(e) => setFormData({...formData, email: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           />
           <TextField
             sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
@@ -323,7 +323,7 @@ const SupplierList: React.FC = () => {
             label="Phone"
             fullWidth
             value={formData.phone}
-            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           />
           <TextField
             sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
@@ -331,7 +331,7 @@ const SupplierList: React.FC = () => {
             label="Description"
             fullWidth
             value={formData.description}
-            onChange={(e) => setFormData({...formData, description: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
           <TextField
             sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
@@ -341,7 +341,7 @@ const SupplierList: React.FC = () => {
             value={formData.address.city}
             onChange={(e) => setFormData({
               ...formData,
-              address: {...formData.address, city: e.target.value}
+              address: { ...formData.address, city: e.target.value }
             })}
           />
           <TextField
@@ -352,7 +352,7 @@ const SupplierList: React.FC = () => {
             value={formData.address.district}
             onChange={(e) => setFormData({
               ...formData,
-              address: {...formData.address, district: e.target.value}
+              address: { ...formData.address, district: e.target.value }
             })}
           />
           <TextField
@@ -363,7 +363,7 @@ const SupplierList: React.FC = () => {
             value={formData.address.street}
             onChange={(e) => setFormData({
               ...formData,
-              address: {...formData.address, street: e.target.value}
+              address: { ...formData.address, street: e.target.value }
             })}
           />
           <TextField
@@ -374,7 +374,7 @@ const SupplierList: React.FC = () => {
             value={formData.address.ward}
             onChange={(e) => setFormData({
               ...formData,
-              address: {...formData.address, ward: e.target.value}
+              address: { ...formData.address, ward: e.target.value }
             })}
           />
         </DialogContent>

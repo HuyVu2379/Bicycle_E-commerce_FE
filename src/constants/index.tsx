@@ -10,7 +10,10 @@ export const APP_ROUTES = {
     FORGOT: "forgot-password",
   },
   ADMIN: {
-    PROMOTION: "/promotions"
+    PROMOTION: "promotions",
+    DASHBOARD: "dashboard",
+    ORDER: "orders",
+    SUPLIER: "suplier"
   },
   USER_AUTHORIZATION: {
     MANAGEMENT: "/authorizations",

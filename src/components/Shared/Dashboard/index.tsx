@@ -49,10 +49,10 @@ const Dashboard: React.FC = () => {
                 <ToggleButton value="7days" aria-label="7 days">
                   7 Days
                 </ToggleButton>
-                <ToggleButton 
-                  value="monthly" 
+                <ToggleButton
+                  value="monthly"
                   aria-label="monthly"
-                  sx={{ 
+                  sx={{
                     bgcolor: timeRange === 'monthly' ? 'warning.main' : 'inherit',
                     color: timeRange === 'monthly' ? 'white' : 'inherit',
                     '&.Mui-selected': {
@@ -102,46 +102,46 @@ const Dashboard: React.FC = () => {
         {/* Stat Cards */}
         <Grid item xs={12} sm={6} md={3}>
           <StyledPaper>
-            <StatCard 
-              title="Online Orders" 
-              value="116,490,340" 
-              progress={60} 
-              color="#FFD700" 
-              trend="up" 
+            <StatCard
+              title="Online Orders"
+              value="116,490,340"
+              progress={60}
+              color="#FFD700"
+              trend="up"
               trendValue="8.5%"
             />
           </StyledPaper>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StyledPaper>
-            <StatCard 
-              title="Revenue Order" 
-              value="1,195,345,345" 
-              progress={60} 
-              color="#4CAF50" 
-              trend="up" 
+            <StatCard
+              title="Revenue Order"
+              value="1,195,345,345"
+              progress={60}
+              color="#4CAF50"
+              trend="up"
               trendValue="12.3%"
             />
           </StyledPaper>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StyledPaper>
-            <StatCard 
-              title="Share" 
-              value="share.vn" 
-              progress={60} 
-              color="#2196F3" 
+            <StatCard
+              title="Share"
+              value="share.vn"
+              progress={60}
+              color="#2196F3"
               showProgress={false}
             />
           </StyledPaper>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StyledPaper>
-            <StatCard 
-              title="Another Stat" 
-              value="60/100" 
-              progress={60} 
-              color="#9C27B0" 
+            <StatCard
+              title="Another Stat"
+              value="60/100"
+              progress={60}
+              color="#9C27B0"
             />
           </StyledPaper>
         </Grid>
