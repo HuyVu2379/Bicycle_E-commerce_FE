@@ -46,7 +46,7 @@ interface StatsType {
     jobApplications: number;
 }
 
-const AdminDashboard = () => {
+const StatisticTemplate = () => {
     const [stats, setStats] = useState<StatsType | null>(null);
 
     useEffect(() => {
@@ -114,7 +114,7 @@ const AdminDashboard = () => {
                             elevation={0}
                             sx={{
                                 p: 3,
-                                width: "350px",
+                                width: "100%",
                                 height: "100%",
                                 textAlign: "center",
                                 borderRadius: 2,
@@ -488,4 +488,4 @@ const AdminDashboard = () => {
     );
 };
 
-export default AdminDashboard;
+export default StatisticTemplate;

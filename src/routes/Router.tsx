@@ -1,33 +1,34 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import LoginTemplate from "@/pages/auth/Login";
-import RegisterTemplate from "@/pages/auth/Register";
+import LoginTemplate from "@/pages/Auth/Login";
+import RegisterTemplate from "@/pages/Auth/Register";
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
-import UserProfile from "@/pages/auth/Profile";
-import HomeTemplate from "@/pages/home/index";
+import UserProfile from "@/pages/Auth/Profile";
+import HomeTemplate from "@/pages/Home/index";
 import ServiceLayout from "@/layouts/ServiceLayout";
 import CheckoutPage from "@/components/Shared/YourCart/index";
-import ServiceTemplate from "@/pages/service/index";
+import ServiceTemplate from "@/pages/Service/index";
 import PaymentLayout from "@/layouts/PaymentLayout";
-import PaymentTemplate from "@/pages/payment/index";
+import PaymentTemplate from "@/pages/Payment/index";
 import AboutLayout from "@/layouts/AboutLayout";
-import AboutTemplate from "@/pages/about/index";
+import AboutTemplate from "@/pages/About/index";
 import ContactLayout from "@/layouts/ContactLayout";
-import ContactTemplate from "@/pages/contact/index";
+import ContactTemplate from "@/pages/Contact/index";
 import ProductDetailLayout from "@/layouts/ProductDetailLayout";
-import ProductDetailTemplate from "@/pages/productDetail/index";
+import ProductDetailTemplate from "@/pages/ProductDetail/index";
 import NewsLayout from "@/layouts/NewsLayout";
-import NewsTemplate from "@/pages/news";
-import NewsDetailsTemplate from "@/pages/news/NewsDetail";
+import NewsTemplate from "@/pages/News";
+import NewsDetailsTemplate from "@/pages/News/NewsDetail";
 import ShopLayout from "@/layouts/ShopLayout";
-import ShopTemplate from "@/pages/shop";
+import ShopTemplate from "@/pages/Shop";
 import NotFoundPage from "@/pages/404/index";
 import { APP_ROUTES } from "@/constants";
 import AdminLayout from "@/layouts/Admin/AdminLayout";
-import Dashboard from "@/components/Shared/Dashboard";
-import PromotionTemplate from "@/components/Shared/DataTable";
-import OrderList from "@/components/Shared/OrderList";
+import Dashboard from "@/pages/Admin/Dashboard";
+import PromotionTemplate from "@/pages/Admin/Promotion";
+import OrderList from "@/pages/Admin/Order";
 import SupplierList from "@/components/Shared/SupplierList";
+import StatisticTemplate from "@/pages/Admin/Statistics";
 const router = createBrowserRouter([
   // Redirect root to dashboard
   {
@@ -168,6 +169,10 @@ const router = createBrowserRouter([
         path: APP_ROUTES.ADMIN.SUPLIER,
         Component: SupplierList
       },
+      {
+        path: APP_ROUTES.ADMIN.STATISTIC,
+        Component: StatisticTemplate
+      }
     ]
   },
   // 404 Route
