@@ -30,4 +30,5 @@ export const APP_ROUTES = {
   NEWS: "/news",
   SHOP: "/shop",
   CART: "cart",
+  ORDER: "/orders",
 } as const;
