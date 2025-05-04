@@ -9,6 +9,9 @@ export const APP_ROUTES = {
     UPDATE_PASS: "profile/update-password",
     FORGOT: "forgot-password",
   },
+  ADMIN: {
+    PROMOTION: "/promotions"
+  },
   USER_AUTHORIZATION: {
     MANAGEMENT: "/authorizations",
     UPDATE_ROLE: "/authorizations/change",
@@ -18,6 +21,7 @@ export const APP_ROUTES = {
   },
   NOT_FOUND: "/404",
   AUTH_ROUTE: "/auth",
+  ADMIN_ROUTE: "/admin",
   PRODUCT_ROUTE: "/product",
   SERVICE: "/service",
   PAYMENT: "/payment",

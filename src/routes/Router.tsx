@@ -23,6 +23,7 @@ import ShopLayout from "@/layouts/ShopLayout";
 import ShopTemplate from "@/pages/shop";
 import NotFoundPage from "@/pages/404/index";
 import { APP_ROUTES } from "@/constants";
+import AdminLayout from "@/layouts/Admin/AdminLayout";
 
 const router = createBrowserRouter([
   // Redirect root to dashboard
@@ -65,28 +66,48 @@ const router = createBrowserRouter([
   {
     path: APP_ROUTES.SERVICE,
     Component: ServiceLayout,
-    element: <ServiceTemplate />,
+    children: [
+      {
+        path: "",
+        Component: ServiceTemplate
+      }
+    ]
   },
 
   // Payment Route
   {
     path: APP_ROUTES.PAYMENT,
     Component: PaymentLayout,
-    element: <PaymentTemplate />,
+    children: [
+      {
+        path: "",
+        Component: PaymentTemplate
+      }
+    ]
   },
 
   // About Route
   {
     path: APP_ROUTES.ABOUT,
     Component: AboutLayout,
-    element: <AboutTemplate />,
+    children: [
+      {
+        path: "",
+        Component: AboutTemplate
+      }
+    ]
   },
 
   // Contact Route
   {
     path: APP_ROUTES.CONTACT,
     Component: ContactLayout,
-    element: <ContactTemplate />,
+    children: [
+      {
+        path: "",
+        Component: ContactTemplate
+      }
+    ]
   },
 
   // News Routes
@@ -103,9 +124,19 @@ const router = createBrowserRouter([
   {
     path: APP_ROUTES.SHOP,
     Component: ShopLayout,
-    element: <ShopTemplate />,
+    children: [
+      {
+        path: "",
+        Component: ShopTemplate
+      }
+    ]
   },
 
+  // Admin Route
+  {
+    path: APP_ROUTES.ADMIN_ROUTE,
+    Component: AdminLayout,
+  },
   // 404 Route
   {
     path: "*",
