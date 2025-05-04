@@ -3,7 +3,7 @@ import LoginTemplate from "@/pages/auth/Login";
 import RegisterTemplate from "@/pages/auth/Register";
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
-import UserProfile from "@/components/Shared/Profile";
+import UserProfile from "@/pages/auth/Profile";
 import HomeTemplate from "@/pages/home/index";
 import ServiceLayout from "@/layouts/ServiceLayout";
 import CheckoutPage from "@/components/Shared/YourCart/index";
@@ -23,7 +23,11 @@ import ShopLayout from "@/layouts/ShopLayout";
 import ShopTemplate from "@/pages/shop";
 import NotFoundPage from "@/pages/404/index";
 import { APP_ROUTES } from "@/constants";
-
+import AdminLayout from "@/layouts/Admin/AdminLayout";
+import Dashboard from "@/components/Shared/Dashboard";
+import PromotionTemplate from "@/components/Shared/DataTable";
+import OrderList from "@/components/Shared/OrderList";
+import SupplierList from "@/components/Shared/SupplierList";
 const router = createBrowserRouter([
   // Redirect root to dashboard
   {
@@ -36,9 +40,18 @@ const router = createBrowserRouter([
     Component: AuthLayout,
     path: APP_ROUTES.AUTH_ROUTE,
     children: [
-      { path: APP_ROUTES.USER.LOGIN, Component: LoginTemplate },
-      { path: APP_ROUTES.USER.REGISTER, Component: RegisterTemplate },
-      { path: APP_ROUTES.USER.PROFILE, Component: UserProfile },
+      {
+        path: "login",
+        Component: LoginTemplate,
+      },
+      {
+        path: "register",
+        Component: RegisterTemplate,
+      },
+      {
+        path: "profile",
+        Component: UserProfile,
+      },
     ],
   },
 
@@ -47,7 +60,10 @@ const router = createBrowserRouter([
     Component: ProductDetailLayout,
     path: APP_ROUTES.PRODUCT_ROUTE,
     children: [
-      { path: APP_ROUTES.PRODUCT.DETAIL, Component: ProductDetailTemplate },
+      {
+        path: "detail",
+        Component: ProductDetailTemplate,
+      },
     ],
   },
 
@@ -65,28 +81,48 @@ const router = createBrowserRouter([
   {
     path: APP_ROUTES.SERVICE,
     Component: ServiceLayout,
-    element: <ServiceTemplate />,
+    children: [
+      {
+        path: "",
+        Component: ServiceTemplate
+      }
+    ]
   },
 
   // Payment Route
   {
     path: APP_ROUTES.PAYMENT,
     Component: PaymentLayout,
-    element: <PaymentTemplate />,
+    children: [
+      {
+        path: "",
+        Component: PaymentTemplate
+      }
+    ]
   },
 
   // About Route
   {
     path: APP_ROUTES.ABOUT,
     Component: AboutLayout,
-    element: <AboutTemplate />,
+    children: [
+      {
+        path: "",
+        Component: AboutTemplate
+      }
+    ]
   },
 
   // Contact Route
   {
     path: APP_ROUTES.CONTACT,
     Component: ContactLayout,
-    element: <ContactTemplate />,
+    children: [
+      {
+        path: "",
+        Component: ContactTemplate
+      }
+    ]
   },
 
   // News Routes
@@ -103,9 +139,37 @@ const router = createBrowserRouter([
   {
     path: APP_ROUTES.SHOP,
     Component: ShopLayout,
-    element: <ShopTemplate />,
+    children: [
+      {
+        path: "",
+        Component: ShopTemplate
+      }
+    ]
   },
 
+  // Admin Route
+  {
+    path: APP_ROUTES.ADMIN_ROUTE,
+    Component: AdminLayout,
+    children: [
+      {
+        path: APP_ROUTES.ADMIN.DASHBOARD,
+        Component: Dashboard
+      },
+      {
+        path: APP_ROUTES.ADMIN.PROMOTION,
+        Component: PromotionTemplate
+      },
+      {
+        path: APP_ROUTES.ADMIN.ORDER,
+        Component: OrderList
+      },
+      {
+        path: APP_ROUTES.ADMIN.SUPLIER,
+        Component: SupplierList
+      },
+    ]
+  },
   // 404 Route
   {
     path: "*",
