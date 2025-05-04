@@ -1,5 +1,4 @@
-import React from 'react';
-import { Box, Typography, Button, Grid } from '@mui/material';
+import { Box, Typography, Button, Grid } from "@mui/material";
 import {
   Gift,
   Truck,
@@ -10,12 +9,10 @@ import {
   Users,
   Globe,
   Handshake,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+} from "lucide-react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 // Benefit Item Component
 const BenefitItem = ({ icon, title, description }) => (
@@ -63,12 +60,12 @@ const TeamMemberItem = ({ imageSrc, name, role }) => (
     <img
       src={imageSrc}
       alt={name}
-      style={{ width: '100%', height: 'auto', borderRadius: '8px', mb: 1 }}
+      style={{ width: "100%", height: "auto", borderRadius: "8px", mb: 1 }}
     />
-    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
       {name}
     </Typography>
-    <Typography variant="body2" sx={{ color: '#666' }}>
+    <Typography variant="body2" sx={{ color: "#666" }}>
       {role}
     </Typography>
   </Box>
@@ -107,7 +104,7 @@ const AboutComponent = () => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 0, // Immediate transition for continuous scrolling
-    cssEase: 'linear', // Linear easing for constant speed
+    cssEase: "linear", // Linear easing for constant speed
     pauseOnHover: false, // Prevent pausing on hover
     pauseOnDotsHover: false, // Prevent pausing on dots hover
     pauseOnFocus: false, // Prevent pausing on focus
@@ -187,7 +184,12 @@ const AboutComponent = () => {
             <Box>
               <Typography
                 variant="h4"
-                sx={{ width: "45%", fontWeight: "bold", marginTop: "3vw", mb: 12 }}
+                sx={{
+                  width: "45%",
+                  fontWeight: "bold",
+                  marginTop: "3vw",
+                  mb: 12,
+                }}
               >
                 Meet the Team Behind Your Ride.
               </Typography>
@@ -209,7 +211,7 @@ const AboutComponent = () => {
                       borderRadius: "50px",
                       textTransform: "none",
                       px: 5,
-                      fontSize: '18px',
+                      fontSize: "18px",
                       "&:hover": { bgcolor: "#e64446" },
                     }}
                   >
@@ -221,9 +223,9 @@ const AboutComponent = () => {
                       color: "#000",
                       textTransform: "none",
                       fontWeight: "medium",
-                      fontSize: '15px',
-                      textDecoration: 'underline',
-                      mx: 2
+                      fontSize: "15px",
+                      textDecoration: "underline",
+                      mx: 2,
                     }}
                   >
                     About Us
@@ -348,7 +350,7 @@ const AboutComponent = () => {
       </Box>
 
       {/* Meet Our Team Section */}
-      <Box sx={{ overflow: 'hidden', py: { xs: 4, md: 6 }, width: '100%' }}>
+      <Box sx={{ overflow: 'hidden',py: { xs: 4, md: 6 }, width: '100%' }}>
         <Box
           sx={{
             display: "flex",

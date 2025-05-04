@@ -37,9 +37,18 @@ const router = createBrowserRouter([
     Component: AuthLayout,
     path: APP_ROUTES.AUTH_ROUTE,
     children: [
-      { path: APP_ROUTES.USER.LOGIN, Component: LoginTemplate },
-      { path: APP_ROUTES.USER.REGISTER, Component: RegisterTemplate },
-      { path: APP_ROUTES.USER.PROFILE, Component: UserProfile },
+      {
+        path: "login",
+        Component: LoginTemplate,
+      },
+      {
+        path: "register",
+        Component: RegisterTemplate,
+      },
+      {
+        path: "profile",
+        Component: UserProfile,
+      },
     ],
   },
 
@@ -48,7 +57,10 @@ const router = createBrowserRouter([
     Component: ProductDetailLayout,
     path: APP_ROUTES.PRODUCT_ROUTE,
     children: [
-      { path: APP_ROUTES.PRODUCT.DETAIL, Component: ProductDetailTemplate },
+      {
+        path: "detail",
+        Component: ProductDetailTemplate,
+      },
     ],
   },
 
