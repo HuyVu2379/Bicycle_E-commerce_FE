@@ -8,12 +8,31 @@ import {
     ListItemText,
     Divider,
 } from "@mui/material";
-import { Dashboard, Settings, Inventory, Receipt, LocalShipping, Discount } from "@mui/icons-material";
+import { Dashboard, Settings, Inventory, Receipt, LocalShipping, Discount, BarChart } from "@mui/icons-material";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function LeftSideBar() {
-    const settingsMenuItem = { text: "Settings", icon: <Settings /> };
     const drawerWidth = 240;
     const appBarHeight = 64;
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Define menu items with their paths
+    const menuItems = [
+        { key: "Dashboard", icon: <Dashboard />, path: "/admin/dashboard", text: "Dashboard" },
+        { key: "Product", icon: <Inventory />, path: "/admin/products", text: "Product" },
+        { key: "Order", icon: <Receipt />, path: "/admin/orders", text: "Order" },
+        { key: "Supplier", icon: <LocalShipping />, path: "/admin/suppliers", text: "Supplier" },
+        { key: "Promotion", icon: <Discount />, path: "/admin/promotions", text: "Promotion" },
+        { key: "Statistics", icon: <BarChart />, path: "/admin/statistics", text: "Statistics" },
+        { key: "Settings", icon: <Settings />, path: "/admin/settings", text: "Settings" },
+    ];
+
+    const isActive = (path: string) => location.pathname === path;
+
+    const handleNavigate = (path: string) => {
+        navigate(path);
+    };
 
     return (
         <Drawer
@@ -23,7 +42,7 @@ function LeftSideBar() {
                 width: drawerWidth,
                 flexShrink: 0,
                 zIndex: (theme) => theme.zIndex.appBar - 1,
-                position: "fixed", // Explicitly fix the position
+                position: "fixed",
                 "& .MuiDrawer-paper": {
                     width: drawerWidth,
                     boxSizing: "border-box",
@@ -47,93 +66,49 @@ function LeftSideBar() {
             </Box>
 
             <List>
-                <ListItem
-                    key="Dashboard"
-                    sx={{
-                        cursor: "pointer",
-                        "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.1)",
-                            transform: "scale(1.05)",
-                            transition: "all 0.2s ease-in-out",
-                        },
-                    }}
-                >
-                    <ListItemIcon><Dashboard /></ListItemIcon>
-                    <ListItemText primary="Dashboard" />
-                </ListItem>
-                <ListItem
-                    key="Product"
-                    sx={{
-                        cursor: "pointer",
-                        "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.1)",
-                            transform: "scale(1.05)",
-                            transition: "all 0.2s ease-in-out",
-                        },
-                    }}
-                >
-                    <ListItemIcon><Inventory /></ListItemIcon>
-                    <ListItemText primary="Product" />
-                </ListItem>
-                <ListItem
-                    key="Order"
-                    sx={{
-                        cursor: "pointer",
-                        "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.1)",
-                            transform: "scale(1.05)",
-                            transition: "all 0.2s ease-in-out",
-                        },
-                    }}
-                >
-                    <ListItemIcon><Receipt /></ListItemIcon>
-                    <ListItemText primary="Order" />
-                </ListItem>
-                <ListItem
-                    key="Supplier"
-                    sx={{
-                        cursor: "pointer",
-                        "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.1)",
-                            transform: "scale(1.05)",
-                            transition: "all 0.2s ease-in-out",
-                        },
-                    }}
-                >
-                    <ListItemIcon><LocalShipping /></ListItemIcon>
-                    <ListItemText primary="Supplier" />
-                </ListItem>
-                <ListItem
-                    key="Promotion"
-                    sx={{
-                        cursor: "pointer",
-                        "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.1)",
-                            transform: "scale(1.05)",
-                            transition: "all 0.2s ease-in-out",
-                        },
-                    }}
-                >
-                    <ListItemIcon><Discount /></ListItemIcon>
-                    <ListItemText primary="Promotion" />
-                </ListItem>
+                {menuItems.slice(0, 6).map((item) => (
+                    <ListItem
+                        key={item.key}
+                        onClick={() => handleNavigate(item.path)}
+                        sx={{
+                            cursor: "pointer",
+                            backgroundColor: isActive(item.path) ? "#E4926C" : "transparent",
+                            "&:hover": {
+                                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                                transform: "scale(1.05)",
+                                transition: "all 0.2s ease-in-out",
+                            },
+                            ...(isActive(item.path) && { fontWeight: "bold", boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)" }),
+                        }}
+                    >
+                        <ListItemIcon sx={{ color: isActive(item.path) ? "#1976d2" : "inherit" }}>
+                            {item.icon}
+                        </ListItemIcon>
+                        <ListItemText primary={item.text} />
+                    </ListItem>
+                ))}
             </List>
             <Box sx={{ flexGrow: 1 }} />
             <Divider />
             <List>
                 <ListItem
-                    key={settingsMenuItem.text}
+                    key={menuItems[6].key}
+                    onClick={() => handleNavigate(menuItems[6].path)}
                     sx={{
                         cursor: "pointer",
+                        backgroundColor: isActive(menuItems[6].path) ? "#E4926C" : "transparent",
                         "&:hover": {
                             backgroundColor: "rgba(0, 0, 0, 0.1)",
                             transform: "scale(1.05)",
                             transition: "all 0.2s ease-in-out",
                         },
+                        ...(isActive(menuItems[6].path) && { fontWeight: "bold" }), // Bold text for active item
                     }}
                 >
-                    <ListItemIcon>{settingsMenuItem.icon}</ListItemIcon>
-                    <ListItemText primary={settingsMenuItem.text} />
+                    <ListItemIcon sx={{ color: isActive(menuItems[6].path) ? "#1976d2" : "inherit" }}>
+                        {menuItems[6].icon}
+                    </ListItemIcon>
+                    <ListItemText primary={menuItems[6].text} />
                 </ListItem>
             </List>
         </Drawer>

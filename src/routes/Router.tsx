@@ -29,6 +29,7 @@ import PromotionTemplate from "@/pages/Admin/Promotion";
 import OrderList from "@/pages/Admin/Order";
 import SupplierList from "@/components/Shared/SupplierList";
 import StatisticTemplate from "@/pages/Admin/Statistics";
+import ProductManagement from "@/pages/Admin/Product";
 const router = createBrowserRouter([
   // Redirect root to dashboard
   {
@@ -172,6 +173,10 @@ const router = createBrowserRouter([
       {
         path: APP_ROUTES.ADMIN.STATISTIC,
         Component: StatisticTemplate
+      },
+      {
+        path: APP_ROUTES.ADMIN.PRODUCT,
+        Component: ProductManagement
       }
     ]
   },

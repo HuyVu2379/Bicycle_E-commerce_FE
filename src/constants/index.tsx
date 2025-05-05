@@ -13,8 +13,9 @@ export const APP_ROUTES = {
     PROMOTION: "promotions",
     DASHBOARD: "dashboard",
     ORDER: "orders",
-    SUPLIER: "suplier",
-    STATISTIC: "statistic"
+    SUPLIER: "suppliers",
+    PRODUCT: "products",
+    STATISTIC: "statistics"
   },
   USER_AUTHORIZATION: {
     MANAGEMENT: "/authorizations",

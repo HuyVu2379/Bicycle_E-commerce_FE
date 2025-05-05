@@ -10,7 +10,6 @@ function Header() {
                 backgroundColor: '#fff',
                 color: '#000',
                 boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                zIndex: (theme) => theme.zIndex.drawer + 1,
                 height: 64,
                 width: '100%',
             }}
