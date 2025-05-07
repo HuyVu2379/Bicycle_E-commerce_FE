@@ -25,6 +25,8 @@ const OrderList: React.FC = () => {
   const handleSearch = () => {
     if (searchInput.trim() !== '') {
       searchOrders(searchType, searchInput.trim());
+    }else if(searchInput.trim() === '') {
+      fetchOrders();
     }
   };
 
@@ -40,8 +42,8 @@ const OrderList: React.FC = () => {
 
   return (
     <Box>
-      <Box display="flex" alignItems="center" gap={2} mb={2}>
-        <FormControl size="small">
+      <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center' }}>
+        <FormControl sx={{ width: 200 }}>
           <InputLabel>Search by</InputLabel>
           <Select
             value={searchType}
@@ -49,13 +51,13 @@ const OrderList: React.FC = () => {
             onChange={(e) => setSearchType(e.target.value as any)}
           >
             <MenuItem value="orderId">Order ID</MenuItem>
-            <MenuItem value="userId">User ID</MenuItem>
+            <MenuItem value="userEmail">User Email</MenuItem>
           </Select>
         </FormControl>
         <TextField
-          label="Search"
+          label={`Nhập ${searchType === 'orderId' ? 'OrderId ID' : 'User Email'}`}
+          sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
           variant="outlined"
-          size="small"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -75,8 +77,9 @@ const OrderList: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>STT</TableCell>
               <TableCell>Order ID</TableCell>
-              <TableCell>User ID</TableCell>
+              <TableCell>User Email</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Total Price</TableCell>
               <TableCell>Details</TableCell>
@@ -92,8 +95,9 @@ const OrderList: React.FC = () => {
                 <TableCell colSpan={5} align="center">No orders found</TableCell>
               </TableRow>
             ) : (
-              orders.map((order) => (
+              orders.map((order, index) => (
                 <TableRow key={order.orderId}>
+                  <TableCell>{page * 10 + index + 1}</TableCell>
                   <TableCell>{order.orderId}</TableCell>
                   <TableCell>{order.userId}</TableCell>
                   <TableCell>{new Date(order.orderDate).toLocaleString()}</TableCell>
@@ -110,15 +114,11 @@ const OrderList: React.FC = () => {
         </Table>
       </TableContainer>
 
-      {/* {totalPages > 1 && (
+      {totalPages > 1 && (
         <Box mt={2} display="flex" justifyContent="center">
           <Pagination count={totalPages} page={page + 1} onChange={handlePageChange} />
         </Box>
-      )} */}
-      <Box mt={2} display="flex" justifyContent="center">
-        <Pagination count={totalPages} page={page + 1} onChange={handlePageChange} />
-      </Box>
-      
+      )}      
 
       {selectedOrder && (
         <OrderDetail order={selectedOrder} onClose={() => setSelectedOrder(null)} />
