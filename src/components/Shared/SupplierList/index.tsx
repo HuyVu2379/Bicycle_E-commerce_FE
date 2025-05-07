@@ -13,7 +13,7 @@ import AddressMap from "../AddressMap";
 import useSupplier from '@/hook/api/useSupplier';
 
 interface AddressType {
-  detail: string;
+  fullAddress: string;
   city: string;
   district: string;
   street: string;
@@ -144,7 +144,7 @@ const SupplierList: React.FC = () => {
     phone: '',
     description: '',
     address: {
-      detail: '',
+      fullAddress: '',
       city: '',
       district: '',
       street: '',
@@ -156,7 +156,7 @@ const SupplierList: React.FC = () => {
   const center = [10.7769, 106.7009]; // Tọa độ trung tâm TP.HCM
 
   const [addressFields, setAddressFields] = useState({
-    detail: "",
+    fullAddress: "",
     street: "",
     ward: "",
     district: "",
@@ -194,7 +194,7 @@ const SupplierList: React.FC = () => {
       phone: '',
       description: '',
       address: {
-        detail: '',
+        fullAddress: '',
         city: '',
         district: '',
         street: '',
@@ -214,6 +214,7 @@ const SupplierList: React.FC = () => {
       description: supplier.description,
       address: { ...supplier.address }
     });
+    setSelectedSupplier(supplier);
     setIsEditing(true);
     setOpenModal(true);
   };
@@ -334,12 +335,12 @@ const SupplierList: React.FC = () => {
       </TableContainer>
 
       {/* Phân trang */}
-      <Pagination
+      {totalPages > 1 && (<Pagination
         count={totalPages}
         page={page}
         onChange={(_, newPage) => setPage(newPage)}
         sx={{ display: 'flex', justifyContent: 'center' }}
-      />
+      />)}
 
       {/* Modal tạo/cập nhật */}
       <Dialog open={openModal} onClose={() => setOpenModal(false)}>
@@ -402,13 +403,13 @@ const SupplierList: React.FC = () => {
           <TextField
             sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
             margin="dense"
-            label="Detail"
+            label="fullAddress"
             fullWidth
             disabled
-            value={formData.address.detail}
+            value={formData.address.fullAddress}
             onChange={(e) => setFormData(prev => ({
               ...prev,
-              address: { ...prev.address, detail: e.target.value }
+              address: { ...prev.address, fullAddress: e.target.value }
             }))}
           />
           <TextField

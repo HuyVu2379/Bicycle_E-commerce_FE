@@ -40,11 +40,12 @@ const AddressMap = ({ initialPosition, onAddressChange }: { initialPosition: num
             );
             const { address, display_name } = response.data;
             const addressData = {
-                detail: display_name || "",
-                street: address?.road || "",
+                fullAddress: display_name || "",
                 ward: address?.residential || address?.quarter || "",
+                street: address?.road || address?.street || "",
                 district: address?.suburb || "",
                 city: address?.city || address?.state || "",
+                country: address?.country || "",
             };
             onAddressChange(addressData);
             return addressData;
