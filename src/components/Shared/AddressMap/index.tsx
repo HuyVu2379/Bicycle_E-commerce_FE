@@ -41,6 +41,7 @@ const AddressMap = ({ initialPosition, onAddressChange }: { initialPosition: num
             const { address, display_name } = response.data;
             const addressData = {
                 detail: display_name || "",
+                street: address?.road || "",
                 ward: address?.residential || address?.quarter || "",
                 district: address?.suburb || "",
                 city: address?.city || address?.state || "",
