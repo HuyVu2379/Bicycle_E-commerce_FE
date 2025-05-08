@@ -52,6 +52,7 @@ export const useUser = createSlice({
     initialState: initUser,
     reducers: {
         setMe: (state: InitUserType, { payload }: PayloadAction<any>) => {
+            console.log("check me: ", payload);
             state.me = payload;
         },
     },

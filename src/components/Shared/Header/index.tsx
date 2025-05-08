@@ -3,12 +3,12 @@ import "./header.css";
 import { Link } from "react-router-dom";
 import { FaUser, FaShoppingCart, FaSearch, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
-
+import useAuth from "@/hook/api/useAuth";
 const Header: React.FC = () => {
+  const { handleLogout } = useAuth();
   const [showShopDropdown, setShowShopDropdown] = useState(false);
-  const [showPagesDropdown, setShowPagesDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const { accessToken } = localStorage;
   return (
     <header className="header">
       <div className="header-container">
@@ -68,20 +68,22 @@ const Header: React.FC = () => {
             <Link to="/auth/login" className="icons">
               <FaUser className="icon" />
             </Link>
-            <Link to="/profile" className="icons">
+            <Link to="/auth/profile" className="icons">
               <ImProfile className="icon" />
             </Link>
             <div className="cart icons">
               <FaShoppingCart className="icon" />
               <span className="cart-badge">4</span>
             </div>
-            <Link to="/logout" className="logout">
+            {accessToken ? (< Link to="/auth/login" onClick={handleLogout} className="logout">
               Logout
-            </Link>
+            </Link>)
+              : <></>
+            }
           </div>
         </div>
       </div>
-    </header>
+    </header >
   );
 };
 
