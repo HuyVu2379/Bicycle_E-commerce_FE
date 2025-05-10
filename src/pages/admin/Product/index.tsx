@@ -95,10 +95,6 @@ const ProductManagement: React.FC = () => {
         setProduct({ ...product, colors: selectedColors });
     };
 
-    const handleDeleteColor = (color: string) => {
-        setProduct({ ...product, colors: product.colors.filter((c) => c !== color) });
-    };
-
     const handleAddCategory = () => {
         if (newCategory && !categories.includes(newCategory)) {
             setCategories([...categories, newCategory]);
@@ -197,7 +193,14 @@ const ProductManagement: React.FC = () => {
     );
 
     return (
-        <Container maxWidth="lg" className="py-8">
+        <Container
+            disableGutters
+            sx={{
+                width: '100%',
+                height: '100%',
+                py: 4
+            }}
+        >
             <Box component="form" onSubmit={handleSubmit} className="space-y-6">
                 <Grid container spacing={3}>
                     {/* Tên sản phẩm */}

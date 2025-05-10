@@ -32,6 +32,7 @@ function useAuth() {
         try {
             removeValueInLocalStorage("accessToken");
             removeValueInLocalStorage("refreshToken");
+            removeValueInLocalStorage("userId");
             dispatch(setMe(null));
             // navigate(`${APP_ROUTES.AUTH_ROUTE}${APP_ROUTES.USER.LOGIN}`);
             enqueueSnackbar({ message: 'Logout successful!', variant: 'success' });

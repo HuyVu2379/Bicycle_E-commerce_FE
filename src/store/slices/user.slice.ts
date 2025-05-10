@@ -2,11 +2,13 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface Address {
     addressId: string;
+    fullAddress: string;
+    street: string,
     district: string;
     city: string;
-    street: string;
     ward: string;
     country: string;
+    userId: string;
 }
 interface User {
     userId: string;
@@ -19,29 +21,27 @@ interface User {
     gender: string
 }
 export interface InitUserType {
-    me: {
-        user: Partial<User>;
-    }
+    me: Partial<User>;
 }
 
 const initUser: InitUserType = {
     me: {
-        user: {
+        userId: '',
+        fullName: '',
+        email: '',
+        phoneNumber: '',
+        dob: '',
+        avatar: '',
+        gender: '',
+        address: {
+            fullAddress: '',
             userId: '',
-            fullName: '',
-            email: '',
-            phoneNumber: '',
-            dob: '',
-            avatar: '',
-            gender: '',
-            address: {
-                addressId: '',
-                district: '',
-                city: '',
-                street: '',
-                ward: '',
-                country: ''
-            },
+            addressId: '',
+            district: '',
+            street: '',
+            city: '',
+            ward: '',
+            country: ''
         },
     },
 };
@@ -52,13 +52,21 @@ export const useUser = createSlice({
     initialState: initUser,
     reducers: {
         setMe: (state: InitUserType, { payload }: PayloadAction<any>) => {
-            console.log("check me: ", payload);
-            state.me = payload;
+            state.me = payload || initUser.me;
+        },
+        setAddress: (state: InitUserType, { payload }: PayloadAction<Address>) => {
+            state.me.address = payload;
+        },
+        setAvatar: (state: InitUserType, { payload }: PayloadAction<string>) => {
+            console.log("check avatar update: ", payload);
+            state.me.avatar = payload;
         },
     },
 });
 export const {
     setMe,
+    setAddress,
+    setAvatar
 } = useUser.actions;
 
 export default useUser.reducer;
