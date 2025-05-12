@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Box, Grid, Paper, Typography, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Grid, Paper, Typography, ToggleButtonGroup, ToggleButton, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SalesChart from './SalesChart';
 import MonthlyStatistics from './MonthlyStatistics';
 import StatCard from './StatCard';
-import { salesData, monthlyStats } from './data';
+import { getDashboardSalesData, getDashboardStatCards, getDashboardMonthlyData } from '@/services/Dashboard.service';
+
 
 const DashboardContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -19,8 +20,47 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   borderRadius: '10px',
 }));
 
+const LoadingContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100%',
+}));
+
 const Dashboard: React.FC = () => {
   const [timeRange, setTimeRange] = useState<string>('monthly');
+  const [salesData, setSalesData] = useState<any[]>([]);
+  const [monthlyStats, setMonthlyStats] = useState<any[]>([]);
+  const [statCards, setStatCards] = useState<any>({});
+  const [loading, setLoading] = useState(true);
+
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    try {
+      const salesResponse = await getDashboardSalesData();
+      if (salesResponse.success) {
+        setSalesData(salesResponse.data);
+      }
+
+      const monthlyResponse = await getDashboardMonthlyData();
+      if (monthlyResponse.success) {
+        setMonthlyStats(monthlyResponse.data);
+      }
+
+      const statCardsResponse = await getDashboardStatCards();
+      if (statCardsResponse.success) {
+        setStatCards(statCardsResponse.data);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
   const handleTimeRangeChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -30,6 +70,17 @@ const Dashboard: React.FC = () => {
       setTimeRange(newTimeRange);
     }
   };
+
+  if (loading) {
+    return (
+      <DashboardContainer>
+        <LoadingContainer>
+          <CircularProgress />
+        </LoadingContainer>
+      </DashboardContainer>
+    )
+
+  }
 
   return (
     <DashboardContainer>
@@ -100,30 +151,35 @@ const Dashboard: React.FC = () => {
         </Grid>
 
         {/* Stat Cards */}
-        <Grid item xs={12} sm={6} md={3}>
-          <StyledPaper>
-            <StatCard
-              title="Online Orders"
-              value="116,490,340"
-              progress={60}
-              color="#FFD700"
-              trend="up"
-              trendValue="8.5%"
-            />
-          </StyledPaper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StyledPaper>
-            <StatCard
-              title="Revenue Order"
-              value="1,195,345,345"
-              progress={60}
-              color="#4CAF50"
-              trend="up"
-              trendValue="12.3%"
-            />
-          </StyledPaper>
-        </Grid>
+        {statCards.onlineOrders && (
+          <Grid item xs={12} sm={6} md={3}>
+            <StyledPaper>
+              <StatCard
+                title="Online Orders"
+                value="116,490,340"
+                progress={60}
+                color="#FFD700"
+                trend="up"
+                trendValue="8.5%"
+              />
+            </StyledPaper>
+          </Grid>
+        )}
+
+        {statCards.revenueOrder && (
+          <Grid item xs={12} sm={6} md={3}>
+            <StyledPaper>
+              <StatCard
+                title="Revenue Order"
+                value="1,195,345,345"
+                progress={60}
+                color="#4CAF50"
+                trend="up"
+                trendValue="12.3%"
+              />
+            </StyledPaper>
+          </Grid>
+        )}
         <Grid item xs={12} sm={6} md={3}>
           <StyledPaper>
             <StatCard
