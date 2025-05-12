@@ -26,7 +26,7 @@ export const getDashboardMonthlyData = async () => {
 };
 
 export const getDashboardStatCards = async () => {
-    try {  
+    try {
         const url = `${api}/stat-cards`
         const result = await axiosConfig.get(url);
         return { success: true, data: Array.isArray(result) ? result : [] };
@@ -35,5 +35,23 @@ export const getDashboardStatCards = async () => {
         return { success: false, data: [] }
     }
 };
+
+export const getDashboardYearData = async (year: number) => {
+    try {
+        const url = `${api}/get-revenue-by-year/${year}`
+        const response = await axiosConfig.get(url);
+
+        if (response && response.data.success === true && Array.isArray(response.data)) {
+            return { success: true, data: response.data };
+        } else {
+            console.warn("API response structure is unexpected:", response);
+            return { success: true, data: response };
+        }
+
+    } catch (error) {
+        console.error("Error fetching year data:", error);
+        return { success: false, data: [] }
+    }
+}
 
 
