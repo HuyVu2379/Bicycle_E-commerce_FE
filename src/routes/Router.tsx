@@ -63,7 +63,7 @@ const router = createBrowserRouter([
     path: APP_ROUTES.PRODUCT_ROUTE,
     children: [
       {
-        path: "detail",
+        path: "detail/:productId",
         Component: ProductDetailTemplate,
       },
     ],

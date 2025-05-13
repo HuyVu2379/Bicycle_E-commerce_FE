@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductInformation from "@/components/Shared/ProductInfomation";
 import SpecificationsComponent from "@/components/Shared/Specification";
 import ReviewsComponent from "@/components/Shared/Review/customerReview";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
 import ProductList from '@/components/Shared/ProductList';
+import { useParams } from "react-router-dom";
+import useProductDetail from '@/hook/api/useProductDetail';
+
 const product = {
   name: 'GIANT DEFY ADVANCED',
   rating: 4.5,
@@ -49,6 +52,22 @@ const sampleProducts = [
 
 const ProductDetailTemplate = () => {
   const [value, setValue] = useState(0);
+  const { productId } = useParams<{ productId: string }>();
+  const { fetchProduct, fetchSpecifications, fetchReviews,
+    productInfo, specifications, reviews
+  } = useProductDetail();
+
+  // Gọi hàm fetchProduct khi component được mount
+  useEffect(() => {
+    if (productId) {
+      fetchProduct(productId);
+      fetchSpecifications(productId);
+      fetchReviews(productId);
+    }
+  }, [productId]);
+  console.log('productInfo', productInfo);
+  console.log('specifications', specifications);
+  console.log('reviews', reviews);
 
   // Xử lý thay đổi tab
   const handleChange = (event: any, newValue: number) => {
@@ -105,7 +124,7 @@ const ProductDetailTemplate = () => {
           </div>
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <SpecificationsComponent />
+          <SpecificationsComponent specifications={specifications}/>
         </TabPanel>
         <TabPanel value={value} index={2}>
           <div>
@@ -113,12 +132,12 @@ const ProductDetailTemplate = () => {
           </div>
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <ReviewsComponent />
+          <ReviewsComponent reviews={reviews}/>
         </TabPanel>
       </Box>
-      <Box sx={{ width: '100%' }}>
+      {/* <Box sx={{ width: '100%' }}>
         <ProductList products={sampleProducts} />
-      </Box>
+      </Box> */}
     </Box>
   );
 };
