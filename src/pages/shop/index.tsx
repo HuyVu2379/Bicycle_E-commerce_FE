@@ -7,7 +7,7 @@ import FilterSidebar from "@/components/Shared/SideBar/index";
 
 const sampleProducts = [
   {
-    productId: "6822ecba9b989e58769c1e8b",
+    productId: "68231292a0de5b7faf90f0a0",
     name: "Urban Explorer",
     type: "Enduro",
     originalPrice: 21599.0,

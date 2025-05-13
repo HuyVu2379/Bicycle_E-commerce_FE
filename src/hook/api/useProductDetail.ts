@@ -1,8 +1,51 @@
 import {  useState } from 'react';
-import {getSpecifications, getAllReviews} from '@/services/ProductDetail.Service';
+import {getProductById, getSpecifications, getAllReviews} from '@/services/ProductDetail.Service';
+
+interface CategoryType {
+    categoryId: string;
+    name: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+interface InventoryType {
+    inventoryId: string;
+    productId: string;
+    importDate: string;
+    color: string;
+    imageUrls: string[];
+    quantity: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
+interface SupplierType {
+    supplierId: string;
+    name: string;
+    addressId: string;
+    phone: string;
+    email: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+}
 
 interface ProductType {
-};
+    productId: string;
+    name: string;
+    categoryId: string;
+    supplierId: string;
+    description: string;
+    price: number;
+    priceReduced: number;
+    promotionId: string | null;
+    createdAt: string;
+    updatedAt: string;
+    category: CategoryType;
+    inventory: InventoryType[];
+    supplier: SupplierType;
+}
 
 interface SpecificationType {
     specificationId: string;
@@ -29,6 +72,14 @@ function useProductDetail() {
     const [productInfo, setProductInfo] = useState<ProductType | null>(null);
 
     const fetchProduct = async (productId: string) => {
+        try {
+            const res = await getProductById(productId);
+            if (res.data) {
+                setProductInfo(res.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch product:', error);
+        }
     };
 
     const fetchSpecifications = async (productId: string) => {

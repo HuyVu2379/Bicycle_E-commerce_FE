@@ -1,7 +1,17 @@
 import axiosConfig from "./axiosConfig";
 const api = "/api/v1";
 
-// get by id
+// get by id /products/public/6823099ba0de5b7faf90f096
+export const getProductById = async (productId: string) => {
+    try {
+        const url = `${api}/products/public/${productId}`;
+        let result = await axiosConfig.get(url);
+        return result;
+    } catch (error) {
+        console.error("Error getting product detail:", error);
+        return { success: false, message: error };
+    }
+}
 
 // get specific product by productId
 // /specifications/public/find/6822ecba9b989e58769c1e8b

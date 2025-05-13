@@ -7,49 +7,6 @@ import ProductList from '@/components/Shared/ProductList';
 import { useParams } from "react-router-dom";
 import useProductDetail from '@/hook/api/useProductDetail';
 
-const product = {
-  name: 'GIANT DEFY ADVANCED',
-  rating: 4.5,
-  reviews: 129,
-  price: 2990.00,
-  description: 'Experience unmatched comfort and performance with the GIANT Defy Advanced. This endurance road bike features a lightweight carbon frame, advanced compliance technology.',
-  colors: ['Green', 'Red', 'Yellow'],
-  images: [
-    '/assets/images/product-1.png',
-    '/assets/images/product-3.png',
-    '/assets/images/product-3.png',
-    '/assets/images/product-3.png',
-    '/assets/images/product-3.png',
-    '/assets/images/product-3.png',
-  ],
-};
-const sampleProducts = [
-  {
-    name: "Urban Explorer",
-    type: "Enduro",
-    originalPrice: 21599.0,
-    discountedPrice: 14599.0,
-    imageUrl:
-      "/public/assets/images/hero-swiper-3.png",
-  },
-  {
-    name: "Mountain Blazer",
-    type: "Trail",
-    originalPrice: 18999.0,
-    discountedPrice: 12999.0,
-    imageUrl:
-      "/public/assets/images/hero-swiper-3.png",
-  },
-  {
-    name: "City Sprinter",
-    type: "Urban",
-    originalPrice: 15999.0,
-    discountedPrice: 9999.0,
-    imageUrl:
-      "/public/assets/images/hero-swiper-3.png",
-  },
-];
-
 const ProductDetailTemplate = () => {
   const [value, setValue] = useState(0);
   const { productId } = useParams<{ productId: string }>();
@@ -65,9 +22,8 @@ const ProductDetailTemplate = () => {
       fetchReviews(productId);
     }
   }, [productId]);
-  console.log('productInfo', productInfo);
-  console.log('specifications', specifications);
-  console.log('reviews', reviews);
+
+  console.log('Product Info:', productInfo);
 
   // Xử lý thay đổi tab
   const handleChange = (event: any, newValue: number) => {
@@ -87,7 +43,7 @@ const ProductDetailTemplate = () => {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" padding={2} bgcolor="#f3f8f3">
-      <ProductInformation productData={product} />
+      <ProductInformation product={productInfo} />
       <Box sx={{ width: '100%', maxWidth: 1200 }}>
         <Tabs
           value={value}
@@ -120,7 +76,7 @@ const ProductDetailTemplate = () => {
         {/* Nội dung của từng tab */}
         <TabPanel value={value} index={0}>
           <div>
-            The Giant Defy Advanced is designed to redefine long-distance cycling with its exceptional blend of comfort and performance. Crafted from advanced-grade carbon fiber, this endurance road bike features a lightweight and responsive frame that absorbs road vibrations, allowing for a smoother ride over varied terrain. The Defy Advanced is equipped with a precise and reliable drivetrain, ensuring effortless shifting and optimal power transfer.
+            {productInfo?.product?.description || 'No description available.'}
           </div>
         </TabPanel>
         <TabPanel value={value} index={1}>
