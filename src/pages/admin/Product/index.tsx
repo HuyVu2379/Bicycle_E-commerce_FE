@@ -1,55 +1,41 @@
-import React, { useState, useCallback } from 'react';
-import {
-    Container,
-    Grid,
-    TextField,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    Button,
-    Typography,
-    Box,
-    Chip,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    IconButton,
-} from '@mui/material';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Container, Grid, Box, IconButton, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import Gallery from 'react-photo-gallery';
-import Carousel, { Modal, ModalGateway as ModalGatewayOriginal } from 'react-images';
-import MarkdownEditor from './Description';
+import ProductForm from '@/components/Admin/Product/ProductForm';
+import ColorVariantManager from '@/components/Admin/Product/ColorVariantManager';
+import SpecificationManager from '@/components/Admin/Product/SpecificationManager';
+import CategoryDialog from '@/components/Admin/Product/CategoryDialog';
+import SpecificationDialog from '@/components/Admin/Product/SpecificationDialog';
+import ImageLightbox from '@/components/Admin/Product/ImageLightBox';
 import ProductList from './ProductTable';
-// Create a properly typed version of ModalGateway
-const ModalGateway = (props: { children: React.ReactNode }) => (
-    <ModalGatewayOriginal {...props as any} />
-);
+import useProduct from '@/hook/api/useProduct';
+import { SelectChangeEvent } from '@mui/material';
 
-interface Specification {
+export interface Specification {
     key: string;
     value: string;
 }
 
-interface Product {
+export interface Product {
     name: string;
     description: string;
     price: string;
     category: string;
     supplier: string;
     colors: string[];
-    images: string[];
+    images: { [color: string]: string[] };
+    quantities: { [color: string]: number };
     specifications: Specification[];
 }
 
-interface GalleryPhoto {
+export interface GalleryPhoto {
     src: string;
     width: number;
     height: number;
+    color: string;
 }
 
-const colorsList = ['Blue', 'Red', 'Grey', 'Black', 'White', 'Brown', 'Orange'];
+export const colorsList = ['Blue', 'Red', 'Grey', 'Black', 'White', 'Brown', 'Orange'];
 
 const ProductManagement: React.FC = () => {
     const [product, setProduct] = useState<Product>({
@@ -59,45 +45,85 @@ const ProductManagement: React.FC = () => {
         category: '',
         supplier: '',
         colors: [],
-        images: [],
+        images: {},
+        quantities: {},
         specifications: [],
     });
-
-    const [categories, setCategories] = useState<string[]>(['Điện tử', 'Thời trang', 'Gia dụng']);
-    const [suppliers] = useState<string[]>(['Nhà cung cấp A', 'Nhà cung cấp B', 'Nhà cung cấp C']);
+    const { handleFetchCategories, handleFetchSupplier, categories, suppliers } = useProduct();
+    useEffect(() => {
+        const fetchData = async () => {
+            await handleFetchCategories();
+            await handleFetchSupplier();
+        };
+        fetchData();
+    }, []);
     const [newCategory, setNewCategory] = useState<string>('');
     const [openCategoryDialog, setOpenCategoryDialog] = useState<boolean>(false);
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [currentImage, setCurrentImage] = useState<number>(0);
     const [openSpecDialog, setOpenSpecDialog] = useState<boolean>(false);
     const [newSpec, setNewSpec] = useState<Specification>({ key: '', value: '' });
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [currentImage, setCurrentImage] = useState<number>(0);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent<string>) => {
         const { name, value } = e.target;
         setProduct({ ...product, [name as string]: value });
     };
+    console.log("Check img selected", product.images);
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleColorChange = (e: SelectChangeEvent<string[]>) => {
+        const selectedColors = e.target.value as string[];
+        const updatedImages = { ...product.images };
+        const updatedQuantities = { ...product.quantities };
+        Object.keys(updatedImages).forEach((color) => {
+            if (!selectedColors.includes(color)) {
+                updatedImages[color].forEach((img) => URL.revokeObjectURL(img));
+                delete updatedImages[color];
+                delete updatedQuantities[color];
+            }
+        });
+        setProduct({ ...product, colors: selectedColors, images: updatedImages, quantities: updatedQuantities });
+    };
+
+    const handleImageChange = (color: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files) {
             const newImages = Array.from(files).map((file) => URL.createObjectURL(file));
-            setProduct({ ...product, images: [...product.images, ...newImages] });
+            setProduct({
+                ...product,
+                images: {
+                    ...product.images,
+                    [color]: [...(product.images[color] || []), ...newImages],
+                },
+            });
         }
     };
 
-    const handleDeleteImage = (image: string) => {
-        URL.revokeObjectURL(image);
-        setProduct({ ...product, images: product.images.filter((img) => img !== image) });
+    const handleQuantityChange = (color: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (value === '' || (!isNaN(Number(value)) && Number(value) >= 0)) {
+            setProduct({
+                ...product,
+                quantities: {
+                    ...product.quantities,
+                    [color]: value === '' ? 0 : Number(value),
+                },
+            });
+        }
     };
 
-    const handleColorChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-        const selectedColors = e.target.value as string[];
-        setProduct({ ...product, colors: selectedColors });
+    const handleDeleteImage = (color: string, image: string) => {
+        URL.revokeObjectURL(image);
+        setProduct({
+            ...product,
+            images: {
+                ...product.images,
+                [color]: product.images[color].filter((img) => img !== image),
+            },
+        });
     };
 
     const handleAddCategory = () => {
         if (newCategory && !categories.includes(newCategory)) {
-            setCategories([...categories, newCategory]);
             setProduct({ ...product, category: newCategory });
             setNewCategory('');
             setOpenCategoryDialog(false);
@@ -126,9 +152,16 @@ const ProductManagement: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const missingQuantities = product.colors.filter((color) => !product.quantities[color] && product.quantities[color] !== 0);
+        if (missingQuantities.length > 0) {
+            alert(`Vui lòng nhập số lượng cho các màu: ${missingQuantities.join(', ')}`);
+            return;
+        }
         console.log('Sản phẩm:', product);
         alert('Sản phẩm đã được lưu!');
-        product.images.forEach((image) => URL.revokeObjectURL(image));
+        Object.values(product.images).forEach((images) => {
+            images.forEach((image) => URL.revokeObjectURL(image));
+        });
         setProduct({
             name: '',
             description: '',
@@ -136,7 +169,8 @@ const ProductManagement: React.FC = () => {
             category: '',
             supplier: '',
             colors: [],
-            images: [],
+            images: {},
+            quantities: {},
             specifications: [],
         });
     };
@@ -151,23 +185,28 @@ const ProductManagement: React.FC = () => {
         setIsOpen(false);
     };
 
-    const photos: GalleryPhoto[] = product.images.map((image) => ({
-        src: image,
-        width: 1,
-        height: 1,
-    }));
+    const photos: GalleryPhoto[] = product.colors.reduce((acc: GalleryPhoto[], color) => {
+        const colorImages = (product.images[color] || []).map((image) => ({
+            src: image,
+            width: 1,
+            height: 1,
+            color,
+        }));
+        return [...acc, ...colorImages];
+    }, []);
 
     const renderImage = useCallback(
         ({ index, photo }: { index: number; photo: GalleryPhoto }) => (
             <Box sx={{ position: 'relative', display: 'inline-block' }}>
                 <img
                     src={photo.src}
-                    alt={`Product Preview ${index + 1}`}
+                    alt={`Product Preview ${photo.color} ${index + 1}`}
                     style={{
                         maxWidth: '100px',
                         maxHeight: '100px',
                         objectFit: 'contain',
                         cursor: 'pointer',
+                        margin: '5px',
                     }}
                     onClick={(e) => openLightbox(e, { index })}
                 />
@@ -183,7 +222,7 @@ const ProductManagement: React.FC = () => {
                             backgroundColor: 'rgba(0, 0, 0, 0.7)',
                         },
                     }}
-                    onClick={() => handleDeleteImage(photo.src)}
+                    onClick={() => handleDeleteImage(photo.color, photo.src)}
                 >
                     <CloseIcon fontSize="small" />
                 </IconButton>
@@ -193,315 +232,76 @@ const ProductManagement: React.FC = () => {
     );
 
     return (
-        <Container
-            disableGutters
-            sx={{
-                width: '100%',
-                height: '100%',
-                py: 4
-            }}
-        >
+        <Container disableGutters sx={{ width: '100%', height: '100%', py: 4 }}>
             <Box component="form" onSubmit={handleSubmit} className="space-y-6">
                 <Grid container spacing={3}>
-                    {/* Tên sản phẩm */}
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Tên sản phẩm"
-                            name="name"
-                            value={product.name}
-                            onChange={handleInputChange}
-                            required
-                            variant="outlined"
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    "& input": {
-                                        paddingY: "26px",
-                                    },
-                                },
-                            }}
-                        />
-                    </Grid>
-
-                    {/* Giá */}
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            label="Giá"
-                            name="price"
-                            type="number"
-                            InputProps={{ inputProps: { min: 0 } }}
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    "& input": {
-                                        paddingY: "26px",
-                                    },
-                                },
-                            }}
-                            value={product.price}
-                            onChange={handleInputChange}
-                            required
-                            variant="outlined"
-                        />
-                    </Grid>
-
-                    {/* Danh mục */}
-                    <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Danh mục</InputLabel>
-                            <Select
-                                name="category"
-                                value={product.category}
-                                onChange={handleInputChange}
-                                label="Danh mục"
-                                required
-                            >
-                                {categories.map((cat) => (
-                                    <MenuItem key={cat} value={cat}>
-                                        {cat}
-                                    </MenuItem>
-                                ))}
-                                <MenuItem value="add_new" onClick={() => setOpenCategoryDialog(true)}>
-                                    + Thêm danh mục mới
-                                </MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    {/* Nhà cung cấp */}
-                    <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Nhà cung cấp</InputLabel>
-                            <Select
-                                name="supplier"
-                                value={product.supplier}
-                                onChange={handleInputChange}
-                                label="Nhà cung cấp"
-                                required
-                            >
-                                {suppliers.map((sup) => (
-                                    <MenuItem key={sup} value={sup}>
-                                        {sup}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    {/* Màu sắc */}
-                    <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Màu sắc</InputLabel>
-                            <Select
-                                name="color"
-                                value={product.colors}
-                                onChange={handleColorChange}
-                                label="Màu sắc"
-                                required
-                            >
-                                {colorsList.map((color) => (
-                                    <MenuItem key={color} value={color}>
-                                        {color}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    {/* Chọn ảnh và preview */}
-                    <Grid item xs={6}>
-                        <Box className="flex flex-col gap-4">
-                            <Button
-                                variant="outlined"
-                                component="label"
-                                className="w-fit"
-                                sx={{
-                                    backgroundColor: 'white',
-                                    fontSize: '16px',
-                                    '&:hover': {
-                                        backgroundColor: '#0068FF',
-                                        color: 'white',
-                                    },
-                                }}
-                            >
-                                Chọn ảnh
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    multiple
-                                    hidden
-                                    onChange={handleImageChange}
-                                />
-                            </Button>
-                            {product.images.length > 0 && (
-                                <Box className="mt-2">
-                                    <Typography variant="subtitle1">Preview:</Typography>
-                                    <Gallery
-                                        photos={photos}
-                                        renderImage={renderImage}
-                                        targetRowHeight={100}
-                                    />
-                                </Box>
-                            )}
-                        </Box>
-                    </Grid>
-
-                    {/* Thêm thông số kỹ thuật */}
-                    <Grid item xs={6}>
-                        <Box className="flex flex-col gap-4">
-                            <Button
-                                variant="outlined"
-                                onClick={() => setOpenSpecDialog(true)}
-                                className="w-fit"
-                                sx={{
-                                    backgroundColor: 'white',
-                                    fontSize: '16px',
-                                    '&:hover': {
-                                        backgroundColor: '#0068FF',
-                                        color: 'white',
-                                    },
-                                }}
-                            >
-                                Thêm thông số kỹ thuật
-                            </Button>
-                            {product.specifications.length > 0 && (
-                                <Box className="mt-2">
-                                    <Typography variant="subtitle1">Thông số kỹ thuật:</Typography>
-                                    <Box className="flex flex-wrap gap-2">
-                                        {product.specifications.map((spec, index) => (
-                                            <Chip
-                                                key={index}
-                                                label={`${spec.key}: ${spec.value}`}
-                                                onDelete={() => handleDeleteSpec(spec)}
-                                                color="default"
-                                                sx={{ marginRight: 1 }}
-                                            />
-                                        ))}
-                                    </Box>
-                                </Box>
-                            )}
-                        </Box>
-                    </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                    <MarkdownEditor
-                        value={product.description}
-                        onChange={(value) => setProduct({ ...product, description: value })}
+                    <ProductForm
+                        product={product}
+                        categories={categories}
+                        suppliers={suppliers}
+                        handleInputChange={handleInputChange}
+                        handleColorChange={handleColorChange}
+                        setOpenCategoryDialog={setOpenCategoryDialog}
+                    />
+                    <ColorVariantManager
+                        colors={product.colors}
+                        quantities={product.quantities}
+                        images={product.images}
+                        photos={photos}
+                        handleImageChange={handleImageChange}
+                        handleQuantityChange={handleQuantityChange}
+                        renderImage={renderImage}
+                        handleDeleteImage={handleDeleteImage}
+                    />
+                    <SpecificationManager
+                        specifications={product.specifications}
+                        handleDeleteSpec={handleDeleteSpec}
+                        setOpenSpecDialog={setOpenSpecDialog}
                     />
                 </Grid>
                 {/* Nút submit */}
-                <Box
-                    className="text-center"
-                    sx={{
-                        mt: 5,
-                    }}
-                >
-                    <Button
-                        type="submit"
-                        variant="outlined"
-                        color="primary"
-                        size="large"
-                        className="mt-4"
-                        sx={{
-                            backgroundColor: 'white',
-                            fontSize: '16px',
-                            '&:hover': {
-                                backgroundColor: '#0068FF',
-                                color: 'white',
-                            },
-                        }}
-                    >
-                        Lưu sản phẩm
-                    </Button>
-                </Box>
+                <Grid item xs={12}>
+                    <Box className="text-center" sx={{ mt: 5 }}>
+                        <Button
+                            type="submit"
+                            variant="outlined"
+                            color="primary"
+                            size="large"
+                            sx={{
+                                backgroundColor: 'white',
+                                fontSize: '16px',
+                                '&:hover': {
+                                    backgroundColor: '#0068FF',
+                                    color: 'white',
+                                },
+                            }}
+                        >
+                            Lưu sản phẩm
+                        </Button>
+                    </Box>
+                </Grid>
             </Box>
             <ProductList />
-            {/* Dialog thêm danh mục mới */}
-            <Dialog open={openCategoryDialog} onClose={() => setOpenCategoryDialog(false)}>
-                <DialogTitle>Thêm danh mục mới</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Tên danh mục"
-                        fullWidth
-                        value={newCategory}
-                        onChange={(e) => setNewCategory(e.target.value)}
-                        variant="outlined"
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& input": {
-                                    paddingY: "26px",
-                                },
-                            },
-                        }}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenCategoryDialog(false)}>Hủy</Button>
-                    <Button onClick={handleAddCategory} disabled={!newCategory}>
-                        Thêm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Dialog thêm thông số kỹ thuật */}
-            <Dialog open={openSpecDialog} onClose={() => setOpenSpecDialog(false)}>
-                <DialogTitle>Thêm thông số kỹ thuật</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Tên thông số"
-                        name="key"
-                        fullWidth
-                        value={newSpec.key}
-                        onChange={handleSpecChange}
-                        variant="outlined"
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& input": {
-                                    paddingY: "26px",
-                                },
-                            },
-                        }}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Giá trị"
-                        name="value"
-                        fullWidth
-                        value={newSpec.value}
-                        onChange={handleSpecChange}
-                        variant="outlined"
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& input": {
-                                    paddingY: "26px",
-                                },
-                            },
-                        }}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenSpecDialog(false)}>Hủy</Button>
-                    <Button onClick={handleAddSpec} disabled={!newSpec.key || !newSpec.value}>
-                        Thêm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Lightbox xem ảnh */}
-            <ModalGateway>
-                {isOpen ? (
-                    <Modal onClose={closeLightbox}>
-                        <Carousel
-                            currentIndex={currentImage}
-                            views={product.images.map((image) => ({ source: image }))}
-                        />
-                    </Modal>
-                ) : null}
-            </ModalGateway>
+            <CategoryDialog
+                open={openCategoryDialog}
+                newCategory={newCategory}
+                setNewCategory={setNewCategory}
+                handleAddCategory={handleAddCategory}
+                handleClose={() => setOpenCategoryDialog(false)}
+            />
+            <SpecificationDialog
+                open={openSpecDialog}
+                newSpec={newSpec}
+                handleSpecChange={handleSpecChange}
+                handleAddSpec={handleAddSpec}
+                handleClose={() => setOpenSpecDialog(false)}
+            />
+            <ImageLightbox
+                isOpen={isOpen}
+                currentImage={currentImage}
+                photos={photos}
+                closeLightbox={closeLightbox}
+            />
         </Container>
     );
 };
