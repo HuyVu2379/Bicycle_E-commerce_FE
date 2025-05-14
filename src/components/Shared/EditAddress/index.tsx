@@ -6,37 +6,74 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import AddressMap from "../AddressMap";
 import "./index.css";
-
-const center = [10.7769, 106.7009]; // Tọa độ trung tâm TP.HCM
+import useUser from "@/hook/api/useUser";
+import { enqueueSnackbar } from "notistack";
+import useAuth from "@/hook/api/useAuth";
+import { useEffect } from "react";
+const center = [10.7769, 106.7009];
 
 const EditAddressModal = ({ open, handleClose }: any) => {
+    const { handleEditAddress } = useUser();
+    const { me } = useAuth();
     const [addressFields, setAddressFields] = useState({
-        detail: "",
+        addressId: "",
+        userId: "",
+        fullAddress: "",
+        street: "",
         ward: "",
         district: "",
         city: "",
+        country: "Vietnam",
     });
+
+    // Đồng bộ addressFields khi me.address thay đổi
+    useEffect(() => {
+        if (me?.address) {
+            setAddressFields({
+                addressId: me.address.addressId || "",
+                userId: me.address.userId || "",
+                fullAddress: me.address.fullAddress || "",
+                street: me.address.street || "",
+                ward: me.address.ward || "",
+                district: me.address.district || "",
+                city: me.address.city || "",
+                country: me.address.country || "Vietnam",
+            });
+        }
+    }, [me?.address]);
     const [mapVisible, setMapVisible] = useState(false);
 
-    // Cập nhật các trường địa chỉ từ AddressMap
     const handleAddressChange = (addressData: any) => {
         if (addressData) {
-            setAddressFields(addressData);
+            console.log("EditAddressModal: Received addressData:", addressData);
+            setAddressFields((prev) => ({
+                ...prev,
+                fullAddress: addressData.fullAddress || prev.fullAddress,
+                street: addressData.street || prev.street,
+                ward: addressData.ward || prev.ward,
+                district: addressData.district || prev.district,
+                city: addressData.city || prev.city,
+                country: addressData.country || prev.country,
+            }));
         }
     };
 
-    // Xử lý cập nhật các trường địa chỉ
-    const handleFieldChange = (field: string, value: string) => {
+    const handleFieldChange = (field: any, value: any) => {
         setAddressFields((prev) => ({
             ...prev,
             [field]: value,
         }));
     };
 
-    const handleAddressSubmit = (event: any) => {
+    const handleAddressSubmit = async (event: any) => {
         event.preventDefault();
-        console.log("Cập nhật địa chỉ:", addressFields);
-        handleClose();
+        try {
+            await handleEditAddress(addressFields);
+            enqueueSnackbar("Cập nhật địa chỉ thành công!", { variant: "success" });
+            handleClose();
+        } catch (err: any) {
+            enqueueSnackbar("Lỗi khi cập nhật địa chỉ: " + err.message, { variant: "error" });
+        }
     };
 
     return (
@@ -71,8 +108,30 @@ const EditAddressModal = ({ open, handleClose }: any) => {
                 <Box component="form" onSubmit={handleAddressSubmit}>
                     <TextField
                         label="Địa chỉ chi tiết"
-                        value={addressFields.detail}
-                        onChange={(e) => handleFieldChange("detail", e.target.value)}
+                        value={addressFields.fullAddress}
+                        onChange={(e) => handleFieldChange("fullAddress", e.target.value)}
+                        fullWidth
+                        sx={{
+                            mb: 2,
+                            backgroundColor: "white",
+                            borderRadius: 1,
+                            "& .MuiInputLabel-root": {
+                                color: "black",
+                            },
+                            "& .MuiOutlinedInput-root": {
+                                "& input": {
+                                    paddingY: "20px",
+                                },
+                                "&.Mui-focused fieldset": {
+                                    borderColor: "blue",
+                                },
+                            },
+                        }}
+                    />
+                    <TextField
+                        label="Đường"
+                        value={addressFields.street}
+                        onChange={(e) => handleFieldChange("street", e.target.value)}
                         fullWidth
                         sx={{
                             mb: 2,

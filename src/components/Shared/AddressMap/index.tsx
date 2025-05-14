@@ -47,6 +47,7 @@ const AddressMap = ({ initialPosition, onAddressChange }: { initialPosition: num
                 city: address?.city || address?.state || "",
                 country: address?.country || "",
             };
+
             onAddressChange(addressData);
             return addressData;
         } catch (error) {
