@@ -20,6 +20,7 @@ import { Order, SpringPage } from "../../types/order";
 import { getOrdersByUserId } from "../../services/Order.service";
 import OrderRow from "../../components/Shared/Order"; 
 
+
 type OrderSortBy = "orderDate" | "totalPrice";
 type OrderSortDirection = "asc" | "desc";
 
@@ -39,7 +40,7 @@ const OrderHistoryPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10); 
 
   const [sortBy, setSortBy] = useState<OrderSortBy>("orderDate");
@@ -48,12 +49,15 @@ const OrderHistoryPage: React.FC = () => {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const response = await getOrdersByUserId(currentPage, rowsPerPage, sortBy, sortDirection);
-
-    if (response && response.success && response.data) {
-      setOrdersPage(response.data);
+    console.log("Fetching orders with params:", {currentPage, rowsPerPage, sortBy, sortDirection});
+    const receivedOrdersPage = await getOrdersByUserId(currentPage, rowsPerPage, sortBy, sortDirection);
+    console.log("Response from service in order page", receivedOrdersPage);
+    
+    if (receivedOrdersPage && receivedOrdersPage.success && receivedOrdersPage.data && Array.isArray(receivedOrdersPage.data.content)) {
+      setOrdersPage(receivedOrdersPage.data);
+      console.log(receivedOrdersPage.data);
     } else {
-      setError(response.message || "An unknown error occurred.");
+      setError(receivedOrdersPage?.message ||"Lấy danh sách đơn hàng thất bại hoặc dữ liệu không đúng định dạng.");
       setOrdersPage(null);
     }
     setLoading(false);
@@ -98,7 +102,7 @@ const OrderHistoryPage: React.FC = () => {
         Lịch sử đơn hàng
       </Typography>
       {loading && <CircularProgress size={24} sx={{ mb: 2, display: 'block', margin: 'auto' }} />}
-      {!loading && orders.length === 0 && !error && (
+      {ordersPage?.content.length === 0 && (
         <Typography sx={{ textAlign: 'center', mt: 3 }}>Bạn chưa có đơn hàng nào.</Typography>
       )}
       

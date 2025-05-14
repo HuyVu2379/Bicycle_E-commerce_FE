@@ -4,23 +4,28 @@ import { Order, OrdersPageResponse, SpringPage } from "../types/order";
 const api = "/api/v1/orders";
 
 export const getOrdersByUserId = async (
-    pageNo: number = 1,
+    pageNo: number = 0,
     pageSize: number = 10,
     sortBy: string = "orderDate",
     sortDirection: string = "desc"
 ): Promise<OrdersPageResponse> => {
     try {
         const url = `${api}/history-orders`;
-        const response = await axiosConfig.get<OrdersPageResponse>(url, {
+        console.log("Calling API:", url, { params: { pageNo, pageSize, sortBy, sortDirection } });
+        const response = await axiosConfig.get<SpringPage<Order>>(url, {
             params: {
                 pageNo,
                 pageSize,
                 sortBy,
                 sortDirection,
-
             }
         });
-        return response.data;
+        console.log("API response data:", response.data);
+        return {
+            success: true,
+            data: response.data,
+            message: "Lấy danh sách đơn hàng thành công"
+        };
     } catch (error) {
         console.error("Error fetching orders:", error);
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
