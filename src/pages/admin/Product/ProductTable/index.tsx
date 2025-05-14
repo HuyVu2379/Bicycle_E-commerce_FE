@@ -38,7 +38,7 @@ interface DataRow {
     status: "active" | "inactive";
 }
 
-const ProductList: React.FC = () => {
+const ProductTable: React.FC = () => {
     const [data, setData] = useState<DataRow[]>([]);
     const [selected, setSelected] = useState<number[]>([]);
     const [page, setPage] = useState(1);
@@ -368,4 +368,4 @@ const ProductList: React.FC = () => {
     );
 };
 
-export default ProductList;
+export default ProductTable

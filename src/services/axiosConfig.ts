@@ -91,7 +91,7 @@ axiosConfig.interceptors.response.use(
         if (!newToken) {
           setValueInLocalStorage("accessToken", "");
           setValueInLocalStorage("refreshToken", "");
-          // window.location.href = "/auth/login";
+          window.location.href = "/auth/login";
           processQueue(new Error('Failed to refresh token'));
           return Promise.reject(error);
         }

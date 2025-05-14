@@ -40,8 +40,9 @@ export const getAllSupplier = async () => {
 }
 export const createSpecifications = async (data: any) => {
     try {
-        const url = `${api_supplier}/create`;
+        const url = `${api_specification}/create`;
         const result = await axiosConfig.post(url, data);
+        console.log("check response: ", result);
         return result.data;
     } catch (error) {
         console.error("Error create specification:", error);

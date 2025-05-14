@@ -7,13 +7,14 @@ import SpecificationManager from '@/components/Admin/Product/SpecificationManage
 import CategoryDialog from '@/components/Admin/Product/CategoryDialog';
 import SpecificationDialog from '@/components/Admin/Product/SpecificationDialog';
 import ImageLightbox from '@/components/Admin/Product/ImageLightBox';
-import ProductList from './ProductTable';
+import ProductTable from '@/pages/admin/Product/ProductTable';
 import useProduct from '@/hook/api/useProduct';
 import { uploadMultipleImages } from '@/services/Upload.service';
 import { createProduct, bulkCreateInventory } from '@/services/Product.service';
 import { SelectChangeEvent } from '@mui/material';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import { useSnackbar } from 'notistack';
 
 export interface Specification {
     key: string;
@@ -43,7 +44,7 @@ export interface GalleryPhoto {
 export const colorsList = ['Blue', 'Red', 'Green', 'Yellow', 'Pink', 'Purple', 'Black', 'White', 'Brown', 'Orange'];
 
 const ProductManagement: React.FC = () => {
-    // Sử dụng useRef để theo dõi state mà không gây ra render
+    const { enqueueSnackbar } = useSnackbar();
     const productRef = useRef<Product>({
         name: '',
         description: '',
@@ -58,15 +59,14 @@ const ProductManagement: React.FC = () => {
     });
 
     const imageFilesRef = useRef<{ [color: string]: File[] }>({});
-
     const [product, setProduct] = useState<Product>(productRef.current);
     const [imageFiles, setImageFiles] = useState<{ [color: string]: File[] }>({});
-
-    const { handleFetchCategories, handleFetchSupplier, handleFetchPromotion, categories, suppliers, promotions } = useProduct();
+    const [submitting, setSubmitting] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [dataFetched, setDataFetched] = useState<boolean>(false);
 
-    // Cập nhật ref khi state thay đổi
+    const { handleFetchCategories, handleFetchSupplier, handleFetchPromotion, categories, suppliers, promotions, handleCreateSpecifications } = useProduct();
+
     useEffect(() => {
         productRef.current = product;
     }, [product]);
@@ -86,14 +86,15 @@ const ProductManagement: React.FC = () => {
                     handleFetchPromotion(),
                 ]);
                 setDataFetched(true);
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Lỗi khi lấy dữ liệu:', error);
+                enqueueSnackbar(`Lỗi khi lấy dữ liệu: ${error.message || 'Không xác định'}`, { variant: 'error' });
             } finally {
                 setLoading(false);
             }
         };
         fetchData();
-    }, [handleFetchCategories, handleFetchSupplier, handleFetchPromotion, dataFetched]);
+    }, [dataFetched]);
 
     const [newCategory, setNewCategory] = useState<string>('');
     const [openCategoryDialog, setOpenCategoryDialog] = useState<boolean>(false);
@@ -106,12 +107,15 @@ const ProductManagement: React.FC = () => {
     const handleInputChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent<string>) => {
             const { name, value } = e.target;
-            setProduct((prev) => ({ ...prev, [name as string]: value }));
+            setProduct((prev) => {
+                const updatedProduct = { ...prev, [name as string]: value };
+                console.log('check product from ProductManagement:', updatedProduct);
+                return updatedProduct;
+            });
         },
         []
     );
 
-    // Sử dụng ref thay vì state trong các callback để tránh re-render
     const handleColorChange = useCallback((e: SelectChangeEvent<string[]>) => {
         const selectedColors = e.target.value as string[];
         const currentProduct = productRef.current;
@@ -134,7 +138,7 @@ const ProductManagement: React.FC = () => {
             ...prev,
             colors: selectedColors,
             images: updatedImages,
-            quantities: updatedQuantities
+            quantities: updatedQuantities,
         }));
 
         setImageFiles(updatedImageFiles);
@@ -182,7 +186,6 @@ const ProductManagement: React.FC = () => {
 
     const handleDeleteImage = useCallback(
         (color: string, image: string) => {
-            // Sử dụng ref để truy cập giá trị mới nhất
             const currentProduct = productRef.current;
             const currentImageFiles = imageFilesRef.current;
 
@@ -212,13 +215,20 @@ const ProductManagement: React.FC = () => {
             setProduct((prev) => ({ ...prev, categoryId: newCategory }));
             setNewCategory('');
             setOpenCategoryDialog(false);
+            enqueueSnackbar('Thêm danh mục mới thành công', { variant: 'success' });
+        } else {
+            enqueueSnackbar('Danh mục đã tồn tại hoặc không hợp lệ', { variant: 'error' });
         }
-    }, [newCategory, categories]);
+    }, [newCategory, categories, enqueueSnackbar]);
 
-    const handleAddPromotion = useCallback((promotionId: string) => {
-        setProduct((prev) => ({ ...prev, promotionId }));
-        setOpenPromotionDialog(false);
-    }, []);
+    const handleAddPromotion = useCallback(
+        (promotionId: string) => {
+            setProduct((prev) => ({ ...prev, promotionId }));
+            setOpenPromotionDialog(false);
+            enqueueSnackbar('Chọn khuyến mãi thành công', { variant: 'success' });
+        },
+        [enqueueSnackbar]
+    );
 
     const handleSpecChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -226,48 +236,55 @@ const ProductManagement: React.FC = () => {
     }, []);
 
     const handleAddSpec = useCallback(() => {
-        // Tạo bản sao của newSpec để tránh tham chiếu
         const specToAdd = { ...newSpec };
-
         if (specToAdd.key && specToAdd.value) {
             setProduct((prev) => ({
                 ...prev,
-                specifications: [...prev.specifications, specToAdd]
+                specifications: [...prev.specifications, specToAdd],
             }));
             setNewSpec({ key: '', value: '' });
             setOpenSpecDialog(false);
+            enqueueSnackbar('Thêm thông số kỹ thuật thành công', { variant: 'success' });
+        } else {
+            enqueueSnackbar('Thông số kỹ thuật không hợp lệ', { variant: 'error' });
         }
-    }, [newSpec]);
+    }, [newSpec, enqueueSnackbar]);
 
-    const handleDeleteSpec = useCallback((specToDelete: Specification) => {
-        setProduct((prev) => ({
-            ...prev,
-            specifications: prev.specifications.filter(
-                (spec) => spec.key !== specToDelete.key || spec.value !== specToDelete.value
-            ),
-        }));
-    }, []);
+    const handleDeleteSpec = useCallback(
+        (specToDelete: Specification) => {
+            setProduct((prev) => ({
+                ...prev,
+                specifications: prev.specifications.filter((spec) => spec.key !== specToDelete.key || spec.value !== specToDelete.value),
+            })),
+                enqueueSnackbar('Xóa thông số kỹ thuật thành công', { variant: 'success' });
+        },
+        [enqueueSnackbar]
+    );
 
     const handleSubmit = useCallback(
         async (e: React.FormEvent) => {
             e.preventDefault();
+            setSubmitting(true);
+            enqueueSnackbar('Bắt đầu tạo sản phẩm...', { variant: 'info' });
 
-            // Sử dụng ref để truy cập giá trị mới nhất
             const currentProduct = productRef.current;
             const currentImageFiles = imageFilesRef.current;
 
-            const missingQuantities = currentProduct.colors.filter(
-                (color) => !currentProduct.quantities[color] && currentProduct.quantities[color] !== 0
-            );
-
-            if (missingQuantities.length > 0) {
-                alert(`Vui lòng nhập số lượng cho các màu: ${missingQuantities.join(', ')}`);
-                return;
-            }
-
             try {
+                const missingQuantities = currentProduct.colors.filter(
+                    (color) => !currentProduct.quantities[color] && currentProduct.quantities[color] !== 0
+                );
+                if (missingQuantities.length > 0) {
+                    enqueueSnackbar(`Vui lòng nhập số lượng cho các màu: ${missingQuantities.join(', ')}`, { variant: 'error' });
+                    setSubmitting(false);
+                    return;
+                }
+
+                enqueueSnackbar('Đang chuyển đổi mô tả sản phẩm...', { variant: 'info' });
                 const parsedDescription = await marked.parse(currentProduct.description);
                 const descriptionHtml = DOMPurify.sanitize(parsedDescription);
+
+                enqueueSnackbar('Đang tạo sản phẩm...', { variant: 'info' });
                 const productData = {
                     name: currentProduct.name,
                     description: descriptionHtml,
@@ -277,22 +294,21 @@ const ProductManagement: React.FC = () => {
                     supplierId: currentProduct.supplierId,
                 };
                 const createdProduct = await createProduct(productData);
-                console.log("check createdProduct", createdProduct);
-
                 const productId = createdProduct.productId;
 
+                enqueueSnackbar('Đang tải ảnh sản phẩm...', { variant: 'info' });
                 const uploadedImages: { [color: string]: string[] } = {};
                 for (const color of currentProduct.colors) {
                     const files = currentImageFiles[color] || [];
                     if (files.length > 0) {
                         const serverUrls = await uploadMultipleImages(files);
-                        console.log('Đã tải lên hình ảnh:', serverUrls);
                         uploadedImages[color] = serverUrls.imageUrls;
                     } else {
                         uploadedImages[color] = [];
                     }
                 }
 
+                enqueueSnackbar('Đang tạo kho sản phẩm...', { variant: 'info' });
                 const inventories = currentProduct.colors.map((color) => ({
                     productId,
                     importDate: new Date().toISOString(),
@@ -300,18 +316,21 @@ const ProductManagement: React.FC = () => {
                     quantity: currentProduct.quantities[color] || 0,
                     imageUrls: uploadedImages[color],
                 }));
-                console.log('inventories', inventories);
+                await bulkCreateInventory(inventories);
 
-                const inventotyCreated = await bulkCreateInventory(inventories);
-                console.log('Kho đã tạo:', inventotyCreated);
+                enqueueSnackbar('Đang thêm thông số kỹ thuật...', { variant: 'info' });
+                const specificationsData = currentProduct.specifications.map((spec) => ({
+                    productId,
+                    key: spec.key,
+                    value: spec.value,
+                }));
+                await handleCreateSpecifications(specificationsData);
 
-                alert('Sản phẩm và kho đã được lưu!');
+                enqueueSnackbar('Tạo sản phẩm thành công!', { variant: 'success' });
 
-                // Clean up object URLs
                 Object.values(currentProduct.images).forEach((images) => {
                     images.forEach((image) => URL.revokeObjectURL(image));
                 });
-
                 const resetProduct = {
                     name: '',
                     description: '',
@@ -324,15 +343,16 @@ const ProductManagement: React.FC = () => {
                     quantities: {},
                     specifications: [],
                 };
-
                 setProduct(resetProduct);
                 setImageFiles({});
-            } catch (error) {
-                console.error('Lỗi khi tạo sản phẩm hoặc kho:', error);
-                alert('Đã xảy ra lỗi khi lưu sản phẩm. Vui lòng thử lại.');
+            } catch (error: any) {
+                console.error('Lỗi khi tạo sản phẩm:', error);
+                enqueueSnackbar(`Đã xảy ra lỗi khi tạo sản phẩm: ${error.message || 'Không xác định'}`, { variant: 'error' });
+            } finally {
+                setSubmitting(false);
             }
         },
-        [] // Không có dependencies vì chúng ta sử dụng ref
+        [enqueueSnackbar, handleCreateSpecifications]
     );
 
     const openLightbox = useCallback((event: React.MouseEvent, { index }: { index: number }) => {
@@ -390,7 +410,7 @@ const ProductManagement: React.FC = () => {
                 </IconButton>
             </Box>
         ),
-        [openLightbox, handleDeleteImage] // Chỉ phụ thuộc vào hàm callback
+        [openLightbox, handleDeleteImage]
     );
 
     if (loading) {
@@ -440,6 +460,7 @@ const ProductManagement: React.FC = () => {
                             variant="outlined"
                             color="primary"
                             size="large"
+                            disabled={submitting}
                             sx={{
                                 backgroundColor: 'white',
                                 fontSize: '16px',
@@ -449,12 +470,12 @@ const ProductManagement: React.FC = () => {
                                 },
                             }}
                         >
-                            Lưu sản phẩm
+                            {submitting ? <CircularProgress size={24} /> : 'Lưu sản phẩm'}
                         </Button>
                     </Box>
                 </Grid>
             </Box>
-            <ProductList />
+            <ProductTable />
             <CategoryDialog
                 open={openCategoryDialog}
                 newCategory={newCategory}
