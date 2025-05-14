@@ -1,5 +1,5 @@
 import {  useState } from 'react';
-import {getProductById, getSpecifications, getAllReviews} from '@/services/ProductDetail.Service';
+import {getProductById, getSpecifications, getAllReviews, sendReview} from '@/services/ProductDetail.Service';
 
 interface CategoryType {
     categoryId: string;
@@ -68,7 +68,7 @@ interface ReviewType {
 
 function useProductDetail() {
     const [specifications, setSpecifications] = useState<SpecificationType[]>([]);
-    const [reviews, setReviews] = useState<ReviewType[]>([]);
+    const [reviewsData, setReviewsData] = useState<ReviewType[]>([]);
     const [productInfo, setProductInfo] = useState<ProductType | null>(null);
 
     const fetchProduct = async (productId: string) => {
@@ -97,20 +97,32 @@ function useProductDetail() {
         try {
             const res = await getAllReviews(productId);
             if (res.data) {
-                setReviews(res.data);
+                setReviewsData(res.data);
             }
         } catch (error) {
             console.error('Failed to fetch reviews:', error);
         }
     };
 
+    const handleSendReview = async (data: any) => {
+        try {
+            if (typeof data.userId === "string") {
+                data.userId = data.userId.replace(/"/g, "");
+            }
+            await sendReview(data);
+        } catch (error) {
+            console.error('Failed to send review:', error);
+        }
+    };
+
     return{
         productInfo,
         specifications,
-        reviews,
+        reviewsData,
         fetchProduct,
         fetchSpecifications,
-        fetchReviews
+        fetchReviews,
+        handleSendReview
     };
 };
 
