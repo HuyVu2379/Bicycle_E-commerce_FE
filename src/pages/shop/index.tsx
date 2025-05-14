@@ -94,8 +94,9 @@ export default function ShopTemplate() {
   const [filteredProducts, setFilteredProducts] = useState(sampleProducts);
   const {
     handleFetchProducts,
+    products
   } = useProduct();
-
+  console.log(products);
   useEffect(()=>{
     handleFetchProducts();
   },[handleFetchProducts]);

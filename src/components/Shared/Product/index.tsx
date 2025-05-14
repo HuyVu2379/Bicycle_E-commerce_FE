@@ -4,11 +4,16 @@ import { styled } from "@mui/system";
 import VanillaTilt from "vanilla-tilt";
 
 interface Product {
+  productId: string;
   name: string;
-  type: string;
-  originalPrice: number;
-  discountedPrice: number;
-  imageUrl: string;
+  categoryId: string;
+  supplierId: string;
+  description: string;
+  price: number;
+  priceReduced: number;
+  promotionId: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface ProductComponentProps extends Product {}
