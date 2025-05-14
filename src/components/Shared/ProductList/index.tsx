@@ -5,6 +5,7 @@ import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
 
 interface Product {
+  productId: string;
   name: string;
   type: string;
   originalPrice?: number;
@@ -60,7 +61,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
       <Grid container justifyContent="center" sx={{ padding: "0 32px" }}>
         {products.map((product, index) => (
           <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
-            <Link sx={{ width: "100%" }} to="/product/detail">
+            <Link sx={{ width: "100%" }} to={`/product/detail/${product.productId}`}>
               <ProductComponent {...product} />
             </Link>
           </Grid>
