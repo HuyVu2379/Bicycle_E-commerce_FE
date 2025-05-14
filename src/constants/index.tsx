@@ -8,6 +8,7 @@ export const APP_ROUTES = {
     LOGIN: "login",
     UPDATE_PASS: "profile/update-password",
     FORGOT: "forgot-password",
+    ORDER: "orders",
   },
   ADMIN: {
     PROMOTION: "promotions",
@@ -36,4 +37,6 @@ export const APP_ROUTES = {
   SHOP: "/shop",
   CART: "cart",
   ORDER: "/orders",
+  USER_ORDER_HISTORY: "/my-orders",
+
 } as const;

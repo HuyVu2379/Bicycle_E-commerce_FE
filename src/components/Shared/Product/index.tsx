@@ -2,16 +2,11 @@ import React, { useEffect, useRef } from "react";
 import { Card, CardContent, Typography, Button, Stack, Box } from "@mui/material";
 import { styled } from "@mui/system";
 import VanillaTilt from "vanilla-tilt";
+import { ProductResponse } from "../../../types/product";
 
-interface Product {
-  name: string;
-  type: string;
-  originalPrice: number;
-  discountedPrice: number;
-  imageUrl: string;
+interface ProductComponentProps {
+  product: ProductResponse;
 }
-
-interface ProductComponentProps extends Product {}
 
 const ProductCard = styled(Card)(({ theme }) => ({
   width: "100%",
@@ -65,11 +60,7 @@ const BikeImage = styled("img")(({ theme }) => ({
 }));
 
 const ProductComponent: React.FC<ProductComponentProps> = ({
-  name,
-  type,
-  originalPrice,
-  discountedPrice,
-  imageUrl,
+  product
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -83,7 +74,6 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
         scale: 1.03,
       });
     }
-
     return () => {
       if (cardRef.current && (cardRef.current as any).vanillaTilt) {
         (cardRef.current as any).vanillaTilt.destroy();
@@ -94,7 +84,7 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
   return (
     <ProductCard ref={cardRef}>
       <NewBadge>NEW</NewBadge>
-      <BikeImage src={imageUrl} alt={`${name} ${type} Bike`} />
+      <BikeImage src={product.image} alt={`${product.productName} Bike`} />
       <CardContent sx={{ padding: 2 }}>
         <Typography
           variant="h6"
@@ -102,10 +92,7 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
           gutterBottom
           sx={{ fontWeight: "bold" }}
         >
-          {name}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" gutterBottom>
-          {type}
+          {product.productName}
         </Typography>
         <Stack
           direction="row"
@@ -115,8 +102,8 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
           sx={{ paddingTop: 1 }}
         >
           <PriceStack>
-            <OriginalPrice>${originalPrice.toFixed(2)} USD</OriginalPrice>
-            <DiscountPrice>${discountedPrice.toFixed(2)} USD</DiscountPrice>
+            <OriginalPrice>${product.price?.toFixed(2)} USD</OriginalPrice>
+            <DiscountPrice>${product.priceReduced?.toFixed(2)} USD</DiscountPrice>
           </PriceStack>
           <Button
             variant="outlined"
