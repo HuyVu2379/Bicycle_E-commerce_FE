@@ -1,11 +1,11 @@
-import { setCategories, setSuppliers } from '@/store/slices/product.slice'
-import { getAllCategory, getAllSupplier } from "@/services/Product.service";
+import { setCategories, setPromotions, setSuppliers } from '@/store/slices/product.slice'
+import { getAllCategory, getAllSupplier, getAllPromotions } from "@/services/Product.service";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 function useProduct() {
     const dispatch = useDispatch();
     const productStore = useSelector((state: RootState) => state.productSlice);
-    const { categories, suppliers } = productStore
+    const { categories, suppliers, promotions } = productStore
     const handleFetchCategories = async () => {
         const response = await getAllCategory();
         dispatch(setCategories(response.data))
@@ -14,8 +14,12 @@ function useProduct() {
         const response = await getAllSupplier();
         dispatch(setSuppliers(response.data));
     }
+    const handleFetchPromotion = async () => {
+        const response = await getAllPromotions();
+        dispatch(setPromotions(response));
+    }
 
-    return { handleFetchCategories, handleFetchSupplier, categories, suppliers };
+    return { handleFetchCategories, handleFetchSupplier, categories, suppliers, handleFetchPromotion, promotions };
 }
 
 export default useProduct;

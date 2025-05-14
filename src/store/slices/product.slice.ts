@@ -13,14 +13,28 @@ interface Supplier {
     email: string,
     description: string,
 }
+interface Promotion {
+    createdAt: Date,
+    updatedAt: Date,
+    promotionId: string,
+    name: string,
+    reducePercent: number,
+    startDate: Date,
+    endDate: Date,
+    limitValue: number,
+    applyFor: string,
+    active: boolean
+}
 export interface InitStateType {
     categories: Partial<Category>[]
     suppliers: Partial<Supplier>[]
+    promotions: Partial<Promotion>[]
 }
 
 const initState: InitStateType = {
     categories: [],
-    suppliers: []
+    suppliers: [],
+    promotions: []
 };
 
 
@@ -33,12 +47,16 @@ export const useProduct = createSlice({
         },
         setSuppliers: (state: InitStateType, { payload }: PayloadAction<any>) => {
             state.suppliers = payload
+        },
+        setPromotions: (state: InitStateType, { payload }: PayloadAction<any>) => {
+            state.promotions = payload
         }
     },
 });
 export const {
     setCategories,
-    setSuppliers
+    setSuppliers,
+    setPromotions
 } = useProduct.actions;
 
 export default useProduct.reducer;
