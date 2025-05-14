@@ -62,7 +62,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
         {products.map((product, index) => (
           <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
             <Link sx={{ width: "100%" }} to={`/product/detail/${product.productId}`}>
-              <ProductComponent {...product} />
+              <ProductComponent product={product} />
             </Link>
           </Grid>
         ))}
