@@ -13,23 +13,26 @@ import PaymentTemplate from "@/pages/Payment/index";
 import AboutLayout from "@/layouts/AboutLayout";
 import AboutTemplate from "@/pages/About/index";
 import ContactLayout from "@/layouts/ContactLayout";
-import ContactTemplate from "@/pages/Contact/index";
+import ContactTemplate from "@/pages/contact";
 import ProductDetailLayout from "@/layouts/ProductDetailLayout";
 import ProductDetailTemplate from "@/pages/ProductDetail/index";
 import NewsLayout from "@/layouts/NewsLayout";
-import NewsTemplate from "@/pages/News";
-import NewsDetailsTemplate from "@/pages/News/NewsDetail";
+import NewsTemplate from "@/pages/news";
+import NewsDetailsTemplate from "@/pages/news/NewsDetail";
 import ShopLayout from "@/layouts/ShopLayout";
-import ShopTemplate from "@/pages/Shop";
+import ShopTemplate from "@/pages/shop";
 import NotFoundPage from "@/pages/404/index";
 import { APP_ROUTES } from "@/constants";
 import AdminLayout from "@/layouts/Admin/AdminLayout";
 import Dashboard from "@/pages/Admin/Dashboard";
 import PromotionTemplate from "@/pages/Admin/Promotion";
 import OrderList from "@/pages/Admin/Order";
+import OrderHistory from "@/pages/Order";
 import SupplierList from "@/components/Shared/SupplierList";
-import StatisticTemplate from "@/pages/Admin/Statistics";
+import StatisticTemplate from "@/pages/admin/Statistics";
 import ProductManagement from "@/pages/Admin/Product";
+import OrderLayout from "@/layouts/OrderLayout";
+import OrderHistoryPage from "@/pages/Order";
 const router = createBrowserRouter([
   // Redirect root to dashboard
   {
@@ -75,8 +78,16 @@ const router = createBrowserRouter([
     Component: HomeLayout,
     children: [
       { path: "", Component: HomeTemplate },
-      { path: APP_ROUTES.CART, Component: CheckoutPage }, // Use constant
+      { path: APP_ROUTES.CART, Component: CheckoutPage }
     ],
+  },
+
+  {
+    path: APP_ROUTES.USER_ORDER_HISTORY,
+    Component: OrderLayout,
+    children: [
+      { path: "", Component: OrderHistoryPage }
+    ]
   },
 
   // Service Route

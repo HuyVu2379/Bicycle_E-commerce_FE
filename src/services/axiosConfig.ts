@@ -8,7 +8,11 @@ const axiosConfig = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  validateStatus: function (status) {
+    return (status >= 200 && status < 300) || status === 302; // Chấp nhận status 2xx hoặc 302
+  },
 });
+
 
 let isRefreshing = false;
 let failedQueue: {
