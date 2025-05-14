@@ -34,6 +34,6 @@
   CONTACT: "/contact",
   NEWS: "/news",
   SHOP: "/shop",
-  CART: "cart",
+  CART: "/cart",
   ORDER: "/orders",
 } as const;

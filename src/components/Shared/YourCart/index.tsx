@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
-import PayPalLogo from '/assets/images/logo-paypal.png';
+import PayPalLogo from "/assets/images/logo-paypal.png";
 
 const sampleCartItem = {
   name: "Giant Defy Advanced",

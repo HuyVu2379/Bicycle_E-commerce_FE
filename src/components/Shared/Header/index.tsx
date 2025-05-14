@@ -71,10 +71,10 @@ const Header: React.FC = () => {
             <Link to="/auth/profile" className="icons">
               <ImProfile className="icon" />
             </Link>
-            <div className="cart icons">
+            <Link to="/cart" className="cart icons">
               <FaShoppingCart className="icon" />
               <span className="cart-badge">4</span>
-            </div>
+            </Link>
             {accessToken ? (< Link to="/auth/login" onClick={handleLogout} className="logout">
               Logout
             </Link>)
