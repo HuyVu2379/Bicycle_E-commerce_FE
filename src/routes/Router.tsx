@@ -24,12 +24,15 @@ import ShopTemplate from "@/pages/shop";
 import NotFoundPage from "@/pages/404/index";
 import { APP_ROUTES } from "@/constants";
 import AdminLayout from "@/layouts/Admin/AdminLayout";
-import Dashboard from "@/pages/admin/Dashboard";
-import PromotionTemplate from "@/pages/admin/Promotion";
-import OrderList from "@/pages/admin/Order";
+import Dashboard from "@/pages/Admin/Dashboard";
+import PromotionTemplate from "@/pages/Admin/Promotion";
+import OrderList from "@/pages/Admin/Order";
+import OrderHistory from "@/pages/Order";
 import SupplierList from "@/components/Shared/SupplierList";
 import StatisticTemplate from "@/pages/admin/Statistics";
 import ProductManagement from "@/pages/Admin/Product";
+import OrderLayout from "@/layouts/OrderLayout";
+import OrderHistoryPage from "@/pages/Order";
 const router = createBrowserRouter([
   // Redirect root to dashboard
   {
@@ -75,8 +78,16 @@ const router = createBrowserRouter([
     Component: HomeLayout,
     children: [
       { path: "", Component: HomeTemplate },
-      { path: APP_ROUTES.CART, Component: CheckoutPage }, // Use constant
+      { path: APP_ROUTES.CART, Component: CheckoutPage }
     ],
+  },
+
+  {
+    path: APP_ROUTES.USER_ORDER_HISTORY,
+    Component: OrderLayout,
+    children: [
+      { path: "", Component: OrderHistoryPage }
+    ]
   },
 
   // Service Route
