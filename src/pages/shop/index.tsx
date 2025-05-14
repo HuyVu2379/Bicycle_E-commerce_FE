@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductList from "@/components/Shared/ProductList/index";
 import AdvertisementSection from "@/components/Shared/Advertisement/index";
 import Service from "@/components/Shared/Service/index";
 import { Box, Grid } from "@mui/material";
 import FilterSidebar from "@/components/Shared/SideBar/index";
+import useProduct from "@/hook/api/useProduct";
 
 const sampleProducts = [
   {
@@ -89,10 +90,15 @@ const sampleProducts = [
   },
 ];
 
-
 export default function ShopTemplate() {
   const [filteredProducts, setFilteredProducts] = useState(sampleProducts);
+  const {
+    handleFetchProducts,
+  } = useProduct();
 
+  useEffect(()=>{
+    handleFetchProducts();
+  },[handleFetchProducts]);
   return (
     <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mt: 4 }}>
       <Grid container spacing={4} sx={{ maxWidth: '1400px' }}>
