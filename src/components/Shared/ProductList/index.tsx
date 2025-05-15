@@ -3,18 +3,10 @@ import { Grid, Box, Typography, Button } from "@mui/material";
 import ProductComponent from "../Product/index";
 import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
-
-interface Product {
-  productId: string;
-  name: string;
-  type: string;
-  originalPrice?: number;
-  discountedPrice?: number;
-  imageUrl: string;
-}
+import { ProductResponse } from "@/types/product";
 
 interface ProductListProps {
-  products: Product[];
+  products: ProductResponse[];
 }
 
 const HeaderContainer = styled(Box)({
