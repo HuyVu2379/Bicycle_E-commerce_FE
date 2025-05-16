@@ -3,18 +3,10 @@ import { Grid, Box, Typography, Button } from "@mui/material";
 import ProductComponent from "../Product/index";
 import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
-
-interface Product {
-  productId: string;
-  name: string;
-  type: string;
-  originalPrice?: number;
-  discountedPrice?: number;
-  imageUrl: string;
-}
+import { ProductResponse } from "@/types/product";
 
 interface ProductListProps {
-  products: Product[];
+  products: ProductResponse[];
 }
 
 const HeaderContainer = styled(Box)({
@@ -61,7 +53,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
       <Grid container justifyContent="center" sx={{ padding: "0 32px" }}>
         {products.map((product, index) => (
           <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
-            <Link sx={{ width: "100%" }} to={`/product/detail/${product.productId}`}>
+            <Link style={{ textDecoration: 'none' }} to={`/product/detail/${product.productId}`}>
               <ProductComponent product={product} />
             </Link>
           </Grid>
@@ -71,4 +63,4 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
   );
 };
 
-export default ProductList;
+export default ProductList; 
