@@ -11,8 +11,8 @@ const Header: React.FC = () => {
   const { handleLogout } = useAuth();
   const [showShopDropdown, setShowShopDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { accessToken } = localStorage;
   const { cartItemCount } = useCart();
+  const accessToken = getValueFromLocalStorage("accessToken");
 
   return (
     <header className="header">
