@@ -12,7 +12,7 @@ interface MessageResponse<T> {
 
 export const getAllProduct = async (): Promise<MessageResponse<ProductResponse[]>> => {
     try {
-        const url = `${api}/public/getAllProduct`;
+        const url = `${api}/public/getProductForHome`;
         const response = await axiosConfig.get<MessageResponse<ProductResponse[]>>(url) as unknown as MessageResponse<ProductResponse[]>;
 
         return response;
