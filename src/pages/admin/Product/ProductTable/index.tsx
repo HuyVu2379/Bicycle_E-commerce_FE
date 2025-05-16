@@ -38,7 +38,7 @@ interface DataRow {
     status: "active" | "inactive";
 }
 
-const ProductList: React.FC = () => {
+const ProductTable: React.FC = () => {
     const [data, setData] = useState<DataRow[]>([]);
     const [selected, setSelected] = useState<number[]>([]);
     const [page, setPage] = useState(1);
@@ -69,7 +69,7 @@ const ProductList: React.FC = () => {
                     status: item.product.status || "active"
                 }));
                 setData(mappedData);
-                setTotalPages(response.data.totalPages || 1);
+                setTotalPages(response.data.page.totalPages || 1);
             } else if (response.status === 204) {
                 setData([]);
                 setTotalPages(0);
@@ -209,21 +209,6 @@ const ProductList: React.FC = () => {
                         </FormControl>
 
                         <FormControl size="small" sx={{ minWidth: 150, mr: 2 }}>
-                            <InputLabel id="filter-label">Tình trạng</InputLabel>
-                            <Select
-                                labelId="filter-label"
-                                id="filter-select"
-                                value={tempStatusFilter}
-                                label="Tình trạng"
-                                onChange={handleTempStatusFilterChange}
-                            >
-                                <MenuItem value="all">Tất cả</MenuItem>
-                                <MenuItem value="active">Đang hoạt động</MenuItem>
-                                <MenuItem value="inactive">Không hoạt động</MenuItem>
-                            </Select>
-                        </FormControl>
-
-                        <FormControl size="small" sx={{ minWidth: 150, mr: 2 }}>
                             <InputLabel id="sort-label">Sắp xếp theo</InputLabel>
                             <Select
                                 labelId="sort-label"
@@ -234,7 +219,9 @@ const ProductList: React.FC = () => {
                             >
                                 <MenuItem value="name">Tên</MenuItem>
                                 <MenuItem value="price">Giá</MenuItem>
-                                <MenuItem value="quantity">Số lượng</MenuItem>
+                                <MenuItem value="inventory.quantity">Số lượng</MenuItem>
+                                <MenuItem value="category.name">Danh mục</MenuItem>
+                                <MenuItem value="supplier.name">Nhà cung cấp</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -381,4 +368,4 @@ const ProductList: React.FC = () => {
     );
 };
 
-export default ProductList;
+export default ProductTable

@@ -1,34 +1,19 @@
 import React, { useState } from 'react';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TextField,
-  Pagination,
-  Box,
-  InputAdornment,
-  IconButton,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  DialogContentText
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Paper, TextField, Pagination, Box, InputAdornment, IconButton,
+  Select, MenuItem, FormControl, InputLabel, Button,
+  Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddressMap from "../AddressMap";
+import useSupplier from '@/hook/api/useSupplier';
 
 interface AddressType {
+  fullAddress: string;
   city: string;
   district: string;
   street: string;
@@ -45,98 +30,108 @@ interface SupplierType {
   address: AddressType;
 }
 
-const suppliers = {
-  "statusCode": 200,
-  "message": "Suppliers retrieved successfully",
-  "success": true,
-  "data": {
-    "content": [
-      {
-        "supplierId": "67e22228907a031f3b32f442",
-        "name": "ABC Supplies",
-        "phone": "0123456789",
-        "email": "contact@abc.com",
-        "description": "sell bike",
-        "address": {
-          "addressId": "69cb9927-45d2-49c1-b8b2-a3ec98b267db",
-          "city": "Ho Chi Minh",
-          "district": "Quan Go Vap",
-          "street": "12 Nguyen Van Bao",
-          "ward": "Phuong 4",
-          "country": "Viet Nam"
-        }
-      },
-      {
-        "supplierId": "67e22360907a031f3b32f447",
-        "name": "Thống Nhất",
-        "phone": "1111-2222-3334",
-        "email": "thongnhat@gmail.com",
-        "description": "vn bike",
-        "address": {
-          "addressId": "8b1d5675-2d74-48f0-8d50-ec2271286c8a",
-          "city": "Ho Chi Minh",
-          "district": "Huyen Binh Chanh",
-          "street": "Lien Ap 123",
-          "ward": "Vinh Loc B",
-          "country": "Viet Nam"
-        }
-      },
-      {
-        "supplierId": "680c30a20162751f7cbd88a5",
-        "name": "martin supplier",
-        "phone": "0123456789",
-        "email": "martin@gmail.com",
-        "description": "sell bike",
-        "address": {
-          "addressId": "9cbee659-0fb8-468e-b987-f93a9fc8e71a",
-          "city": "Ho Chi Minh",
-          "district": "Binh tan",
-          "street": "HL 2",
-          "ward": "Binh tri dong a",
-          "country": "Viet Nam"
-        }
-      }
-    ],
-    "pageable": {
-      "pageNumber": 0,
-      "pageSize": 10,
-      "sort": [
-        {
-          "direction": "DESC",
-          "property": "orderDate",
-          "ignoreCase": false,
-          "nullHandling": "NATIVE",
-          "ascending": false,
-          "descending": true
-        }
-      ],
-      "offset": 0,
-      "paged": true,
-      "unpaged": false
-    },
-    "last": true,
-    "totalElements": 3,
-    "totalPages": 1,
-    "size": 10,
-    "number": 0,
-    "sort": [
-      {
-        "direction": "DESC",
-        "property": "orderDate",
-        "ignoreCase": false,
-        "nullHandling": "NATIVE",
-        "ascending": false,
-        "descending": true
-      }
-    ],
-    "first": true,
-    "numberOfElements": 3,
-    "empty": false
-  }
-};
+// const suppliers = {
+//   "statusCode": 200,
+//   "message": "Suppliers retrieved successfully",
+//   "success": true,
+//   "data": {
+//     "content": [
+//       {
+//         "supplierId": "67e22228907a031f3b32f442",
+//         "name": "ABC Supplies",
+//         "phone": "0123456789",
+//         "email": "contact@abc.com",
+//         "description": "sell bike",
+//         "address": {
+//           "addressId": "69cb9927-45d2-49c1-b8b2-a3ec98b267db",
+//           "city": "Ho Chi Minh",
+//           "district": "Quan Go Vap",
+//           "street": "12 Nguyen Van Bao",
+//           "ward": "Phuong 4",
+//           "country": "Viet Nam"
+//         }
+//       },
+//       {
+//         "supplierId": "67e22360907a031f3b32f447",
+//         "name": "Thống Nhất",
+//         "phone": "1111-2222-3334",
+//         "email": "thongnhat@gmail.com",
+//         "description": "vn bike",
+//         "address": {
+//           "addressId": "8b1d5675-2d74-48f0-8d50-ec2271286c8a",
+//           "city": "Ho Chi Minh",
+//           "district": "Huyen Binh Chanh",
+//           "street": "Lien Ap 123",
+//           "ward": "Vinh Loc B",
+//           "country": "Viet Nam"
+//         }
+//       },
+//       {
+//         "supplierId": "680c30a20162751f7cbd88a5",
+//         "name": "martin supplier",
+//         "phone": "0123456789",
+//         "email": "martin@gmail.com",
+//         "description": "sell bike",
+//         "address": {
+//           "addressId": "9cbee659-0fb8-468e-b987-f93a9fc8e71a",
+//           "city": "Ho Chi Minh",
+//           "district": "Binh tan",
+//           "street": "HL 2",
+//           "ward": "Binh tri dong a",
+//           "country": "Viet Nam"
+//         }
+//       }
+//     ],
+//     "pageable": {
+//       "pageNumber": 0,
+//       "pageSize": 10,
+//       "sort": [
+//         {
+//           "direction": "DESC",
+//           "property": "orderDate",
+//           "ignoreCase": false,
+//           "nullHandling": "NATIVE",
+//           "ascending": false,
+//           "descending": true
+//         }
+//       ],
+//       "offset": 0,
+//       "paged": true,
+//       "unpaged": false
+//     },
+//     "last": true,
+//     "totalElements": 3,
+//     "totalPages": 1,
+//     "size": 10,
+//     "number": 0,
+//     "sort": [
+//       {
+//         "direction": "DESC",
+//         "property": "orderDate",
+//         "ignoreCase": false,
+//         "nullHandling": "NATIVE",
+//         "ascending": false,
+//         "descending": true
+//       }
+//     ],
+//     "first": true,
+//     "numberOfElements": 3,
+//     "empty": false
+//   }
+// };
 
 const SupplierList: React.FC = () => {
   const [page, setPage] = useState<number>(1);
+  const {
+    suppliers,
+    totalPages,
+    loading,
+    fetchSuppliers,
+    searchSupplier,
+    create,
+    update,
+    remove
+  } = useSupplier(page);
   const [searchType, setSearchType] = useState<'supplierId' | 'email'>('supplierId');
   const [searchInput, setSearchInput] = useState<string>('');
   const [openModal, setOpenModal] = useState(false);
@@ -149,6 +144,7 @@ const SupplierList: React.FC = () => {
     phone: '',
     description: '',
     address: {
+      fullAddress: '',
       city: '',
       district: '',
       street: '',
@@ -157,8 +153,38 @@ const SupplierList: React.FC = () => {
     }
   });
 
-  const handleSearch = () => {
-    // Xử lý tìm kiếm
+  const center = [10.7769, 106.7009]; // Tọa độ trung tâm TP.HCM
+
+  const [addressFields, setAddressFields] = useState({
+    fullAddress: "",
+    street: "",
+    ward: "",
+    district: "",
+    city: "",
+    country: "Viet Nam",
+  });
+  const [mapVisible, setMapVisible] = useState(false);
+
+  // Cập nhật các trường địa chỉ từ AddressMap
+  const handleAddressChange = (addressData: any) => {
+    if (addressData) {
+      setFormData(prev => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          ...addressData,
+          country: 'Viet Nam'
+        }
+      }));
+    }
+  };
+
+  // Xử lý cập nhật các trường địa chỉ
+  const handleFieldChange = (field: string, value: string) => {
+    setAddressFields((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const handleCreate = () => {
@@ -168,6 +194,7 @@ const SupplierList: React.FC = () => {
       phone: '',
       description: '',
       address: {
+        fullAddress: '',
         city: '',
         district: '',
         street: '',
@@ -180,11 +207,14 @@ const SupplierList: React.FC = () => {
   };
 
   const handleEdit = (supplier: SupplierType) => {
-    setSelectedSupplier(supplier);
     setFormData({
-      ...supplier,
+      name: supplier.name,
+      email: supplier.email,
+      phone: supplier.phone,
+      description: supplier.description,
       address: { ...supplier.address }
     });
+    setSelectedSupplier(supplier);
     setIsEditing(true);
     setOpenModal(true);
   };
@@ -194,15 +224,29 @@ const SupplierList: React.FC = () => {
     setOpenDeleteDialog(true);
   };
 
-  const handleSubmit = () => {
-    // Xử lý submit form
-    console.log(isEditing ? 'Update:' : 'Create:', formData);
+  const handleSearch = async () => {
+    if (searchInput.trim() === '') {
+      fetchSuppliers();
+    } else {
+      await searchSupplier(searchType, searchInput.trim());
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (isEditing && selectedSupplier) {
+      await update(selectedSupplier.supplierId, formData);
+    } else {
+      await create(formData);
+    }
+    fetchSuppliers();
     setOpenModal(false);
   };
 
-  const handleDeleteConfirm = () => {
-    // Xử lý xóa
-    console.log('Delete:', selectedSupplier?.supplierId);
+  const handleDeleteConfirm = async () => {
+    if (selectedSupplier) {
+      await remove(selectedSupplier.supplierId);
+      fetchSuppliers();
+    }
     setOpenDeleteDialog(false);
   };
 
@@ -264,7 +308,7 @@ const SupplierList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {suppliers.data.content.map((supplier, index) => (
+            {suppliers.map((supplier, index) => (
               <TableRow key={supplier.supplierId}>
                 <TableCell>{(page - 1) * 10 + index + 1}</TableCell>
                 <TableCell>{supplier.supplierId}</TableCell>
@@ -272,9 +316,10 @@ const SupplierList: React.FC = () => {
                 <TableCell>{supplier.email}</TableCell>
                 <TableCell>{supplier.phone}</TableCell>
                 <TableCell>{supplier.description}</TableCell>
-                <TableCell>
+                {/* <TableCell>
                   {`${supplier.address.street}, ${supplier.address.ward}, ${supplier.address.district}, ${supplier.address.city}`}
-                </TableCell>
+                </TableCell> */}
+                <TableCell>{supplier.address.fullAddress}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleEdit(supplier)}>
                     <EditIcon color="primary" />
@@ -290,12 +335,12 @@ const SupplierList: React.FC = () => {
       </TableContainer>
 
       {/* Phân trang */}
-      <Pagination
-        count={suppliers.data.totalPages}
+      {totalPages > 1 && (<Pagination
+        count={totalPages}
         page={page}
         onChange={(_, newPage) => setPage(newPage)}
         sx={{ display: 'flex', justifyContent: 'center' }}
-      />
+      />)}
 
       {/* Modal tạo/cập nhật */}
       <Dialog open={openModal} onClose={() => setOpenModal(false)}>
@@ -333,27 +378,39 @@ const SupplierList: React.FC = () => {
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
+
+          {/* map */}
+          <Button
+            variant="outlined"
+            onClick={() => setMapVisible(!mapVisible)}
+            fullWidth
+            sx={{
+              mb: 2,
+              textTransform: "none",
+              borderRadius: "8px",
+              fontWeight: "bold",
+            }}
+          >
+            {mapVisible ? "Ẩn bản đồ" : "Mở bản đồ để chọn địa chỉ"}
+          </Button>
+          {mapVisible && (
+            <AddressMap
+              initialPosition={center}
+              onAddressChange={handleAddressChange}
+            />
+          )}
+
           <TextField
             sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
             margin="dense"
-            label="City"
+            label="fullAddress"
             fullWidth
-            value={formData.address.city}
-            onChange={(e) => setFormData({
-              ...formData,
-              address: { ...formData.address, city: e.target.value }
-            })}
-          />
-          <TextField
-            sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
-            margin="dense"
-            label="District"
-            fullWidth
-            value={formData.address.district}
-            onChange={(e) => setFormData({
-              ...formData,
-              address: { ...formData.address, district: e.target.value }
-            })}
+            disabled
+            value={formData.address.fullAddress}
+            onChange={(e) => setFormData(prev => ({
+              ...prev,
+              address: { ...prev.address, fullAddress: e.target.value }
+            }))}
           />
           <TextField
             sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
@@ -361,10 +418,10 @@ const SupplierList: React.FC = () => {
             label="Street"
             fullWidth
             value={formData.address.street}
-            onChange={(e) => setFormData({
-              ...formData,
-              address: { ...formData.address, street: e.target.value }
-            })}
+            onChange={(e) => setFormData(prev => ({
+              ...prev,
+              address: { ...prev.address, street: e.target.value }
+            }))}
           />
           <TextField
             sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
@@ -372,11 +429,41 @@ const SupplierList: React.FC = () => {
             label="Ward"
             fullWidth
             value={formData.address.ward}
-            onChange={(e) => setFormData({
-              ...formData,
-              address: { ...formData.address, ward: e.target.value }
-            })}
+            onChange={(e) => setFormData(prev => ({
+              ...prev,
+              address: { ...prev.address, ward: e.target.value }
+            }))}
           />
+          <TextField
+            sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
+            margin="dense"
+            label="District"
+            fullWidth
+            value={formData.address.district}
+            onChange={(e) => setFormData(prev => ({
+              ...prev,
+              address: { ...prev.address, district: e.target.value }
+            }))}
+          />
+          <TextField
+            sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
+            margin="dense"
+            label="City"
+            fullWidth
+            value={formData.address.city}
+            onChange={(e) => setFormData(prev => ({
+              ...prev,
+              address: { ...prev.address, city: e.target.value }
+            }))}
+          />
+        <TextField
+          sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
+          margin="dense"
+          label="Country"
+          fullWidth
+          value={formData.address.country}
+          disabled
+        />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenModal(false)}>Cancel</Button>

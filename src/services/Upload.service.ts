@@ -57,7 +57,7 @@ export const uploadMultipleImages = async (files: File[], folder: string = "Bicy
         return {
             success: true,
             data: response.data,
-            imageUrls: response.data.imageUrls || []
+            imageUrls: response.data.data.imageUrls || []
         };
     } catch (error: any) {
         // Xử lý chi tiết khi có lỗi

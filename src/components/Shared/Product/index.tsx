@@ -59,11 +59,12 @@ const BikeImage = styled("img")(({ theme }) => ({
   padding: "16px",
 }));
 
+
 const ProductComponent: React.FC<ProductComponentProps> = ({
   product
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
-
+  console.log("check product component: ", product);
   useEffect(() => {
     if (cardRef.current) {
       VanillaTilt.init(cardRef.current, {
@@ -84,7 +85,7 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
   return (
     <ProductCard ref={cardRef}>
       <NewBadge>NEW</NewBadge>
-      <BikeImage src={product.image} alt={`${product.productName} Bike`} />
+      <BikeImage src={product?.image} alt={`${product?.productName} Bike`} />
       <CardContent sx={{ padding: 2 }}>
         <Typography
           variant="h6"

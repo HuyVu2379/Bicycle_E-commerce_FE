@@ -48,7 +48,7 @@ export default function HomeTemplate() {
       if (response && response.success && Array.isArray(response.data)) {
         setFeaturedProducts(response.data);
       }
-      console.log(response.data);
+      console.log("check product in home page: ", response.data);
 
     } catch (error: any) {
       console.error("Error fetching home data:", error);

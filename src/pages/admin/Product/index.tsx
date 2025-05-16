@@ -1,173 +1,394 @@
-import React, { useState, useCallback } from 'react';
-import {
-    Container,
-    Grid,
-    TextField,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    Button,
-    Typography,
-    Box,
-    Chip,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    IconButton,
-} from '@mui/material';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { Container, Grid, Box, IconButton, Button, CircularProgress } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import Gallery from 'react-photo-gallery';
-import Carousel, { Modal, ModalGateway as ModalGatewayOriginal } from 'react-images';
-import MarkdownEditor from './Description';
-import ProductList from './ProductTable';
-// Create a properly typed version of ModalGateway
-const ModalGateway = (props: { children: React.ReactNode }) => (
-    <ModalGatewayOriginal {...props as any} />
-);
+import ProductForm from '@/components/Admin/Product/ProductForm';
+import ColorVariantManager from '@/components/Admin/Product/ColorVariantManager';
+import SpecificationManager from '@/components/Admin/Product/SpecificationManager';
+import CategoryDialog from '@/components/Admin/Product/CategoryDialog';
+import SpecificationDialog from '@/components/Admin/Product/SpecificationDialog';
+import ImageLightbox from '@/components/Admin/Product/ImageLightBox';
+import ProductTable from '@/pages/admin/Product/ProductTable';
+import useProduct from '@/hook/api/useProduct';
+import { uploadMultipleImages } from '@/services/Upload.service';
+import { createProduct, bulkCreateInventory } from '@/services/Product.service';
+import { SelectChangeEvent } from '@mui/material';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+import { useSnackbar } from 'notistack';
 
-interface Specification {
+export interface Specification {
     key: string;
     value: string;
 }
 
-interface Product {
+export interface Product {
     name: string;
-    description: string;
+    description: string; // Stores Markdown
     price: string;
-    category: string;
-    supplier: string;
+    promotionId: string;
+    categoryId: string;
+    supplierId: string;
     colors: string[];
-    images: string[];
+    images: { [color: string]: string[] };
+    quantities: { [color: string]: number };
     specifications: Specification[];
 }
 
-interface GalleryPhoto {
+export interface GalleryPhoto {
     src: string;
     width: number;
     height: number;
+    color: string;
 }
 
-const colorsList = ['Blue', 'Red', 'Grey', 'Black', 'White', 'Brown', 'Orange'];
+export const colorsList = ['Blue', 'Red', 'Green', 'Yellow', 'Pink', 'Purple', 'Black', 'White', 'Brown', 'Orange'];
 
 const ProductManagement: React.FC = () => {
-    const [product, setProduct] = useState<Product>({
+    const { enqueueSnackbar } = useSnackbar();
+    const productRef = useRef<Product>({
         name: '',
         description: '',
         price: '',
-        category: '',
-        supplier: '',
+        promotionId: '',
+        categoryId: '',
+        supplierId: '',
         colors: [],
-        images: [],
+        images: {},
+        quantities: {},
         specifications: [],
     });
 
-    const [categories, setCategories] = useState<string[]>(['Điện tử', 'Thời trang', 'Gia dụng']);
-    const [suppliers] = useState<string[]>(['Nhà cung cấp A', 'Nhà cung cấp B', 'Nhà cung cấp C']);
+    const imageFilesRef = useRef<{ [color: string]: File[] }>({});
+    const [product, setProduct] = useState<Product>(productRef.current);
+    const [imageFiles, setImageFiles] = useState<{ [color: string]: File[] }>({});
+    const [submitting, setSubmitting] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [dataFetched, setDataFetched] = useState<boolean>(false);
+
+    const { handleFetchCategories, handleFetchSupplier, handleFetchPromotion, categories, suppliers, promotions, handleCreateSpecifications } = useProduct();
+
+    useEffect(() => {
+        productRef.current = product;
+    }, [product]);
+
+    useEffect(() => {
+        imageFilesRef.current = imageFiles;
+    }, [imageFiles]);
+
+    useEffect(() => {
+        if (dataFetched) return;
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                await Promise.all([
+                    handleFetchCategories(),
+                    handleFetchSupplier(),
+                    handleFetchPromotion(),
+                ]);
+                setDataFetched(true);
+            } catch (error: any) {
+                console.error('Lỗi khi lấy dữ liệu:', error);
+                enqueueSnackbar(`Lỗi khi lấy dữ liệu: ${error.message || 'Không xác định'}`, { variant: 'error' });
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [dataFetched]);
+
     const [newCategory, setNewCategory] = useState<string>('');
     const [openCategoryDialog, setOpenCategoryDialog] = useState<boolean>(false);
+    const [openSpecDialog, setOpenSpecDialog] = useState<boolean>(false);
+    const [openPromotionDialog, setOpenPromotionDialog] = useState<boolean>(false);
+    const [newSpec, setNewSpec] = useState<Specification>({ key: '', value: '' });
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [currentImage, setCurrentImage] = useState<number>(0);
-    const [openSpecDialog, setOpenSpecDialog] = useState<boolean>(false);
-    const [newSpec, setNewSpec] = useState<Specification>({ key: '', value: '' });
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
-        const { name, value } = e.target;
-        setProduct({ ...product, [name as string]: value });
-    };
+    const handleInputChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent<string>) => {
+            const { name, value } = e.target;
+            setProduct((prev) => {
+                const updatedProduct = { ...prev, [name as string]: value };
+                console.log('check product from ProductManagement:', updatedProduct);
+                return updatedProduct;
+            });
+        },
+        []
+    );
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files) {
-            const newImages = Array.from(files).map((file) => URL.createObjectURL(file));
-            setProduct({ ...product, images: [...product.images, ...newImages] });
-        }
-    };
-
-    const handleDeleteImage = (image: string) => {
-        URL.revokeObjectURL(image);
-        setProduct({ ...product, images: product.images.filter((img) => img !== image) });
-    };
-
-    const handleColorChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+    const handleColorChange = useCallback((e: SelectChangeEvent<string[]>) => {
         const selectedColors = e.target.value as string[];
-        setProduct({ ...product, colors: selectedColors });
-    };
+        const currentProduct = productRef.current;
+        const currentImageFiles = imageFilesRef.current;
 
-    const handleAddCategory = () => {
-        if (newCategory && !categories.includes(newCategory)) {
-            setCategories([...categories, newCategory]);
-            setProduct({ ...product, category: newCategory });
+        const updatedImages = { ...currentProduct.images };
+        const updatedQuantities = { ...currentProduct.quantities };
+        const updatedImageFiles = { ...currentImageFiles };
+
+        Object.keys(updatedImages).forEach((color) => {
+            if (!selectedColors.includes(color)) {
+                updatedImages[color].forEach((img) => URL.revokeObjectURL(img));
+                delete updatedImages[color];
+                delete updatedQuantities[color];
+                delete updatedImageFiles[color];
+            }
+        });
+
+        setProduct((prev) => ({
+            ...prev,
+            colors: selectedColors,
+            images: updatedImages,
+            quantities: updatedQuantities,
+        }));
+
+        setImageFiles(updatedImageFiles);
+    }, []);
+
+    const handleImageChange = useCallback(
+        (color: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+            const files = e.target.files;
+            if (files) {
+                const newFiles = Array.from(files);
+                const newImageUrls = newFiles.map((file) => URL.createObjectURL(file));
+
+                setProduct((prev) => ({
+                    ...prev,
+                    images: {
+                        ...prev.images,
+                        [color]: [...(prev.images[color] || []), ...newImageUrls],
+                    },
+                }));
+
+                setImageFiles((prev) => ({
+                    ...prev,
+                    [color]: [...(prev[color] || []), ...newFiles],
+                }));
+            }
+        },
+        []
+    );
+
+    const handleQuantityChange = useCallback(
+        (color: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+            const value = e.target.value;
+            if (value === '' || (!isNaN(Number(value)) && Number(value) >= 0)) {
+                setProduct((prev) => ({
+                    ...prev,
+                    quantities: {
+                        ...prev.quantities,
+                        [color]: value === '' ? 0 : Number(value),
+                    },
+                }));
+            }
+        },
+        []
+    );
+
+    const handleDeleteImage = useCallback(
+        (color: string, image: string) => {
+            const currentProduct = productRef.current;
+            const currentImageFiles = imageFilesRef.current;
+
+            const index = currentProduct.images[color]?.indexOf(image) ?? -1;
+            if (index !== -1) {
+                URL.revokeObjectURL(image);
+
+                const updatedImages = {
+                    ...currentProduct.images,
+                    [color]: currentProduct.images[color].filter((_, i) => i !== index),
+                };
+
+                const updatedImageFiles = {
+                    ...currentImageFiles,
+                    [color]: (currentImageFiles[color] || []).filter((_, i) => i !== index),
+                };
+
+                setProduct((prev) => ({ ...prev, images: updatedImages }));
+                setImageFiles(updatedImageFiles);
+            }
+        },
+        []
+    );
+
+    const handleAddCategory = useCallback(() => {
+        if (newCategory && !categories.find((cat: any) => cat.name === newCategory)) {
+            setProduct((prev) => ({ ...prev, categoryId: newCategory }));
             setNewCategory('');
             setOpenCategoryDialog(false);
+            enqueueSnackbar('Thêm danh mục mới thành công', { variant: 'success' });
+        } else {
+            enqueueSnackbar('Danh mục đã tồn tại hoặc không hợp lệ', { variant: 'error' });
         }
-    };
+    }, [newCategory, categories, enqueueSnackbar]);
 
-    const handleSpecChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAddPromotion = useCallback(
+        (promotionId: string) => {
+            setProduct((prev) => ({ ...prev, promotionId }));
+            setOpenPromotionDialog(false);
+            enqueueSnackbar('Chọn khuyến mãi thành công', { variant: 'success' });
+        },
+        [enqueueSnackbar]
+    );
+
+    const handleSpecChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setNewSpec({ ...newSpec, [name]: value });
-    };
+        setNewSpec((prev) => ({ ...prev, [name]: value }));
+    }, []);
 
-    const handleAddSpec = () => {
-        if (newSpec.key && newSpec.value) {
-            setProduct({ ...product, specifications: [...product.specifications, newSpec] });
+    const handleAddSpec = useCallback(() => {
+        const specToAdd = { ...newSpec };
+        if (specToAdd.key && specToAdd.value) {
+            setProduct((prev) => ({
+                ...prev,
+                specifications: [...prev.specifications, specToAdd],
+            }));
             setNewSpec({ key: '', value: '' });
             setOpenSpecDialog(false);
+            enqueueSnackbar('Thêm thông số kỹ thuật thành công', { variant: 'success' });
+        } else {
+            enqueueSnackbar('Thông số kỹ thuật không hợp lệ', { variant: 'error' });
         }
-    };
+    }, [newSpec, enqueueSnackbar]);
 
-    const handleDeleteSpec = (spec: Specification) => {
-        setProduct({
-            ...product,
-            specifications: product.specifications.filter((s) => s.key !== spec.key || s.value !== spec.value),
-        });
-    };
+    const handleDeleteSpec = useCallback(
+        (specToDelete: Specification) => {
+            setProduct((prev) => ({
+                ...prev,
+                specifications: prev.specifications.filter((spec) => spec.key !== specToDelete.key || spec.value !== specToDelete.value),
+            })),
+                enqueueSnackbar('Xóa thông số kỹ thuật thành công', { variant: 'success' });
+        },
+        [enqueueSnackbar]
+    );
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Sản phẩm:', product);
-        alert('Sản phẩm đã được lưu!');
-        product.images.forEach((image) => URL.revokeObjectURL(image));
-        setProduct({
-            name: '',
-            description: '',
-            price: '',
-            category: '',
-            supplier: '',
-            colors: [],
-            images: [],
-            specifications: [],
-        });
-    };
+    const handleSubmit = useCallback(
+        async (e: React.FormEvent) => {
+            e.preventDefault();
+            setSubmitting(true);
+            enqueueSnackbar('Bắt đầu tạo sản phẩm...', { variant: 'info' });
+
+            const currentProduct = productRef.current;
+            const currentImageFiles = imageFilesRef.current;
+
+            try {
+                const missingQuantities = currentProduct.colors.filter(
+                    (color) => !currentProduct.quantities[color] && currentProduct.quantities[color] !== 0
+                );
+                if (missingQuantities.length > 0) {
+                    enqueueSnackbar(`Vui lòng nhập số lượng cho các màu: ${missingQuantities.join(', ')}`, { variant: 'error' });
+                    setSubmitting(false);
+                    return;
+                }
+
+                enqueueSnackbar('Đang chuyển đổi mô tả sản phẩm...', { variant: 'info' });
+                const parsedDescription = await marked.parse(currentProduct.description);
+                const descriptionHtml = DOMPurify.sanitize(parsedDescription);
+
+                enqueueSnackbar('Đang tạo sản phẩm...', { variant: 'info' });
+                const productData = {
+                    name: currentProduct.name,
+                    description: descriptionHtml,
+                    price: parseFloat(currentProduct.price),
+                    promotionId: currentProduct.promotionId || undefined,
+                    categoryId: currentProduct.categoryId,
+                    supplierId: currentProduct.supplierId,
+                };
+                const createdProduct = await createProduct(productData);
+                const productId = createdProduct.productId;
+
+                enqueueSnackbar('Đang tải ảnh sản phẩm...', { variant: 'info' });
+                const uploadedImages: { [color: string]: string[] } = {};
+                for (const color of currentProduct.colors) {
+                    const files = currentImageFiles[color] || [];
+                    if (files.length > 0) {
+                        const serverUrls = await uploadMultipleImages(files);
+                        uploadedImages[color] = serverUrls.imageUrls;
+                    } else {
+                        uploadedImages[color] = [];
+                    }
+                }
+
+                enqueueSnackbar('Đang tạo kho sản phẩm...', { variant: 'info' });
+                const inventories = currentProduct.colors.map((color) => ({
+                    productId,
+                    importDate: new Date().toISOString(),
+                    color: color.toUpperCase(),
+                    quantity: currentProduct.quantities[color] || 0,
+                    imageUrls: uploadedImages[color],
+                }));
+                await bulkCreateInventory(inventories);
+
+                enqueueSnackbar('Đang thêm thông số kỹ thuật...', { variant: 'info' });
+                const specificationsData = currentProduct.specifications.map((spec) => ({
+                    productId,
+                    key: spec.key,
+                    value: spec.value,
+                }));
+                await handleCreateSpecifications(specificationsData);
+
+                enqueueSnackbar('Tạo sản phẩm thành công!', { variant: 'success' });
+
+                Object.values(currentProduct.images).forEach((images) => {
+                    images.forEach((image) => URL.revokeObjectURL(image));
+                });
+                const resetProduct = {
+                    name: '',
+                    description: '',
+                    price: '',
+                    promotionId: '',
+                    categoryId: '',
+                    supplierId: '',
+                    colors: [],
+                    images: {},
+                    quantities: {},
+                    specifications: [],
+                };
+                setProduct(resetProduct);
+                setImageFiles({});
+            } catch (error: any) {
+                console.error('Lỗi khi tạo sản phẩm:', error);
+                enqueueSnackbar(`Đã xảy ra lỗi khi tạo sản phẩm: ${error.message || 'Không xác định'}`, { variant: 'error' });
+            } finally {
+                setSubmitting(false);
+            }
+        },
+        [enqueueSnackbar, handleCreateSpecifications]
+    );
 
     const openLightbox = useCallback((event: React.MouseEvent, { index }: { index: number }) => {
         setCurrentImage(index);
         setIsOpen(true);
     }, []);
 
-    const closeLightbox = () => {
+    const closeLightbox = useCallback(() => {
         setCurrentImage(0);
         setIsOpen(false);
-    };
+    }, []);
 
-    const photos: GalleryPhoto[] = product.images.map((image) => ({
-        src: image,
-        width: 1,
-        height: 1,
-    }));
+    const photos: GalleryPhoto[] = useMemo(() => {
+        return product.colors.reduce((acc: GalleryPhoto[], color) => {
+            const colorImages = (product.images[color] || []).map((image) => ({
+                src: image,
+                width: 1,
+                height: 1,
+                color,
+            }));
+            return [...acc, ...colorImages];
+        }, []);
+    }, [product.colors, product.images]);
 
     const renderImage = useCallback(
         ({ index, photo }: { index: number; photo: GalleryPhoto }) => (
             <Box sx={{ position: 'relative', display: 'inline-block' }}>
                 <img
                     src={photo.src}
-                    alt={`Product Preview ${index + 1}`}
+                    alt={`Product Preview ${photo.color} ${index + 1}`}
                     style={{
                         maxWidth: '100px',
                         maxHeight: '100px',
                         objectFit: 'contain',
                         cursor: 'pointer',
+                        margin: '5px',
                     }}
                     onClick={(e) => openLightbox(e, { index })}
                 />
@@ -183,7 +404,7 @@ const ProductManagement: React.FC = () => {
                             backgroundColor: 'rgba(0, 0, 0, 0.7)',
                         },
                     }}
-                    onClick={() => handleDeleteImage(photo.src)}
+                    onClick={() => handleDeleteImage(photo.color, photo.src)}
                 >
                     <CloseIcon fontSize="small" />
                 </IconButton>
@@ -192,316 +413,89 @@ const ProductManagement: React.FC = () => {
         [openLightbox, handleDeleteImage]
     );
 
+    if (loading) {
+        return (
+            <Container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Container>
+        );
+    }
+
     return (
-        <Container
-            disableGutters
-            sx={{
-                width: '100%',
-                height: '100%',
-                py: 4
-            }}
-        >
+        <Container disableGutters sx={{ width: '100%', height: '100%', py: 4 }}>
             <Box component="form" onSubmit={handleSubmit} className="space-y-6">
                 <Grid container spacing={3}>
-                    {/* Tên sản phẩm */}
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Tên sản phẩm"
-                            name="name"
-                            value={product.name}
-                            onChange={handleInputChange}
-                            required
-                            variant="outlined"
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    "& input": {
-                                        paddingY: "26px",
-                                    },
-                                },
-                            }}
-                        />
-                    </Grid>
-
-                    {/* Giá */}
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            label="Giá"
-                            name="price"
-                            type="number"
-                            InputProps={{ inputProps: { min: 0 } }}
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    "& input": {
-                                        paddingY: "26px",
-                                    },
-                                },
-                            }}
-                            value={product.price}
-                            onChange={handleInputChange}
-                            required
-                            variant="outlined"
-                        />
-                    </Grid>
-
-                    {/* Danh mục */}
-                    <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Danh mục</InputLabel>
-                            <Select
-                                name="category"
-                                value={product.category}
-                                onChange={handleInputChange}
-                                label="Danh mục"
-                                required
-                            >
-                                {categories.map((cat) => (
-                                    <MenuItem key={cat} value={cat}>
-                                        {cat}
-                                    </MenuItem>
-                                ))}
-                                <MenuItem value="add_new" onClick={() => setOpenCategoryDialog(true)}>
-                                    + Thêm danh mục mới
-                                </MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    {/* Nhà cung cấp */}
-                    <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Nhà cung cấp</InputLabel>
-                            <Select
-                                name="supplier"
-                                value={product.supplier}
-                                onChange={handleInputChange}
-                                label="Nhà cung cấp"
-                                required
-                            >
-                                {suppliers.map((sup) => (
-                                    <MenuItem key={sup} value={sup}>
-                                        {sup}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    {/* Màu sắc */}
-                    <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Màu sắc</InputLabel>
-                            <Select
-                                name="color"
-                                value={product.colors}
-                                onChange={handleColorChange}
-                                label="Màu sắc"
-                                required
-                            >
-                                {colorsList.map((color) => (
-                                    <MenuItem key={color} value={color}>
-                                        {color}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    {/* Chọn ảnh và preview */}
-                    <Grid item xs={6}>
-                        <Box className="flex flex-col gap-4">
-                            <Button
-                                variant="outlined"
-                                component="label"
-                                className="w-fit"
-                                sx={{
-                                    backgroundColor: 'white',
-                                    fontSize: '16px',
-                                    '&:hover': {
-                                        backgroundColor: '#0068FF',
-                                        color: 'white',
-                                    },
-                                }}
-                            >
-                                Chọn ảnh
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    multiple
-                                    hidden
-                                    onChange={handleImageChange}
-                                />
-                            </Button>
-                            {product.images.length > 0 && (
-                                <Box className="mt-2">
-                                    <Typography variant="subtitle1">Preview:</Typography>
-                                    <Gallery
-                                        photos={photos}
-                                        renderImage={renderImage}
-                                        targetRowHeight={100}
-                                    />
-                                </Box>
-                            )}
-                        </Box>
-                    </Grid>
-
-                    {/* Thêm thông số kỹ thuật */}
-                    <Grid item xs={6}>
-                        <Box className="flex flex-col gap-4">
-                            <Button
-                                variant="outlined"
-                                onClick={() => setOpenSpecDialog(true)}
-                                className="w-fit"
-                                sx={{
-                                    backgroundColor: 'white',
-                                    fontSize: '16px',
-                                    '&:hover': {
-                                        backgroundColor: '#0068FF',
-                                        color: 'white',
-                                    },
-                                }}
-                            >
-                                Thêm thông số kỹ thuật
-                            </Button>
-                            {product.specifications.length > 0 && (
-                                <Box className="mt-2">
-                                    <Typography variant="subtitle1">Thông số kỹ thuật:</Typography>
-                                    <Box className="flex flex-wrap gap-2">
-                                        {product.specifications.map((spec, index) => (
-                                            <Chip
-                                                key={index}
-                                                label={`${spec.key}: ${spec.value}`}
-                                                onDelete={() => handleDeleteSpec(spec)}
-                                                color="default"
-                                                sx={{ marginRight: 1 }}
-                                            />
-                                        ))}
-                                    </Box>
-                                </Box>
-                            )}
-                        </Box>
-                    </Grid>
+                    <ProductForm
+                        product={product}
+                        categories={categories}
+                        suppliers={suppliers}
+                        promotions={promotions}
+                        openPromotionDialog={openPromotionDialog}
+                        handleInputChange={handleInputChange}
+                        handleColorChange={handleColorChange}
+                        setOpenCategoryDialog={setOpenCategoryDialog}
+                        setOpenPromotionDialog={setOpenPromotionDialog}
+                        handleAddPromotion={handleAddPromotion}
+                    />
+                    <ColorVariantManager
+                        colors={product.colors}
+                        quantities={product.quantities}
+                        images={product.images}
+                        photos={photos}
+                        handleImageChange={handleImageChange}
+                        handleQuantityChange={handleQuantityChange}
+                        renderImage={renderImage}
+                        handleDeleteImage={handleDeleteImage}
+                    />
+                    <SpecificationManager
+                        specifications={product.specifications}
+                        handleDeleteSpec={handleDeleteSpec}
+                        setOpenSpecDialog={setOpenSpecDialog}
+                    />
                 </Grid>
                 <Grid item xs={12}>
-                    <MarkdownEditor
-                        value={product.description}
-                        onChange={(value) => setProduct({ ...product, description: value })}
-                    />
+                    <Box className="text-center" sx={{ mt: 5 }}>
+                        <Button
+                            type="submit"
+                            variant="outlined"
+                            color="primary"
+                            size="large"
+                            disabled={submitting}
+                            sx={{
+                                backgroundColor: 'white',
+                                fontSize: '16px',
+                                '&:hover': {
+                                    backgroundColor: '#0068FF',
+                                    color: 'white',
+                                },
+                            }}
+                        >
+                            {submitting ? <CircularProgress size={24} /> : 'Lưu sản phẩm'}
+                        </Button>
+                    </Box>
                 </Grid>
-                {/* Nút submit */}
-                <Box
-                    className="text-center"
-                    sx={{
-                        mt: 5,
-                    }}
-                >
-                    <Button
-                        type="submit"
-                        variant="outlined"
-                        color="primary"
-                        size="large"
-                        className="mt-4"
-                        sx={{
-                            backgroundColor: 'white',
-                            fontSize: '16px',
-                            '&:hover': {
-                                backgroundColor: '#0068FF',
-                                color: 'white',
-                            },
-                        }}
-                    >
-                        Lưu sản phẩm
-                    </Button>
-                </Box>
             </Box>
-            <ProductList />
-            {/* Dialog thêm danh mục mới */}
-            <Dialog open={openCategoryDialog} onClose={() => setOpenCategoryDialog(false)}>
-                <DialogTitle>Thêm danh mục mới</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Tên danh mục"
-                        fullWidth
-                        value={newCategory}
-                        onChange={(e) => setNewCategory(e.target.value)}
-                        variant="outlined"
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& input": {
-                                    paddingY: "26px",
-                                },
-                            },
-                        }}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenCategoryDialog(false)}>Hủy</Button>
-                    <Button onClick={handleAddCategory} disabled={!newCategory}>
-                        Thêm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Dialog thêm thông số kỹ thuật */}
-            <Dialog open={openSpecDialog} onClose={() => setOpenSpecDialog(false)}>
-                <DialogTitle>Thêm thông số kỹ thuật</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Tên thông số"
-                        name="key"
-                        fullWidth
-                        value={newSpec.key}
-                        onChange={handleSpecChange}
-                        variant="outlined"
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& input": {
-                                    paddingY: "26px",
-                                },
-                            },
-                        }}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Giá trị"
-                        name="value"
-                        fullWidth
-                        value={newSpec.value}
-                        onChange={handleSpecChange}
-                        variant="outlined"
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& input": {
-                                    paddingY: "26px",
-                                },
-                            },
-                        }}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenSpecDialog(false)}>Hủy</Button>
-                    <Button onClick={handleAddSpec} disabled={!newSpec.key || !newSpec.value}>
-                        Thêm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Lightbox xem ảnh */}
-            <ModalGateway>
-                {isOpen ? (
-                    <Modal onClose={closeLightbox}>
-                        <Carousel
-                            currentIndex={currentImage}
-                            views={product.images.map((image) => ({ source: image }))}
-                        />
-                    </Modal>
-                ) : null}
-            </ModalGateway>
+            <ProductTable />
+            <CategoryDialog
+                open={openCategoryDialog}
+                newCategory={newCategory}
+                setNewCategory={setNewCategory}
+                handleAddCategory={handleAddCategory}
+                handleClose={() => setOpenCategoryDialog(false)}
+            />
+            <SpecificationDialog
+                open={openSpecDialog}
+                newSpec={newSpec}
+                handleSpecChange={handleSpecChange}
+                handleAddSpec={handleAddSpec}
+                handleClose={() => setOpenSpecDialog(false)}
+            />
+            <ImageLightbox
+                isOpen={isOpen}
+                currentImage={currentImage}
+                photos={photos}
+                closeLightbox={closeLightbox}
+            />
         </Container>
     );
 };

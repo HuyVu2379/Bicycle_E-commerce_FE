@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -11,14 +11,20 @@ import {
   Divider,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import dayjs from 'dayjs';
 
-interface ReviewType {
-  id: number;
-  author: string;
-  avatar: string;
+interface Review {
+  reviewId: string;
+  userId: string;
+  productId: string;
+  content: string;
   rating: number;
-  date: string;
-  content?: string;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+interface Props {
+  reviews: Review[];
 }
 
 interface RatingDistribution {
@@ -53,52 +59,54 @@ const StyledRating = styled(Rating)({
   },
 });
 
-const ReviewsComponent: React.FC = () => {
-  const averageRating = 4.5;
-  const totalReviews = 15;
+const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
+    const [sortOption, setSortOption] = useState<"newest" | "highest" | "lowest">("newest");
+    const { accessToken } = localStorage;
+    const sortedReviews = useMemo(() => {
+    const cloned = [...reviews];
+    switch (sortOption) {
+      case "highest":
+        return cloned.sort((a, b) => b.rating - a.rating);
+      case "lowest":
+        return cloned.sort((a, b) => a.rating - b.rating);
+      case "newest":
+      default:
+        return cloned.sort((a, b) => dayjs(b.createdAt).unix() - dayjs(a.createdAt).unix());
+    }
+  }, [reviews, sortOption]);
 
-  const ratingDistribution: RatingDistribution[] = [
-    { rating: 5, count: 3, percentage: 60 },
-    { rating: 4, count: 1, percentage: 20 },
-    { rating: 3, count: 0, percentage: 0 },
-    { rating: 2, count: 0, percentage: 0 },
-    { rating: 1, count: 1, percentage: 20 },
-  ];
+    const calculateRatingDistribution = (reviews: Review[]): RatingDistribution[] => {
+    const total = reviews.length;
+    const ratingCountMap = new Map<number, number>();
 
-  const reviews: ReviewType[] = [
-    {
-      id: 1,
-      author: "Angelina Jolie",
-      avatar: "/path-to-avatar.jpg",
-      rating: 5,
-      date: "1 day ago",
-    },
-  ];
+    // Khởi tạo count = 0 cho các mức từ 1 đến 5
+    for (let i = 1; i <= 5; i++) {
+      ratingCountMap.set(i, 0);
+    }
+
+    // Đếm số lượng mỗi loại rating
+    for (const review of reviews) {
+      ratingCountMap.set(review.rating, (ratingCountMap.get(review.rating) || 0) + 1);
+    }
+
+    // Chuyển thành mảng và tính phần trăm
+    const distribution: RatingDistribution[] = Array.from(ratingCountMap.entries()).map(
+      ([rating, count]) => ({
+        rating,
+        count,
+        percentage: total > 0 ? (count / total) * 100 : 0,
+      })
+    );
+    // Sắp xếp từ 5 sao xuống 1 sao
+    return distribution.sort((a, b) => b.rating - a.rating);
+  };
+
+  const averageRating = reviews?.length
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : 0;
 
   return (
     <ReviewContainer>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 4,
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{
-            backgroundColor: "#000",
-            color: "#fff",
-            display: "inline-block",
-            padding: "8px 16px",
-            borderRadius: "20px",
-            fontSize: "0.9rem",
-          }}
-        >
-          Customer Reviews
-        </Typography>
-      </Box>
       <Box sx={{ padding: 2 }}>
         <Typography
           variant="h4"
@@ -141,16 +149,16 @@ const ReviewsComponent: React.FC = () => {
           >
             <StyledRating value={averageRating} precision={0.5} readOnly />
             <Typography component="div" sx={{ fontSize: "0.875rem" }}>
-              {averageRating} out of 5
+              {averageRating.toFixed(1)} out of 5
             </Typography>
           </Box>
           <Typography variant="body2" color="text.secondary">
-            Based on {totalReviews} reviews
+            Based on {reviews?.length} reviews
           </Typography>
         </Box>
 
         <Box sx={{ flex: "0 0 400px", borderRight: "1px solid #eee" }}>
-          {ratingDistribution.map((item) => (
+          {calculateRatingDistribution(reviews).map((item) => (
             <Box
               key={item.rating}
               sx={{ display: "flex", alignItems: "center", mb: 1 }}
@@ -162,31 +170,6 @@ const ReviewsComponent: React.FC = () => {
               </Typography>
             </Box>
           ))}
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRight: "1px solid #eee",
-            flex: "0 0 200px",
-          }}
-        >
-          <Button
-            variant="outlined"
-            sx={{
-              borderRadius: "20px",
-              borderColor: "#000",
-              color: "#000",
-              "&:hover": {
-                borderColor: "#000",
-                backgroundColor: "rgba(0,0,0,0.04)",
-              },
-            }}
-          >
-            ADD REVIEW
-          </Button>
         </Box>
       </Box>
 
@@ -213,6 +196,8 @@ const ReviewsComponent: React.FC = () => {
           <Select
             size="small"
             defaultValue="newest"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value as any)}
             sx={{
               minWidth: 100,
               "& .MuiSelect-select": {
@@ -246,25 +231,69 @@ const ReviewsComponent: React.FC = () => {
             <MenuItem value="lowest">Lowest Rating</MenuItem>
           </Select>
         </Box>
+
+        {accessToken && <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            marginLeft: 20,
+            alignItems: "center",
+            borderRight: "1px solid #eee",
+            flex: "0 0 200px",
+          }}
+        >
+          <Button
+            variant="outlined"
+            sx={{
+              borderRadius: "20px",
+              borderColor: "#000",
+              color: "#000",
+              "&:hover": {
+                borderColor: "#000",
+                backgroundColor: "rgba(0,0,0,0.04)",
+              },
+            }}
+          >
+            ADD REVIEW
+          </Button>
+        </Box>
+        }
       </Box>
 
-      {reviews.map((review) => (
+      {sortedReviews.map((review) => (
         <Box
-          key={review.id}
-          sx={{ mb: 3, pb: 3, borderBottom: "1px solid #eee" }}
+          key={review.reviewId}
+          sx={{
+            mb: 3,
+            pb: 3,
+            borderBottom: "1px solid #eee"
+          }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between', mb: 1 }}>
+          {/* Dòng hiển thị sao và thời gian */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mb: 1
+            }}
+          >
             <StyledRating value={review.rating} size="small" readOnly />
-            <Typography variant="caption" color="text.secondary" sx={{ ml: 2 }}>
-              {review.date}
+            <Typography variant="caption" color="text.secondary">
+              {dayjs(review.createdAt).format("DD/MM/YYYY HH:mm:ss")}
             </Typography>
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <Avatar src={review.avatar} alt={review.author} />
-            <Typography variant="subtitle2" fontWeight="bold" sx={{ ml: 2 }}>
-              {review.author}
-            </Typography>
+
+          {/* Dòng hiển thị tên người dùng */}
+          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            {/* <Avatar src={review.avatar} alt={review.userId} sx={{ mr: 1 }} /> */}
+            <Typography fontWeight="bold">{review.userId.slice(0, 13) + '*'.repeat(review.userId.length - 8)}</Typography>
           </Box>
+
+          {/* Nội dung đánh giá */}
+          <Typography variant="body2" color="text.primary" sx={{ mb: 1 }}>
+            {review.content}
+          </Typography>
         </Box>
       ))}
     </ReviewContainer>

@@ -3,10 +3,18 @@ import { Grid, Box, Typography, Button } from "@mui/material";
 import ProductComponent from "../Product/index";
 import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
-import { ProductResponse } from "../../../types/product";
+
+interface Product {
+  productId: string;
+  name: string;
+  type: string;
+  originalPrice?: number;
+  discountedPrice?: number;
+  imageUrl: string;
+}
 
 interface ProductListProps {
-  products: ProductResponse[];
+  products: Product[];
 }
 
 const HeaderContainer = styled(Box)({
@@ -32,15 +40,6 @@ const MoreShopButton = styled(Button)({
 });
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
-  if (!products || products.length === 0) {
-    return (
-      <Box sx={{ textAlign: 'center', padding: '50px', color: 'text.secondary' }}>
-        <Typography variant="h6">No products found</Typography>
-        <Typography>Please check back later or try a different search.</Typography>
-      </Box>
-    );
-  }
-
   return (
     <Box
       sx={{
@@ -60,17 +59,15 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
         <MoreShopButton variant="outlined">More Shop</MoreShopButton>
       </HeaderContainer>
       <Grid container justifyContent="center" sx={{ padding: "0 32px" }}>
-        {products.map((product) => {
-          return (
-            < Grid item xs = { 12} sm = { 6} md = { 4} lg = { 4} key = { product.productId } >
-              <Link style={{ width: "100%" }} to={`/product/detail/${product.productId}`}>
-                <ProductComponent product={product} />
-              </Link>
+        {products.map((product, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
+            <Link sx={{ width: "100%" }} to={`/product/detail/${product.productId}`}>
+              <ProductComponent product={product} />
+            </Link>
           </Grid>
-          )
-        })}
+        ))}
       </Grid>
-    </Box >
+    </Box>
   );
 };
 
