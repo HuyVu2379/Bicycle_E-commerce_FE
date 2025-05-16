@@ -1,6 +1,6 @@
 import axiosConfig from "./axiosConfig";
 import { ProductResponse } from "../types/product";
-
+const api = "/api/v1/products"
 interface MessageResponse<T> {
     statusCode: number;
     message: string;
@@ -17,23 +17,55 @@ const api_promotions = "/api/v1/promotions"
 
 //===========Products============
 
-export const getAllProduct = async (): Promise<MessageResponse<ProductResponse[]>> => {
+interface PaginatedResponse<T> {
+    content: T[];
+    page: {
+        size: number;
+        number: number;
+        totalElements: number;
+        totalPages: number;
+    };
+}
+
+export const getAllProduct = async (
+    pageNo = 0, 
+    pageSize = 4, 
+    sortBy = "name", 
+    sortDirection = "ASC"
+): Promise<PaginatedResponse<ProductResponse>> => {
     try {
-        const url = `${api_product}/public/getAllProduct`;
-        const response = await axiosConfig.get<MessageResponse<ProductResponse[]>>(url) as unknown as MessageResponse<ProductResponse[]>;
-        console.log(response.data);
-        return response;
+        const url = `${api}/public/getProductForHome`;
+        const response = await axiosConfig.get(url, {
+            params: {
+                pageNo,
+                pageSize,
+                sortBy,
+                sortDirection
+            }
+        });
+        
+        console.log("API response object:", response);
+        
+        return response.data;
     } catch (error: any) {
-        console.error("Error get Product:", error);
+        console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
         if (error.response && error.response.data) {
             return error.response.data;
         }
 
         return {
             statusCode: error.statusCode || error.response?.status || 500,
-            message: error.message || "An unexpected error occurred in service.",
+            message: error.message || "Đã xảy ra lỗi không mong muốn trong service.",
             success: false,
-            data: [] as ProductResponse[],
+            data: {
+                content: [],
+                page: {
+                    size: pageSize,
+                    number: pageNo,
+                    totalElements: 0,
+                    totalPages: 0
+                }
+            }
         }
     }
 };
@@ -150,7 +182,7 @@ export const bulkCreateInventory = async (data: any) => {
 }
 export const getAllPromotions = async () => {
     try {
-        const url = `${api_promotions}`;
+        const url = `${api_promotions}/list`;
         const result = await axiosConfig.get(url);
         return result.data;
     } catch (error) {

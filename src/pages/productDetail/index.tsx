@@ -11,7 +11,7 @@ const ProductDetailTemplate = () => {
   const [value, setValue] = useState(0);
   const { productId } = useParams<{ productId: string }>();
   const { fetchProduct, fetchSpecifications, fetchReviews,
-    productInfo, specifications, reviews
+    productInfo, specifications, reviewsData
   } = useProductDetail();
 
   // Gọi hàm fetchProduct khi component được mount
@@ -22,8 +22,6 @@ const ProductDetailTemplate = () => {
       fetchReviews(productId);
     }
   }, [productId]);
-
-  console.log('Product Info:', productInfo);
 
   // Xử lý thay đổi tab
   const handleChange = (event: any, newValue: number) => {
@@ -75,9 +73,13 @@ const ProductDetailTemplate = () => {
 
         {/* Nội dung của từng tab */}
         <TabPanel value={value} index={0}>
-          <div>
-            {productInfo?.product?.description || 'No description available.'}
-          </div>
+            {productInfo?.product?.description ? (
+            <div
+              dangerouslySetInnerHTML={{ __html: productInfo.product.description }}
+            />
+          ) : (
+            'No description available.'
+          )}
         </TabPanel>
         <TabPanel value={value} index={1}>
           <SpecificationsComponent specifications={specifications}/>
@@ -88,7 +90,7 @@ const ProductDetailTemplate = () => {
           </div>
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <ReviewsComponent reviews={reviews}/>
+          <ReviewsComponent reviews={reviewsData}/>
         </TabPanel>
       </Box>
       {/* <Box sx={{ width: '100%' }}>

@@ -38,3 +38,16 @@ export const getAllReviews = async (productId: string) => {
         return { success: false, message: error };
     }
 }
+
+// send review
+// /reviews/create
+export const sendReview = async (data: any) => {
+    try {
+        const url = `${api}/reviews/create`;
+        let result = await axiosConfig.post(url, data);
+        return result;
+    } catch (error) {
+        console.error("Error sending review:", error);
+        throw error;
+    }
+}

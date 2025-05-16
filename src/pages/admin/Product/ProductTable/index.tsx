@@ -65,8 +65,7 @@ const ProductTable: React.FC = () => {
                     category: item.category?.name || "N/A",
                     supplier: item.supplier?.name || "N/A",
                     price: item.product.price || 0,
-                    quantity: item.inventory?.quantity || 0,
-                    status: item.product.status || "active"
+                    quantity: item.inventory?.reduce((sum: number, inv: any) => sum + (inv.quantity || 0), 0) || 0
                 }));
                 setData(mappedData);
                 setTotalPages(response.data.page.totalPages || 1);

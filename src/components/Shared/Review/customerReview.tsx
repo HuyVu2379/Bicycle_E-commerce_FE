@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -9,9 +9,12 @@ import {
   MenuItem,
   LinearProgress,
   Divider,
+  Modal, TextField
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import dayjs from 'dayjs';
+import { useParams } from "react-router-dom";
+import useProductDetail  from "@/hook/api/useProductDetail";
 
 interface Review {
   reviewId: string;
@@ -60,50 +63,101 @@ const StyledRating = styled(Rating)({
 });
 
 const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
+    const {handleSendReview, fetchReviews, reviewsData} = useProductDetail();
+    const [newReviews, setNewReviews] = useState<Review[]>(reviews || []);
     const [sortOption, setSortOption] = useState<"newest" | "highest" | "lowest">("newest");
-    const { accessToken } = localStorage;
+    const { accessToken, userId } = localStorage;
+    const { productId } = useParams<{ productId: string }>();
+
+    useEffect(() => {
+      fetchReviews(productId);
+      setNewReviews(reviewsData);
+    }, [reviewsData]);
+
+
     const sortedReviews = useMemo(() => {
-    const cloned = [...reviews];
-    switch (sortOption) {
-      case "highest":
-        return cloned.sort((a, b) => b.rating - a.rating);
-      case "lowest":
-        return cloned.sort((a, b) => a.rating - b.rating);
-      case "newest":
-      default:
-        return cloned.sort((a, b) => dayjs(b.createdAt).unix() - dayjs(a.createdAt).unix());
-    }
-  }, [reviews, sortOption]);
+      const cloned = [...newReviews];
+      switch (sortOption) {
+        case "highest":
+          return cloned.sort((a, b) => b.rating - a.rating);
+        case "lowest":
+          return cloned.sort((a, b) => a.rating - b.rating);
+        case "newest":
+        default:
+          return cloned.sort((a, b) => dayjs(b.createdAt).unix() - dayjs(a.createdAt).unix());
+      }
+    }, [newReviews, sortOption]);
+    
+
+    const [formReview, setFormReview] = useState({
+      userId,
+      productId,
+      content: "",
+      rating: 5,
+    });
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const calculateRatingDistribution = (reviews: Review[]): RatingDistribution[] => {
-    const total = reviews.length;
-    const ratingCountMap = new Map<number, number>();
+      const total = reviews.length;
+      const ratingCountMap = new Map<number, number>();
+      // Khởi tạo count = 0 cho các mức từ 1 đến 5
+      for (let i = 1; i <= 5; i++) {
+        ratingCountMap.set(i, 0);
+      }
+      // Đếm số lượng mỗi loại rating
+      for (const review of reviews) {
+        ratingCountMap.set(review.rating, (ratingCountMap.get(review.rating) || 0) + 1);
+      }
+      // Chuyển thành mảng và tính phần trăm
+      const distribution: RatingDistribution[] = Array.from(ratingCountMap.entries()).map(
+        ([rating, count]) => ({
+          rating,
+          count,
+          percentage: total > 0 ? (count / total) * 100 : 0,
+        })
+      );
+      // Sắp xếp từ 5 sao xuống 1 sao
+      return distribution.sort((a, b) => b.rating - a.rating);
+    };
 
-    // Khởi tạo count = 0 cho các mức từ 1 đến 5
-    for (let i = 1; i <= 5; i++) {
-      ratingCountMap.set(i, 0);
-    }
+    const averageRating = newReviews?.length
+      ? newReviews.reduce((sum, r) => sum + r.rating, 0) / newReviews.length : 0;
 
-    // Đếm số lượng mỗi loại rating
-    for (const review of reviews) {
-      ratingCountMap.set(review.rating, (ratingCountMap.get(review.rating) || 0) + 1);
-    }
+    const handleOpenModal = () => {
+      setIsModalOpen(true);
+    };
 
-    // Chuyển thành mảng và tính phần trăm
-    const distribution: RatingDistribution[] = Array.from(ratingCountMap.entries()).map(
-      ([rating, count]) => ({
-        rating,
-        count,
-        percentage: total > 0 ? (count / total) * 100 : 0,
-      })
-    );
-    // Sắp xếp từ 5 sao xuống 1 sao
-    return distribution.sort((a, b) => b.rating - a.rating);
-  };
+    const handleCloseModal = () => {
+      setIsModalOpen(false);
+    };
 
-  const averageRating = reviews?.length
-    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-    : 0;
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setFormReview((prev) => ({
+        ...prev,
+        [name]: name === "rating" ? Number(value) : value,
+      }));
+    };
+
+    const handleSubmitReview = async () => {
+      if (!formReview.content || formReview.rating < 1 || formReview.rating > 5) {
+        alert("Please fill in all fields correctly.");
+        return;
+      }
+      try {
+        await handleSendReview(formReview);
+        console.log("Review submitted:", formReview);
+
+        console.log("Fetching updated reviews...");
+        await fetchReviews(productId); // Gọi lại fetchReviews để cập nhật reviewsData
+        console.log("Reviews updated successfully!");
+        setNewReviews(reviewsData); // Cập nhật newReviews với reviewsData mới
+        handleCloseModal();
+      } catch (error) {
+        console.error("Error in handleSubmitReview:", error);
+        alert("Failed to submit review. Please try again.");
+      }
+    };
 
   return (
     <ReviewContainer>
@@ -153,12 +207,12 @@ const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
             </Typography>
           </Box>
           <Typography variant="body2" color="text.secondary">
-            Based on {reviews?.length} reviews
+            Based on {newReviews?.length} reviews
           </Typography>
         </Box>
 
         <Box sx={{ flex: "0 0 400px", borderRight: "1px solid #eee" }}>
-          {calculateRatingDistribution(reviews).map((item) => (
+          {calculateRatingDistribution(newReviews).map((item) => (
             <Box
               key={item.rating}
               sx={{ display: "flex", alignItems: "center", mb: 1 }}
@@ -253,12 +307,63 @@ const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
                 backgroundColor: "rgba(0,0,0,0.04)",
               },
             }}
+            onClick={handleOpenModal}
           >
             ADD REVIEW
           </Button>
         </Box>
         }
       </Box>
+
+      {/* Modal for adding a review */}
+      <Modal open={isModalOpen} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+            Add a Review
+          </Typography>
+          <TextField
+            fullWidth
+            label="Rating (1-5)"
+            name="rating"
+            type="number"
+            inputProps={{ min: 1, max: 5 }}
+            value={formReview.rating}
+            onChange={handleInputChange}
+            onKeyDown={(e) => e.preventDefault()}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Content"
+            name="content"
+            multiline
+            rows={4}
+            value={formReview.content}
+            onChange={handleInputChange}
+            sx={{ mb: 2 }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleSubmitReview}
+          >
+            Submit
+          </Button>
+        </Box>
+      </Modal>
 
       {sortedReviews.map((review) => (
         <Box
@@ -287,7 +392,9 @@ const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
           {/* Dòng hiển thị tên người dùng */}
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             {/* <Avatar src={review.avatar} alt={review.userId} sx={{ mr: 1 }} /> */}
-            <Typography fontWeight="bold">{review.userId.slice(0, 13) + '*'.repeat(review.userId.length - 8)}</Typography>
+            <Typography fontWeight="bold">
+              {review.userId.slice(0, 13) + '*'.repeat(Math.max(0, review.userId.length - 8))}
+            </Typography>
           </Box>
 
           {/* Nội dung đánh giá */}
