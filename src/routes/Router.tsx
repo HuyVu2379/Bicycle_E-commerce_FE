@@ -24,15 +24,14 @@ import ShopTemplate from "@/pages/shop";
 import NotFoundPage from "@/pages/404/index";
 import { APP_ROUTES } from "@/constants";
 import AdminLayout from "@/layouts/Admin/AdminLayout";
-import Dashboard from "@/pages/Admin/Dashboard";
-import PromotionTemplate from "@/pages/Admin/Promotion";
-import OrderList from "@/pages/Admin/Order";
-import OrderHistory from "@/pages/Order";
+import Dashboard from "@/pages/admin/Dashboard";
+import PromotionTemplate from "@/pages/admin/Promotion";
+import OrderList from "@/pages/admin/Order";
 import SupplierList from "@/components/Shared/SupplierList";
 import StatisticTemplate from "@/pages/admin/Statistics";
-import ProductManagement from "@/pages/Admin/Product";
+import ProductManagement from "@/pages/admin/Product";
 import OrderLayout from "@/layouts/OrderLayout";
-import OrderHistoryPage from "@/pages/Order";
+import OrderHistoryPage from "@/pages/order";
 const router = createBrowserRouter([
   // Redirect root to dashboard
   {

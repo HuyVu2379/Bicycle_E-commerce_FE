@@ -122,7 +122,7 @@ export const bulkCreateInventory = async (data: any) => {
 }
 export const getAllPromotions = async () => {
     try {
-        const url = `${api_promotions}`;
+        const url = `${api_promotions}/list`;
         const result = await axiosConfig.get(url);
         return result.data;
     } catch (error) {
