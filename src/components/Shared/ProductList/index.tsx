@@ -53,7 +53,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
       <Grid container justifyContent="center" sx={{ padding: "0 32px" }}>
         {products.map((product, index) => (
           <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
-            <Link sx={{ width: "100%" }} to={`/product/detail/${product.productId}`}>
+            <Link style={{ textDecoration: 'none' }} to={`/product/detail/${product.productId}`}>
               <ProductComponent product={product} />
             </Link>
           </Grid>
@@ -63,4 +63,4 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
   );
 };
 
-export default ProductList;
+export default ProductList; 

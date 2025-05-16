@@ -1,13 +1,23 @@
 import axiosConfig from "./axiosConfig";
 import { ProductResponse } from "../types/product";
 
+const api = "/api/v1/products"
+
 interface MessageResponse<T> {
     statusCode: number;
     message: string;
     success: boolean;
     data: T;
 }
-
+interface PaginatedResponse<T> {
+    content: T[];
+    page: {
+        size: number;
+        number: number;
+        totalElements: number;
+        totalPages: number;
+    };
+}
 const api_product = "/api/v1/products"
 const api_category = "/api/v1/categories"
 const api_supplier = "/api/v1/suppliers"
@@ -19,9 +29,9 @@ const api_promotions = "/api/v1/promotions"
 
 export const getAllProduct = async (): Promise<MessageResponse<ProductResponse[]>> => {
     try {
-        const url = `${api_product}/public/getAllProduct`;
+        const url = `${api}/public/getAllProduct`;
         const response = await axiosConfig.get<MessageResponse<ProductResponse[]>>(url) as unknown as MessageResponse<ProductResponse[]>;
-        console.log(response.data);
+
         return response;
     } catch (error: any) {
         console.error("Error get Product:", error);
@@ -150,7 +160,7 @@ export const bulkCreateInventory = async (data: any) => {
 }
 export const getAllPromotions = async () => {
     try {
-        const url = `${api_promotions}`;
+        const url = `${api_promotions}/list`;
         const result = await axiosConfig.get(url);
         return result.data;
     } catch (error) {

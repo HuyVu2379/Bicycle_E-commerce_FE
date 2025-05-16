@@ -6,6 +6,7 @@ import HomeLayout from "@/layouts/HomeLayout";
 import UserProfile from "@/pages/Auth/Profile";
 import HomeTemplate from "@/pages/Home/index";
 import ServiceLayout from "@/layouts/ServiceLayout";
+import CheckoutPage from "@/components/Shared/YourCart/index";
 import ServiceTemplate from "@/pages/Service/index";
 import PaymentLayout from "@/layouts/PaymentLayout";
 import PaymentTemplate from "@/pages/Payment/index";
@@ -23,10 +24,9 @@ import ShopTemplate from "@/pages/shop";
 import NotFoundPage from "@/pages/404/index";
 import { APP_ROUTES } from "@/constants";
 import AdminLayout from "@/layouts/Admin/AdminLayout";
-import Dashboard from "@/pages/Admin/Dashboard";
-import PromotionTemplate from "@/pages/Admin/Promotion";
-import OrderList from "@/pages/Admin/Order";
-import OrderHistory from "@/pages/Order";
+import Dashboard from "@/pages/admin/Dashboard";
+import PromotionTemplate from "@/pages/admin/Promotion";
+import OrderList from "@/pages/admin/Order";
 import SupplierList from "@/components/Shared/SupplierList";
 import StatisticTemplate from "@/pages/admin/Statistics";
 import ProductManagement from "@/pages/Admin/Product";
@@ -34,7 +34,6 @@ import CartLayout from "@/layouts/CartLayout";
 import CartTemplate from "@/pages/cart/index";
 import OrderLayout from "@/layouts/OrderLayout";
 import OrderHistoryPage from "@/pages/order/index";
-
 const router = createBrowserRouter([
   // Redirect root to dashboard
   {
@@ -80,6 +79,7 @@ const router = createBrowserRouter([
     Component: HomeLayout,
     children: [
       { path: "", Component: HomeTemplate },
+      { path: APP_ROUTES.CART, Component: CheckoutPage }
     ],
   },
 
@@ -160,16 +160,7 @@ const router = createBrowserRouter([
       }
     ]
   },
-  {
-    path: APP_ROUTES.CART,
-    Component: CartLayout,
-    children: [
-      {
-        path: "",
-        Component: CartTemplate
-      }
-    ]
-  },
+
   // Admin Route
   {
     path: APP_ROUTES.ADMIN_ROUTE,

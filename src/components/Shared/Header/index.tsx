@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import "./header.css";
 import { Link } from "react-router-dom";
 import { FaUser, FaShoppingCart, FaSearch, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
-import { ImProfile } from "react-icons/im";
 import useAuth from "@/hook/api/useAuth";
-import { useCart } from "@/hook/api/useCart";
+import { getValueFromLocalStorage } from "@/utils/localStorage";
+import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
 const Header: React.FC = () => {
+
   const { handleLogout } = useAuth();
   const [showShopDropdown, setShowShopDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { accessToken } = localStorage;
   const { cartItemCount } = useCart();
+  const accessToken = getValueFromLocalStorage("accessToken");
 
   return (
     <header className="header">
@@ -68,21 +69,29 @@ const Header: React.FC = () => {
 
           {/* Action Icons */}
           <div className="actions">
-            <Link to="/auth/login" className="icons">
-              <FaUser className="icon" />
+            {accessToken ? (
+              <Link to="/auth/profile" className="icons">
+                <FaUser className="icon" />
+              </Link>
+            ) : (
+              <Link to="/auth/login" className="icons">
+                <FaUser className="icon" />
+              </Link>
+            )}
+            <Link to="/my-orders" className="icons">
+              <LiaFileInvoiceDollarSolid color="black" size={20} />
             </Link>
-            <Link to="/auth/profile" className="icons">
-              <ImProfile className="icon" />
-            </Link>
-            <Link to="/cart" className="cart icons">
+            <Link to="/home/cart" className="cart icons">
               <FaShoppingCart className="icon" />
               <span className="cart-badge">{cartItemCount || 0}</span>
             </Link>
-            {accessToken ? (< Link to="/auth/login" onClick={handleLogout} className="logout">
-              Logout
-            </Link>)
-              : <></>
-            }
+            {accessToken ? (
+              <Link to="/auth/login" onClick={handleLogout} className="logout">
+                Logout
+              </Link>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </div>
