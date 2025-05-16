@@ -27,7 +27,8 @@ function useAuth() {
             const userId = response.data.userId;
             setValueInLocalStorage('userId', userId);
             await handleGetMe(userId);
-            await fetchCartByUserId(userId); 
+            const data = await fetchCartByUserId(userId); 
+            console.log("Check data cart in useAuth: ", data);
         } else {
             enqueueSnackbar(`${response.message?.response?.data?.message || 'Login failed'}.`, { variant: 'error' });
         }

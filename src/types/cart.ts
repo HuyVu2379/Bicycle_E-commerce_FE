@@ -1,16 +1,16 @@
 export interface CartItemsResponse {
     productId: string;
-    cartItemId : string,
-    name: string;
+    // cartItemId: string;
+    productName: string;
     price: number;
-    selectedColor: string,
-    quantity: number,
-    image: string,
+    color: string; 
+    quantity: number;
+    imageUrl: string; 
 }
 
 export interface CartResponse {
-    cartId: string,
-    userId: string,
+    cartId: string;
+    userId: string;
     items: CartItemsResponse[];
 }
 

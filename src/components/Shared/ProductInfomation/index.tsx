@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -16,8 +16,9 @@ import {
 import { Add, Remove } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { useCart } from "@/hook/api/useCart";
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import { RootState } from "@/store/index";
+import { CartItemsResponse } from "@/types/cart";
 
 const ProductInformation = ({ product }) => {
   if (!product) return null;
@@ -53,33 +54,46 @@ const ProductInformation = ({ product }) => {
   const handleIncrease = () => setQuantity(quantity + 1);
   const handleDecrease = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
 
-  const { addCartItem } = useCart();
-  const { cart } = useSelector((state: RootState) => state.cart);
+  const { currentCart, addCartItems, fetchCartByUserId } = useCart();
+  // const currentCart = useSelector(
+  //   (state: RootState) => state.cartSlice.currentCart
+  // );
 
   const handleAddToCart = () => {
-      console.log(
-          `Added to cart: ${product.product.productId}, Name: ${product.product.name}, Color: ${selectedColor}, Quantity: ${quantity}`
-      );
-      const cartItem = {
-          productId: product.product.productId,
-          name: product.product.name,
-          selectedColor,
-          quantity,
-          cartId: cart.cartId, 
-      };
+    console.log("Check data in product info: ", currentCart);
 
-      addCartItem(cartItem);
+    console.log(
+      `Added to cart: ${product.product.productId}, Name: ${product.product.name}, Color: ${selectedColor}, Quantity: ${quantity}`
+    );
+
+    if (!currentCart) {
+      console.error(
+        "No cart available. Please log in or fetch the cart first."
+      );
+      return;
+    }
+    const cartItem: CartItemsResponse = {
+      productId: product.product.productId,
+      // cartItemId: "",
+      productName: product.product.name,
+      price: product.product.priceReduced,
+      color: selectedColor,
+      quantity,
+      imageUrl: images[0] || "",
+    };
+
+    console.log("Check cart item in Product Info: ", cartItem);
+    addCartItems(cartItem);
   };
 
   return (
     <Box sx={{ padding: 4, maxWidth: 1200, margin: "auto" }}>
       <Grid container spacing={4}>
-        {/* Ảnh chính */}
         <Grid item xs={12} md={6}>
           <CardMedia
             component="img"
             image={mainImage}
-            alt={product.name}
+            alt={product.product.name}
             sx={{ width: "100%", height: "auto", borderRadius: 2 }}
           />
           <Box
@@ -104,7 +118,6 @@ const ProductInformation = ({ product }) => {
           </Box>
         </Grid>
 
-        {/* Thông tin sản phẩm */}
         <Grid item xs={12} md={6}>
           <Typography variant="h4" sx={{ fontWeight: "bold" }} gutterBottom>
             {product.product.name}
@@ -124,7 +137,6 @@ const ProductInformation = ({ product }) => {
           </Typography>
           {product.supplier?.name || "UNKNOWN"}
 
-          {/* Màu sắc */}
           <Typography
             variant="h6"
             gutterBottom
@@ -150,7 +162,6 @@ const ProductInformation = ({ product }) => {
             ))}
           </RadioGroup>
 
-          {/* Số lượng */}
           <Typography
             variant="h6"
             gutterBottom
@@ -173,7 +184,6 @@ const ProductInformation = ({ product }) => {
             </IconButton>
           </Box>
 
-          {/* Nút hành động */}
           <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
             <Button
               variant="contained"
@@ -194,7 +204,6 @@ const ProductInformation = ({ product }) => {
             </Button>
           </Box>
 
-          {/* Thông tin thanh toán và giao hàng */}
           <Typography
             variant="subtitle1"
             gutterBottom

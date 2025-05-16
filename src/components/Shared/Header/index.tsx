@@ -4,11 +4,14 @@ import { Link } from "react-router-dom";
 import { FaUser, FaShoppingCart, FaSearch, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
 import useAuth from "@/hook/api/useAuth";
+import { useCart } from "@/hook/api/useCart";
 const Header: React.FC = () => {
   const { handleLogout } = useAuth();
   const [showShopDropdown, setShowShopDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { accessToken } = localStorage;
+  const { cartItemCount } = useCart();
+
   return (
     <header className="header">
       <div className="header-container">
@@ -73,7 +76,7 @@ const Header: React.FC = () => {
             </Link>
             <Link to="/cart" className="cart icons">
               <FaShoppingCart className="icon" />
-              <span className="cart-badge">4</span>
+              <span className="cart-badge">{cartItemCount || 0}</span>
             </Link>
             {accessToken ? (< Link to="/auth/login" onClick={handleLogout} className="logout">
               Logout

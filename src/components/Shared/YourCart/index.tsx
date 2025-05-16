@@ -24,15 +24,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import PayPalLogo from "/assets/images/logo-paypal.png";
-
-const sampleCartItem = {
-  name: "Giant Defy Advanced",
-  color: "Green",
-  size: "52",
-  price: 299,
-  quantity: 1,
-  image: "/assets/images/item.jpg",
-};
+import { useCart } from "@/hook/api/useCart";
 
 const recommendedItems = [
   {
@@ -48,24 +40,38 @@ const recommendedItems = [
 ];
 
 export default function CheckoutPage() {
-  const [quantity, setQuantity] = useState(1);
+  const { currentCart, removeCartItems, updateItemQuantity } = useCart();
+  const [isGiftWrapped, setIsGiftWrapped] = useState(false);
   const [country, setCountry] = useState("United States");
   const [province, setProvince] = useState("Alabama");
-  const [isGiftWrapped, setIsGiftWrapped] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
   const giftWrapFee = 5;
 
-  const currentAmount = 65;
+  const currentAmount = currentCart?.items.reduce((total, item) => total + item.price * item.quantity, 0) || 0;
   const freeShippingThreshold = 100;
   const progress = (currentAmount / freeShippingThreshold) * 100;
   const amountLeft = (freeShippingThreshold - currentAmount).toFixed(2);
 
   const calculateTotal = () => {
-    let baseTotal = sampleCartItem.price * quantity;
+    let baseTotal = currentCart?.items.reduce((total, item) => total + item.price * item.quantity, 0) || 0;
     if (isGiftWrapped) {
       baseTotal += giftWrapFee;
     }
     return baseTotal;
+  };
+
+  const handleUpdateQuantity = (productId: string, newQuantity: number) => {
+    if (currentCart) {
+      const item = currentCart.items.find((item) => item.productId === productId);
+      if (item && newQuantity >= 1) {
+        updateItemQuantity(currentCart.cartId, productId, newQuantity);
+      }
+    }
+  };
+
+  const handleRemoveItem = (productId: string) => {
+    if (currentCart) {
+      removeCartItems(currentCart.cartId, productId);
+    }
   };
 
   return (
@@ -88,22 +94,22 @@ export default function CheckoutPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {!isDeleted && (
-                  <TableRow>
+                {currentCart?.items.map((item) => (
+                  <TableRow key={item.productId}>
                     <TableCell>
                       <Box display="flex" alignItems="center">
                         <img
-                          src={sampleCartItem.image}
-                          alt={sampleCartItem.name}
+                          src={item.imageUrl}
+                          alt={item.name}
                           width={80}
                         />
                         <Box ml={2}>
-                          <Typography>{sampleCartItem.name}</Typography>
+                          <Typography>{item.name}</Typography>
                           <Typography variant="body2" color="text.secondary">
-                            {sampleCartItem.color} / {sampleCartItem.size}
+                            {item.color} / {item.size || "N/A"}
                           </Typography>
                           <Typography color="error">
-                            ${sampleCartItem.price}
+                            ${item.price.toFixed(2)}
                           </Typography>
                         </Box>
                       </Box>
@@ -111,26 +117,28 @@ export default function CheckoutPage() {
                     <TableCell>
                       <Box display="flex" alignItems="center">
                         <Button
-                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                          onClick={() => handleUpdateQuantity(item.productId, item.quantity - 1)}
                         >
                           -
                         </Button>
-                        <Typography mx={2}>{quantity}</Typography>
-                        <Button onClick={() => setQuantity(quantity + 1)}>
+                        <Typography mx={2}>{item.quantity}</Typography>
+                        <Button
+                          onClick={() => handleUpdateQuantity(item.productId, item.quantity + 1)}
+                        >
                           +
                         </Button>
                       </Box>
                     </TableCell>
                     <TableCell>
-                      ${(sampleCartItem.price * quantity).toFixed(2)}
+                      ${(item.price * item.quantity).toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      <IconButton onClick={() => setIsDeleted(true)}>
+                      <IconButton onClick={() => handleRemoveItem(item.productId)}>
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
                   </TableRow>
-                )}
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -181,7 +189,6 @@ export default function CheckoutPage() {
         {/* Right side: Summary */}
         <Grid item xs={12} md={4}>
           <Box sx={{ width: "100%", px: 2, py: 2 }}>
-            {/* Thanh progress */}
             <Box sx={{ position: "relative", height: 10, borderRadius: 5 }}>
               <LinearProgress
                 variant="determinate"
@@ -191,11 +198,10 @@ export default function CheckoutPage() {
                   borderRadius: 5,
                   backgroundColor: "#e0e0e0",
                   "& .MuiLinearProgress-bar": {
-                    backgroundColor: "#ef4444", // đỏ
+                    backgroundColor: "#ef4444",
                   },
                 }}
               />
-              {/* Icon xe hàng */}
               <Box
                 sx={{
                   position: "absolute",
@@ -216,7 +222,6 @@ export default function CheckoutPage() {
               </Box>
             </Box>
 
-            {/* Text thông báo */}
             <Typography variant="body2" align="center" mt={1}>
               Spend <strong>${amountLeft}</strong> more to enjoy{" "}
               <Typography
@@ -228,7 +233,7 @@ export default function CheckoutPage() {
             </Typography>
           </Box>
           <Typography color="error">
-            Spend ${(53 - calculateTotal()).toFixed(2)} more to enjoy FREE
+            Spend ${(freeShippingThreshold - calculateTotal()).toFixed(2)} more to enjoy FREE
             SHIPPING!
           </Typography>
 
@@ -266,10 +271,10 @@ export default function CheckoutPage() {
             sx={{
               mt: 2,
               "& .MuiInputBase-root": {
-                height: 56, // Chiều cao tổng thể của input (có thể tăng lên tùy ý)
+                height: 56,
               },
               "& input": {
-                padding: "16.5px 14px", // padding bên trong input
+                padding: "16.5px 14px",
               },
             }}
           />
@@ -282,15 +287,15 @@ export default function CheckoutPage() {
               backgroundColor: "black",
               color: "white",
               "&:hover": {
-                backgroundColor: "#333", // màu khi hover
+                backgroundColor: "#333",
               },
-              padding: "16.5px 14px", // padding bên trong input
+              padding: "16.5px 14px",
             }}
           >
             ESTIMATE
           </Button>
 
-          <Typography mt={4}>Subtotal: ${calculateTotal()}</Typography>
+          <Typography mt={4}>Subtotal: ${calculateTotal().toFixed(2)}</Typography>
 
           <Box display="flex" alignItems="center" mt={2}>
             <Checkbox />
@@ -310,7 +315,7 @@ export default function CheckoutPage() {
               color: "black",
               borderStyle: "solid",
               borderWidth: "1px",
-              borderColor: "gray", // màu viền (có thể thay)
+              borderColor: "gray",
             }}
           >
             CHECKOUT
@@ -329,7 +334,7 @@ export default function CheckoutPage() {
             <img
               src={PayPalLogo}
               alt="PayPal Logo"
-              style={{ width: 25, marginRight: 1 }} // Điều chỉnh kích thước logo
+              style={{ width: 25, marginRight: 1 }}
             />
             PayPal
           </Button>
