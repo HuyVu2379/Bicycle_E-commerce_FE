@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   getOrdersByPage,
-  getOrdersByUserId,
+  getOrdersByUserId_DB,
   getOrderById
 } from '@/services/Order.service';
 
@@ -55,7 +55,7 @@ function useOrder() {
         setTotalPages(1);
         setPage(0);
       } else {
-        const res = await getOrdersByUserId(value, 0);
+        const res = await getOrdersByUserId_DB(value, 0);
         if (res.data && res.data.content) {
           setOrders(res.data.content);
           setTotalPages(res.data.totalPages || 1);

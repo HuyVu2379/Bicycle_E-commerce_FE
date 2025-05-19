@@ -18,6 +18,7 @@ import {
 
 interface OrderDetailItem {
   productId: string;
+  color: string;
   quantity: number;
   subtotal: number;
 }
@@ -57,6 +58,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order, onClose }) => {
             <TableHead>
               <TableRow>
                 <TableCell>Product ID</TableCell>
+                <TableCell>Color</TableCell>
                 <TableCell>Quantity</TableCell>
                 <TableCell>Price</TableCell>
                 <TableCell>Subtotal</TableCell>
@@ -66,6 +68,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order, onClose }) => {
               {order.orderDetails.map((detail, index) => (
                 <TableRow key={index}>
                   <TableCell>{detail.productId}</TableCell>
+                  <TableCell>{detail.color === null ? 'NaN' : detail.color}</TableCell>
                   <TableCell>{detail.quantity}</TableCell>
                   <TableCell>{(detail.subtotal / detail.quantity).toLocaleString()}₫</TableCell>
                   <TableCell>{detail.subtotal.toLocaleString()}₫</TableCell>
