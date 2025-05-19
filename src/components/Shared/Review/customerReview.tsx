@@ -63,6 +63,7 @@ const StyledRating = styled(Rating)({
 });
 
 const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
+    console.log("ReviewsComponent rendered with reviews:", reviews);
     const {handleSendReview, fetchReviews, reviewsData} = useProductDetail();
     const [newReviews, setNewReviews] = useState<Review[]>(reviews || []);
     const [sortOption, setSortOption] = useState<"newest" | "highest" | "lowest">("newest");
@@ -70,9 +71,12 @@ const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
     const { productId } = useParams<{ productId: string }>();
 
     useEffect(() => {
-      fetchReviews(productId);
       setNewReviews(reviewsData);
     }, [reviewsData]);
+
+    useEffect(() => {
+      setNewReviews(reviews);
+    }, [reviews]);
 
 
     const sortedReviews = useMemo(() => {

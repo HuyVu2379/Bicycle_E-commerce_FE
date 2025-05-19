@@ -45,10 +45,10 @@ const Dashboard: React.FC = () => {
       const response = await getDashboardYearData(year);
       
       if (response.success && response.data) {
-        const chartData = Object.entries(response.data).map(([month, value]) => ({
-          name: month,
-          value: value
-        }));
+        const chartData = Object.entries(response.data.data).map(([month, value]) => ({
+  name: month,
+  value: value
+}));
         
         setSalesData(chartData);
       } else {
