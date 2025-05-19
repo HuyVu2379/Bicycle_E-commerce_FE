@@ -1,18 +1,53 @@
 import { setMe } from '@/store/slices/user.slice'
-import { login } from '@/services/Auth.service'
+import { login, loginWithGoogle } from '@/services/Auth.service'
 import { getUserById } from '@/services/User.service'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSnackbar } from 'notistack';
 import { APP_ROUTES } from '@/constants';
-import { useNavigate } from "react-router"
+import { data, useNavigate } from "react-router"
 import { removeValueInLocalStorage, setValueInLocalStorage } from '@/utils/localStorage';
 import { RootState } from '@/store';
+
 function useAuth() {
     const userStore = useSelector((state: RootState) => state.userSlice);
     const { me } = userStore
     const dispatch = useDispatch();
     const navigate = useNavigate()
     const { enqueueSnackbar } = useSnackbar();
+
+    const handleLoginWithGoogle = async (token: string) => {
+        try {
+            console.log("Gửi token đến backend:", token);
+
+            const response = await loginWithGoogle(token);
+
+            console.log("Token length: ", token.length, "Token: ", token);
+            console.log("Response: ", response);
+            if (response && response.data && response.data.accessToken) {
+                enqueueSnackbar({ message: 'Login successful!', variant: 'success' });
+
+                setValueInLocalStorage('accessToken', response.data.accessToken);
+                setValueInLocalStorage('refreshToken', response.data.refreshToken);
+                setValueInLocalStorage('userId', response.data.userId);
+                setValueInLocalStorage('email', response.data.email);
+                setValueInLocalStorage('role', response.data.role);
+
+                if (response.data.userId) {
+                    await handleGetMe(response.data.userId);
+                }
+
+                return { success: true, data: response.data }
+            } else {
+                const errorMsg = response.message || 'Đăng nhập thất bại';
+                enqueueSnackbar(errorMsg, { variant: 'error' });
+                return { success: false, message: errorMsg, data: response };
+            }
+        } catch (error) {
+            enqueueSnackbar({ message: 'Login failed!', variant: 'error' });
+            throw error;
+        }
+    }
+
     const handleLogin = async (email: string, password: string) => {
         const response = await login(email, password);
         if ('success' in response && response.success === true) {
@@ -44,7 +79,7 @@ function useAuth() {
         const user = await getUserById(userId);
         dispatch(setMe(user.data));;
     }
-    return { handleLogin, handleLogout, me, handleGetMe };
+    return { handleLogin, handleLogout, me, handleGetMe, handleLoginWithGoogle };
 }
 
 export default useAuth;

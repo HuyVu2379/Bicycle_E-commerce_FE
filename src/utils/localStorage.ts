@@ -6,5 +6,5 @@ export const removeValueInLocalStorage = (key: string) => {
 };
 export const getValueFromLocalStorage = (key: string) => {
   const value: string | null = localStorage.getItem(key);
-  return value !== null ? value : '""';
+  return value ? JSON.parse(value) : null;
 };

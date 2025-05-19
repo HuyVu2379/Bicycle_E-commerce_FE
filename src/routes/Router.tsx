@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import LoginTemplate from "@/pages/Auth/Login";
+import LoginTemplate from "@/pages/auth/Login/index";
 import RegisterTemplate from "@/pages/Auth/Register";
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
@@ -33,6 +33,15 @@ import StatisticTemplate from "@/pages/admin/Statistics";
 import ProductManagement from "@/pages/Admin/Product";
 import OrderLayout from "@/layouts/OrderLayout";
 import OrderHistoryPage from "@/pages/Order";
+import GoogleCallbackLayout from "@/layouts/GoogleCallbackLayout";
+
+const ErrorPage = () => (
+  <div>
+    <h1>Đã xảy ra lỗi</h1>
+    <p>Vui lòng thử lại sau hoặc liên hệ hỗ trợ.</p>
+  </div>
+);
+
 const router = createBrowserRouter([
   // Redirect root to dashboard
   {
@@ -47,7 +56,8 @@ const router = createBrowserRouter([
     children: [
       {
         path: "login",
-        Component: LoginTemplate,
+        element: <LoginTemplate />,
+        errorElement: <ErrorPage />,
       },
       {
         path: "register",
@@ -56,6 +66,11 @@ const router = createBrowserRouter([
       {
         path: "profile",
         Component: UserProfile,
+      },
+      {
+        path: "google-callback",
+        element: <GoogleCallbackLayout />,
+        errorElement: <ErrorPage />,
       },
     ],
   },
@@ -78,16 +93,14 @@ const router = createBrowserRouter([
     Component: HomeLayout,
     children: [
       { path: "", Component: HomeTemplate },
-      { path: APP_ROUTES.CART, Component: CheckoutPage }
+      { path: APP_ROUTES.CART, Component: CheckoutPage },
     ],
   },
 
   {
     path: APP_ROUTES.USER_ORDER_HISTORY,
     Component: OrderLayout,
-    children: [
-      { path: "", Component: OrderHistoryPage }
-    ]
+    children: [{ path: "", Component: OrderHistoryPage }],
   },
 
   // Service Route
@@ -97,9 +110,9 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        Component: ServiceTemplate
-      }
-    ]
+        Component: ServiceTemplate,
+      },
+    ],
   },
 
   // Payment Route
@@ -109,9 +122,9 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        Component: PaymentTemplate
-      }
-    ]
+        Component: PaymentTemplate,
+      },
+    ],
   },
 
   // About Route
@@ -121,9 +134,9 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        Component: AboutTemplate
-      }
-    ]
+        Component: AboutTemplate,
+      },
+    ],
   },
 
   // Contact Route
@@ -133,9 +146,9 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        Component: ContactTemplate
-      }
-    ]
+        Component: ContactTemplate,
+      },
+    ],
   },
 
   // News Routes
@@ -155,9 +168,9 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        Component: ShopTemplate
-      }
-    ]
+        Component: ShopTemplate,
+      },
+    ],
   },
 
   // Admin Route
@@ -167,29 +180,29 @@ const router = createBrowserRouter([
     children: [
       {
         path: APP_ROUTES.ADMIN.DASHBOARD,
-        Component: Dashboard
+        Component: Dashboard,
       },
       {
         path: APP_ROUTES.ADMIN.PROMOTION,
-        Component: PromotionTemplate
+        Component: PromotionTemplate,
       },
       {
         path: APP_ROUTES.ADMIN.ORDER,
-        Component: OrderList
+        Component: OrderList,
       },
       {
         path: APP_ROUTES.ADMIN.SUPLIER,
-        Component: SupplierList
+        Component: SupplierList,
       },
       {
         path: APP_ROUTES.ADMIN.STATISTIC,
-        Component: StatisticTemplate
+        Component: StatisticTemplate,
       },
       {
         path: APP_ROUTES.ADMIN.PRODUCT,
-        Component: ProductManagement
-      }
-    ]
+        Component: ProductManagement,
+      },
+    ],
   },
   // 404 Route
   {
