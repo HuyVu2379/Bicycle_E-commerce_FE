@@ -7,8 +7,10 @@ import { APP_ROUTES } from '@/constants';
 import { useNavigate } from "react-router"
 import { removeValueInLocalStorage, setValueInLocalStorage } from '@/utils/localStorage';
 import { RootState } from '@/store';
+import useCart from './useCart';
 function useAuth() {
     const userStore = useSelector((state: RootState) => state.userSlice);
+    const { fetchCartByUserId } = useCart();
     const { me } = userStore
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -23,6 +25,7 @@ function useAuth() {
             const userId = response.data.userId
             setValueInLocalStorage('userId', userId);
             await handleGetMe(userId);
+            await fetchCartByUserId(userId);
         } else {
             enqueueSnackbar(`${response.message?.response?.data?.message || 'Login failed'}.`, { variant: 'error' });
         }

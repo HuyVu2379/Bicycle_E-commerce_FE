@@ -36,7 +36,7 @@ import { ProductResponse } from "@/types/product";
 
 
 export default function HomeTemplate() {
-  const [ featuredProducts, setFeaturedProducts] = useState<ProductResponse[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<ProductResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
@@ -48,10 +48,10 @@ export default function HomeTemplate() {
     try {
       const response = await getAllProduct(pageNo);
       console.log("Full response:", JSON.stringify(response));
-      
-      if (response && response.content){
+
+      if (response && response.content) {
         setFeaturedProducts(response.content);
-        if (response.page){
+        if (response.page) {
           setTotalPages(response.page.totalPages);
         }
       } else {
@@ -72,7 +72,7 @@ export default function HomeTemplate() {
   }, [page]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value - 1); 
+    setPage(value - 1);
   };
 
   if (loading) {
@@ -101,11 +101,11 @@ export default function HomeTemplate() {
       <AdvertisementSection />
       <ProductList products={featuredProducts} />
       {totalPages > 1 && (
-        <Pagination 
-          count={totalPages} 
-          page={page + 1} 
-          onChange={handlePageChange} 
-          color="primary" 
+        <Pagination
+          count={totalPages}
+          page={page + 1}
+          onChange={handlePageChange}
+          color="primary"
           sx={{ mt: 4, mb: 4 }}
         />
       )}

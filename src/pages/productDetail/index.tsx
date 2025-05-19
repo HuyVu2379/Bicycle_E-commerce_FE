@@ -73,7 +73,7 @@ const ProductDetailTemplate = () => {
 
         {/* Nội dung của từng tab */}
         <TabPanel value={value} index={0}>
-            {productInfo?.product?.description ? (
+          {productInfo?.product?.description ? (
             <div
               dangerouslySetInnerHTML={{ __html: productInfo.product.description }}
             />
@@ -82,7 +82,7 @@ const ProductDetailTemplate = () => {
           )}
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <SpecificationsComponent specifications={specifications}/>
+          <SpecificationsComponent specifications={specifications} />
         </TabPanel>
         <TabPanel value={value} index={2}>
           <div>
@@ -90,7 +90,7 @@ const ProductDetailTemplate = () => {
           </div>
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <ReviewsComponent reviews={reviewsData}/>
+          <ReviewsComponent reviews={reviewsData} />
         </TabPanel>
       </Box>
       {/* <Box sx={{ width: '100%' }}>
