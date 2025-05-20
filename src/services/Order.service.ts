@@ -106,3 +106,25 @@ export const getOrderById = async (orderId: string) => {
         return { success: false, message: error };
     }
 }
+//create order
+export const createOrder = async (data: any) => {
+    try {   
+        const url = `${api}/create`;
+        const result = await axiosConfig.post(url, data);
+        return result.data;
+    } catch (error) {
+        console.error("Error create order:", error);
+        return { success: false, message: error };
+    }
+}
+//create order
+export const updateOrderStatus = async (data: any) => {
+    try {   
+        const url = `${api}/update`;
+        const result = await axiosConfig.put(url, data);
+        return result.data;
+    } catch (error) {
+        console.error("Error create order:", error);
+        return { success: false, message: error };
+    }
+}

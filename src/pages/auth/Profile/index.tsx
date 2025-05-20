@@ -5,20 +5,20 @@ import TextField from "@mui/material/TextField";
 import EditIcon from "@mui/icons-material/Edit";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
-import useAuth from "@/hook/api/useAuth";
+import { useSelector, useDispatch } from "react-redux";
 import useUser from "@/hook/api/useUser";
 import EditAddressModal from "@/components/Shared/EditAddress";
 import { getValueFromLocalStorage } from "@/utils/localStorage";
 import dayjs from "dayjs";
 import { enqueueSnackbar } from "notistack";
-import AvatarModal from "./avatarModal";
+import AvatarModal from "../../../components/Shared/AvatarModal";
 import useUpload from "@/hook/api/useUpload";
+import { setAvatar } from "@/store/slices/user.slice";
 
 const UserProfile = () => {
-    const { handleGetMe } = useAuth();
     const { handleEditProfile, handleUpdateAvatar } = useUser();
     const { me } = useSelector((state: any) => state.userSlice);
+    const dispatch = useDispatch();
     const [userInfo, setUserInfo] = useState({
         userId: "",
         fullName: "",
@@ -41,9 +41,9 @@ const UserProfile = () => {
     let userId = getValueFromLocalStorage("userId");
     userId = userId ? userId.substring(1, userId.length - 1) : "";
 
-    // Đồng bộ userInfo với me khi me thay đổi
+    // Lấy thông tin người dùng khi component mount
     useEffect(() => {
-        if (me) {
+        if (me && !userInfo.userId) {  // Chỉ cập nhật khi me có giá trị và userInfo chưa được set
             setUserInfo({
                 userId: me.userId || "",
                 fullName: me.fullName || "",
@@ -55,23 +55,8 @@ const UserProfile = () => {
                 addressId: me.address?.addressId || "",
             });
         }
+        setIsLoading(false);
     }, [me]);
-
-    // Lấy thông tin người dùng khi component mount
-    useEffect(() => {
-        const fetchData = async () => {
-            if (userId) {
-                try {
-                    await handleGetMe(userId);
-                } catch (err) {
-                    console.error("UserProfile: handleGetMe error =", err);
-                    enqueueSnackbar("Lỗi khi tải thông tin người dùng", { variant: "error" });
-                }
-            }
-            setIsLoading(false);
-        };
-        fetchData();
-    }, []);
 
     // Dọn dẹp URL tạm thời khi avatar thay đổi
     useEffect(() => {
@@ -117,6 +102,8 @@ const UserProfile = () => {
                 };
                 await handleUpdateAvatar(data);
                 setUserInfo((prev) => ({ ...prev, avatar: imageUrl }));
+                // Update the avatar in the Redux store
+                dispatch(setAvatar(imageUrl));
                 enqueueSnackbar("Cập nhật ảnh đại diện thành công!", { variant: "success" });
             } catch (err) {
                 enqueueSnackbar("Lỗi khi tải ảnh lên", { variant: "error" });

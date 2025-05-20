@@ -64,7 +64,6 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
   product
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  console.log("check product component: ", product);
   useEffect(() => {
     if (cardRef.current) {
       VanillaTilt.init(cardRef.current, {

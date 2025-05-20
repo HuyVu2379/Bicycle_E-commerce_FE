@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -23,28 +24,42 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import VNPayLogo from '/assets/images/logo-vnpay.png';
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { updateQuantity, removeItem } from "@/store/slices/cart.slice";
 import EditAddressModal from "../EditAddress";
 import useProduct from "@/hook/api/useProduct";
 import ProductList from "@/components/Shared/ProductList/index";
 import { ProductResponse } from "@/types/product";
 import { getAllProduct } from "@/services/Product.service";
+import useCart from "@/hook/api/useCart";
+import { getValueFromLocalStorage } from "@/utils/localStorage";
+import { useSnackbar } from "notistack";
+import { createPayment, getPaymentStatus } from "@/services/Payment.service";
+import { createOrder } from "@/services/Order.service";
+interface CartItem {
+  cartItemId: string;
+  productName: string;
+  imageUrl: string;
+  color: string;
+  quantity: number;
+  price: number;
+}
 
 export default function CheckoutPage() {
-  const dispatch = useDispatch();
   const cartSlice = useSelector((state: RootState) => state.cartSlice);
   const userSlice = useSelector((state: RootState) => state.userSlice);
   const productSlice = useSelector((state: RootState) => state.productSlice);
+  const { updateQuantityCartItem, removeCartItem, fetchCartByUserId, removeCartItems } = useCart();
   const { me } = userSlice;
   const { cart } = cartSlice;
   const { promotions } = productSlice;
   const { handleFetchPromotion } = useProduct();
   const cartItems = cart.items;
+  const { enqueueSnackbar } = useSnackbar();
   const [isGiftWrapped, setIsGiftWrapped] = useState(false);
   const [selectedPromotion, setSelectedPromotion] = useState<string>("");
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const giftWrapFee = 50000;
   const freeShippingThreshold = 1000000;
   const [open, setOpen] = useState(false);
@@ -53,9 +68,77 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const userId = getValueFromLocalStorage("userId").replace(/^"|"$/g, '');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+      fetchCartByUserId(userId);
+  }, [userId]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const handleSelectItem = (item: CartItem) => {
+    setSelectedItems(prev => {
+      if (prev.some(selectedItem => selectedItem.cartItemId === item.cartItemId)) {
+        return prev.filter(selectedItem => selectedItem.cartItemId !== item.cartItemId);
+      } else {
+        return [...prev, item];
+      }
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedItems.length === cartItems?.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(cartItems || []);
+    }
+  };
+
+  const handlePayment = async () => {
+    if (selectedItems.length === 0) {
+      enqueueSnackbar("Please select at least one item to pay", { variant: 'warning' });
+      return;
+    }
+    
+    // Xóa trạng thái đã xử lý payment trước đó
+    sessionStorage.removeItem('processedPayment');
+    
+    const products = selectedItems.map((item: any) => ({
+      productId: item.productId,
+      color: item.color.toUpperCase(),
+      quantity: item.quantity
+    }));
+    const dataCreateOrder = {
+      promotionId: selectedPromotion,
+      products: products,
+    }
+    const order = await createOrder(dataCreateOrder)
+    
+    const data = {
+      orderId: order.orderId,
+      userId: order.userId,
+      amount: calculateTotal(),
+      currency: "VND", 
+      paymentMethod: "VN_PAY",
+      orderInfo: `Thanh toan don hang ${order.orderId}`,
+      language: "vn",
+    }
+    const response = await createPayment(data);
+    
+    if (response && response.paymentUrl) {
+      // Lưu thông tin cần thiết vào localStorage để xử lý sau khi thanh toán
+      localStorage.setItem('pendingPayment', JSON.stringify({
+        selectedItems,
+        orderId: order.orderId
+      }));
+      // Chuyển hướng đến trang thanh toán VNPay
+      window.location.href = response.paymentUrl;
+    } else {
+      enqueueSnackbar("Có lỗi xảy ra khi tạo thanh toán", { variant: 'error' });
+    }
+  };
 
   const fetchHomeData = async (pageNo = 0) => {
     setLoading(true);
@@ -80,7 +163,8 @@ export default function CheckoutPage() {
   };
 
   const calculateTotal = () => {
-    const baseTotal = cartItems.reduce(
+    if (!cartItems) return 0;
+    const baseTotal = selectedItems.reduce(
       (total: number, item: any) => total + Number(item.price) * Number(item.quantity),
       0
     );
@@ -104,16 +188,67 @@ export default function CheckoutPage() {
   const amountLeft = Math.max(freeShippingThreshold - currentAmount, 0).toFixed(0);
 
   const handleQuantityChange = (cartItemId: string, newQuantity: number) => {
-    dispatch(updateQuantity({ cartItemId, quantity: Math.max(1, newQuantity) }));
+    updateQuantityCartItem(cartItemId, Math.max(1, newQuantity));
   };
 
   const handleDelete = (cartItemId: string) => {
-    dispatch(removeItem(cartItemId));
+    removeCartItem(cartItemId);
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value - 1);
   };
+
+  useEffect(() => {
+    const handlePaymentResult = async () => {
+      const pendingPayment = localStorage.getItem('pendingPayment');
+      if (pendingPayment) {
+        const { selectedItems } = JSON.parse(pendingPayment);
+        try {
+          // Kiểm tra kết quả thanh toán từ URL parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          const vnpParams: { [key: string]: string } = {};
+          
+          // Collect all VNPay parameters
+          urlParams.forEach((value, key) => {
+            if (key.startsWith('vnp_')) {
+              vnpParams[key] = value;
+            }
+          });
+
+          // Check if we're on the callback URL or cart page with payment params
+          if (Object.keys(vnpParams).length > 0) {
+            // Call the payment status API with the VNPay parameters
+            const response = await getPaymentStatus(vnpParams);
+            console.log("check response payment status: ", response);
+            
+            if (response?.vnpResponseCode === "00") {
+              // Remove cart items
+              const cartItemIds = selectedItems.map((item: any) => item.cartItemId);
+              await removeCartItems(cartItemIds);
+              setSelectedItems([]);
+              
+              enqueueSnackbar("Thanh toán thành công!", { variant: 'success' });
+              // Navigate to cart page
+              navigate('/home/cart', { replace: true });
+            } else {
+              enqueueSnackbar("Thanh toán thất bại. Vui lòng thử lại!", { variant: 'error' });
+              navigate('/home/cart', { replace: true });
+            }
+          }
+        } catch (error) {
+          console.error('Payment processing error:', error);
+          enqueueSnackbar("Có lỗi xảy ra khi xử lý kết quả thanh toán", { variant: 'error' });
+          navigate('/home/cart', { replace: true });
+        } finally {
+          // Xóa thông tin pending payment
+          localStorage.removeItem('pendingPayment');
+        }
+      }
+    };
+
+    handlePaymentResult();
+  }, [navigate]);
 
   return (
     <Box p={4}>
@@ -123,13 +258,20 @@ export default function CheckoutPage() {
           <Typography variant="h6" mb={2}>
             Giỏ hàng
           </Typography>
-          {cartItems.length === 0 ? (
+          {cartItems && cartItems.length === 0 ? (
             <Typography>Giỏ hàng của bạn đang trống</Typography>
           ) : (
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>
                   <TableRow>
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={selectedItems.length === cartItems?.length}
+                        indeterminate={selectedItems.length > 0 && selectedItems.length < (cartItems?.length || 0)}
+                        onChange={handleSelectAll}
+                      />
+                    </TableCell>
                     <TableCell>Sản phẩm</TableCell>
                     <TableCell>Số lượng</TableCell>
                     <TableCell>Tổng</TableCell>
@@ -137,8 +279,14 @@ export default function CheckoutPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {cartItems.map((item: any) => (
+                  {cartItems && cartItems.map((item: CartItem) => (
                     <TableRow key={item.cartItemId}>
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={selectedItems.some(selectedItem => selectedItem.cartItemId === item.cartItemId)}
+                          onChange={() => handleSelectItem(item)}
+                        />
+                      </TableCell>
                       <TableCell>
                         <Box display="flex" alignItems="center">
                           <img src={item.imageUrl} alt={item.productName} width={80} />
@@ -373,6 +521,7 @@ export default function CheckoutPage() {
               fontWeight: "bold",
               fontStyle: "italic",
             }}
+            onClick={handlePayment}
           >
             <img
               src={VNPayLogo}
