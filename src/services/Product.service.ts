@@ -16,7 +16,7 @@ interface PaginatedResponse<T> {
 
 export const getAllProduct = async (
     pageNo = 0,
-    pageSize = 6,
+    pageSize = 4,
     sortBy = "name",
     sortDirection = "ASC"
 ): Promise<PaginatedResponse<ProductResponse>> => {
