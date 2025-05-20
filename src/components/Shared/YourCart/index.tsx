@@ -1,14 +1,9 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
-  CardMedia,
   Checkbox,
   Grid,
-  MenuItem,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -20,52 +15,104 @@ import {
   Paper,
   IconButton,
   LinearProgress,
+  Select,
+  MenuItem,
+  Pagination,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
-import PayPalLogo from '/assets/images/logo-paypal.png';
-
-const sampleCartItem = {
-  name: "Giant Defy Advanced",
-  color: "Green",
-  size: "52",
-  price: 299,
-  quantity: 1,
-  image: "/assets/images/item.jpg",
-};
-
-const recommendedItems = [
-  {
-    name: "Merida Scultura Sukura",
-    price: 299,
-    image: "/assets/images/item.jpg",
-  },
-  {
-    name: "Cannondale Topstone",
-    price: 299,
-    image: "/assets/images/item.jpg",
-  },
-];
+import VNPayLogo from '/assets/images/logo-vnpay.png';
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store";
+import { updateQuantity, removeItem } from "@/store/slices/cart.slice";
+import EditAddressModal from "../EditAddress";
+import useProduct from "@/hook/api/useProduct";
+import ProductList from "@/components/Shared/ProductList/index";
+import { ProductResponse } from "@/types/product";
+import { getAllProduct } from "@/services/Product.service";
 
 export default function CheckoutPage() {
-  const [quantity, setQuantity] = useState(1);
-  const [country, setCountry] = useState("United States");
-  const [province, setProvince] = useState("Alabama");
+  const dispatch = useDispatch();
+  const cartSlice = useSelector((state: RootState) => state.cartSlice);
+  const userSlice = useSelector((state: RootState) => state.userSlice);
+  const productSlice = useSelector((state: RootState) => state.productSlice);
+  const { me } = userSlice;
+  const { cart } = cartSlice;
+  const { promotions } = productSlice;
+  const { handleFetchPromotion } = useProduct();
+  const cartItems = cart.items;
   const [isGiftWrapped, setIsGiftWrapped] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
-  const giftWrapFee = 5;
+  const [selectedPromotion, setSelectedPromotion] = useState<string>("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const giftWrapFee = 50000;
+  const freeShippingThreshold = 1000000;
+  const [open, setOpen] = useState(false);
+  const [featuredProducts, setFeaturedProducts] = useState<ProductResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const currentAmount = 65;
-  const freeShippingThreshold = 100;
-  const progress = (currentAmount / freeShippingThreshold) * 100;
-  const amountLeft = (freeShippingThreshold - currentAmount).toFixed(2);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const fetchHomeData = async (pageNo = 0) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await getAllProduct(pageNo);
+      if (response && response.content) {
+        setFeaturedProducts(response.content);
+        if (response.page) {
+          setTotalPages(response.page.totalPages);
+        }
+      } else {
+        setFeaturedProducts([]);
+        setError("Không có sản phẩm đề xuất nào.");
+      }
+    } catch (error: any) {
+      setError(error.message || "Đã xảy ra lỗi khi tải dữ liệu.");
+      setFeaturedProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const calculateTotal = () => {
-    let baseTotal = sampleCartItem.price * quantity;
-    if (isGiftWrapped) {
-      baseTotal += giftWrapFee;
+    const baseTotal = cartItems.reduce(
+      (total: number, item: any) => total + Number(item.price) * Number(item.quantity),
+      0
+    );
+    let total = isGiftWrapped ? baseTotal + giftWrapFee : baseTotal;
+    if (selectedPromotion) {
+      const promotion = promotions.find((p: any) => p.id === selectedPromotion);
+      if (promotion && promotion.discount) {
+        total *= (100 - promotion.discount) / 100; // Áp dụng phần trăm giảm giá
+      }
     }
-    return baseTotal;
+    return total;
+  };
+
+  useEffect(() => {
+    handleFetchPromotion();
+    fetchHomeData(page);
+  }, [page]);
+
+  const currentAmount = calculateTotal();
+  const progress = Math.min((currentAmount / freeShippingThreshold) * 100, 100);
+  const amountLeft = Math.max(freeShippingThreshold - currentAmount, 0).toFixed(0);
+
+  const handleQuantityChange = (cartItemId: string, newQuantity: number) => {
+    dispatch(updateQuantity({ cartItemId, quantity: Math.max(1, newQuantity) }));
+  };
+
+  const handleDelete = (cartItemId: string) => {
+    dispatch(removeItem(cartItemId));
+  };
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value - 1);
   };
 
   return (
@@ -74,66 +121,67 @@ export default function CheckoutPage() {
         {/* Left side: Cart */}
         <Grid item xs={12} md={8}>
           <Typography variant="h6" mb={2}>
-            Cart
+            Giỏ hàng
           </Typography>
-
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Product</TableCell>
-                  <TableCell>Quantity</TableCell>
-                  <TableCell>Total</TableCell>
-                  <TableCell>Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {!isDeleted && (
+          {cartItems.length === 0 ? (
+            <Typography>Giỏ hàng của bạn đang trống</Typography>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
                   <TableRow>
-                    <TableCell>
-                      <Box display="flex" alignItems="center">
-                        <img
-                          src={sampleCartItem.image}
-                          alt={sampleCartItem.name}
-                          width={80}
-                        />
-                        <Box ml={2}>
-                          <Typography>{sampleCartItem.name}</Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {sampleCartItem.color} / {sampleCartItem.size}
-                          </Typography>
-                          <Typography color="error">
-                            ${sampleCartItem.price}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Box display="flex" alignItems="center">
-                        <Button
-                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        >
-                          -
-                        </Button>
-                        <Typography mx={2}>{quantity}</Typography>
-                        <Button onClick={() => setQuantity(quantity + 1)}>
-                          +
-                        </Button>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      ${(sampleCartItem.price * quantity).toFixed(2)}
-                    </TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => setIsDeleted(true)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
+                    <TableCell>Sản phẩm</TableCell>
+                    <TableCell>Số lượng</TableCell>
+                    <TableCell>Tổng</TableCell>
+                    <TableCell>Hành động</TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {cartItems.map((item: any) => (
+                    <TableRow key={item.cartItemId}>
+                      <TableCell>
+                        <Box display="flex" alignItems="center">
+                          <img src={item.imageUrl} alt={item.productName} width={80} />
+                          <Box ml={2}>
+                            <Typography>{item.productName}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {item.color} / {item.quantity}
+                            </Typography>
+                            <Typography color="error">
+                              {item.price.toLocaleString()} VND
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Box display="flex" alignItems="center">
+                          <Button
+                            onClick={() => handleQuantityChange(item.cartItemId, item.quantity - 1)}
+                          >
+                            -
+                          </Button>
+                          <Typography mx={2}>{item.quantity}</Typography>
+                          <Button
+                            onClick={() => handleQuantityChange(item.cartItemId, item.quantity + 1)}
+                          >
+                            +
+                          </Button>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        {(Number(item.price) * Number(item.quantity)).toLocaleString()} VND
+                      </TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => handleDelete(item.cartItemId)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
 
           <Box display="flex" alignItems="center" mt={2}>
             <Checkbox
@@ -141,47 +189,42 @@ export default function CheckoutPage() {
               onChange={(e) => setIsGiftWrapped(e.target.checked)}
             />
             <Typography variant="body2">
-              Please wrap the product carefully. Fee is only $
-              {giftWrapFee.toFixed(2)}. (You can choose or not)
+              Vui lòng gói quà cẩn thận. Phí chỉ {giftWrapFee.toLocaleString()} VND.
             </Typography>
           </Box>
 
           <hr style={{ margin: "20px 0" }} />
 
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-            You may also like
+            Có thể bạn sẽ thích
           </Typography>
-          <Grid container spacing={2} mt={2}>
-            {recommendedItems.map((item, idx) => (
-              <Grid item xs={6} key={idx}>
-                <Card>
-                  <CardMedia
-                    component="img"
-                    height="140"
-                    image={item.image}
-                    alt={item.name}
+          <Box mt={2}>
+            {loading ? (
+              <Typography>Đang tải sản phẩm...</Typography>
+            ) : error ? (
+              <Typography color="error">{error}</Typography>
+            ) : featuredProducts.length === 0 ? (
+              <Typography>Không có sản phẩm đề xuất nào.</Typography>
+            ) : (
+              <>
+                <ProductList products={featuredProducts} />
+                {totalPages > 1 && (
+                  <Pagination
+                    count={totalPages}
+                    page={page + 1}
+                    onChange={handlePageChange}
+                    color="primary"
+                    sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}
                   />
-                  <CardContent>
-                    <Typography>{item.name}</Typography>
-                    <Typography color="error">${item.price}</Typography>
-                    <Typography
-                      variant="body2"
-                      color="primary"
-                      sx={{ cursor: "pointer" }}
-                    >
-                      ADD TO CART
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                )}
+              </>
+            )}
+          </Box>
         </Grid>
 
         {/* Right side: Summary */}
         <Grid item xs={12} md={4}>
           <Box sx={{ width: "100%", px: 2, py: 2 }}>
-            {/* Thanh progress */}
             <Box sx={{ position: "relative", height: 10, borderRadius: 5 }}>
               <LinearProgress
                 variant="determinate"
@@ -191,11 +234,10 @@ export default function CheckoutPage() {
                   borderRadius: 5,
                   backgroundColor: "#e0e0e0",
                   "& .MuiLinearProgress-bar": {
-                    backgroundColor: "#ef4444", // đỏ
+                    backgroundColor: "#ef4444",
                   },
                 }}
               />
-              {/* Icon xe hàng */}
               <Box
                 sx={{
                   position: "absolute",
@@ -215,123 +257,129 @@ export default function CheckoutPage() {
                 <LocalShippingOutlinedIcon sx={{ color: "#ef4444" }} />
               </Box>
             </Box>
-
-            {/* Text thông báo */}
             <Typography variant="body2" align="center" mt={1}>
-              Spend <strong>${amountLeft}</strong> more to enjoy{" "}
-              <Typography
-                component="span"
-                sx={{ color: "#ef4444", fontWeight: "bold" }}
-              >
-                FREE SHIPPING!
+              Mua thêm <strong>{amountLeft.toLocaleString()} VND</strong> để được{" "}
+              <Typography component="span" sx={{ color: "#ef4444", fontWeight: "bold" }}>
+                MIỄN PHÍ VẬN CHUYỂN!
               </Typography>
             </Typography>
           </Box>
-          <Typography color="error">
-            Spend ${(53 - calculateTotal()).toFixed(2)} more to enjoy FREE
-            SHIPPING!
-          </Typography>
 
+          <Typography mt={3} fontWeight="bold">
+            Thông tin địa chỉ
+          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <TextField
+              fullWidth
+              id="diaChi"
+              label="Địa chỉ"
+              variant="outlined"
+              margin="normal"
+              value={
+                me.address
+                  ? `${me.address.fullAddress || ""}, ${me.address.ward || ""}, ${me.address.district || ""}, ${me.address.city || ""}, ${me.address.country || ""}`
+                  : ""
+              }
+              sx={{
+                backgroundColor: "white",
+                borderRadius: 1,
+                "& .MuiInputLabel-root": {
+                  transform: "translate(14px, -9px) scale(0.75)",
+                  color: "black",
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& input": {
+                    paddingY: "26px",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "blue",
+                  },
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              startIcon={<EditIcon />}
+              onClick={handleOpen}
+              sx={{ mt: 1, height: "56px" }}
+            >
+              Sửa
+            </Button>
+          </Box>
+          <EditAddressModal handleClose={handleClose} open={open} />
+
+          <Typography mt={3} fontWeight="bold">
+            Chọn khuyến mãi
+          </Typography>
+          <Select
+            fullWidth
+            value={selectedPromotion}
+            onChange={(e) => setSelectedPromotion(e.target.value)}
+            displayEmpty
+            sx={{ mt: 1 }}
+          >
+            <MenuItem value="">
+              <em>Không áp dụng khuyến mãi</em>
+            </MenuItem>
+            {promotions.map((promo: any) => (
+              <MenuItem key={promo.promotionId} value={promo.promotionId}>
+                {promo.name} ({promo.reducePercent}% giảm)
+              </MenuItem>
+            ))}
+          </Select>
+          {selectedPromotion && (
+            <Typography color="success.main" mt={1}>
+              Đã áp dụng khuyến mãi! Giảm {promotions.find((p: any) => p.promotionId === selectedPromotion)?.reducePercent}% tổng giá.
+            </Typography>
+          )}
+
+          <Typography mt={3} fontWeight="bold">
+            Ghi chú đơn hàng
+          </Typography>
           <TextField
-            label="Add order note"
+            label="Thêm ghi chú"
             multiline
             rows={3}
             fullWidth
-            sx={{ mt: 2 }}
-          />
-
-          <Typography mt={3}>Estimate Shipping</Typography>
-          <Select
-            fullWidth
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
             sx={{ mt: 1 }}
-          >
-            <MenuItem value="United States">United States</MenuItem>
-          </Select>
-
-          <Select
-            fullWidth
-            value={province}
-            onChange={(e) => setProvince(e.target.value)}
-            sx={{ mt: 2 }}
-          >
-            <MenuItem value="Alabama">Alabama</MenuItem>
-            <MenuItem value="California">California</MenuItem>
-          </Select>
-
-          <TextField
-            label="Postal/ZIP code"
-            fullWidth
-            sx={{
-              mt: 2,
-              "& .MuiInputBase-root": {
-                height: 56, // Chiều cao tổng thể của input (có thể tăng lên tùy ý)
-              },
-              "& input": {
-                padding: "16.5px 14px", // padding bên trong input
-              },
-            }}
           />
 
-          <Button
-            variant="contained"
-            fullWidth
-            sx={{
-              mt: 2,
-              backgroundColor: "black",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#333", // màu khi hover
-              },
-              padding: "16.5px 14px", // padding bên trong input
-            }}
-          >
-            ESTIMATE
-          </Button>
-
-          <Typography mt={4}>Subtotal: ${calculateTotal()}</Typography>
+          <Typography mt={3} fontWeight="bold">
+            Tổng cộng: {calculateTotal().toLocaleString()} VND
+          </Typography>
+          {selectedPromotion && (
+            <Typography variant="body2" color="text.secondary">
+              (Đã giảm {promotions.find((p: any) => p.promotionId === selectedPromotion)?.reducePercent}% từ khuyến mãi)
+            </Typography>
+          )}
 
           <Box display="flex" alignItems="center" mt={2}>
-            <Checkbox />
+            <Checkbox
+              checked={agreeTerms}
+              onChange={(e) => setAgreeTerms(e.target.checked)}
+            />
             <Typography variant="body2">
-              I agree with Terms & Conditions
+              Tôi đồng ý với Điều khoản & Điều kiện
             </Typography>
           </Box>
 
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{
-              mt: 2,
-              padding: "16.5px 14px",
-              backgroundColor: "white",
-              color: "black",
-              borderStyle: "solid",
-              borderWidth: "1px",
-              borderColor: "gray", // màu viền (có thể thay)
-            }}
-          >
-            CHECKOUT
-          </Button>
           <Button
             variant="contained"
             fullWidth
             sx={{
               mt: 1,
-              backgroundColor: "#ff3b30",
+              backgroundColor: "#005ea6",
               padding: "16.5px 14px",
               fontWeight: "bold",
               fontStyle: "italic",
             }}
           >
             <img
-              src={PayPalLogo}
-              alt="PayPal Logo"
-              style={{ width: 25, marginRight: 1 }} // Điều chỉnh kích thước logo
+              src={VNPayLogo}
+              alt="VNPay Logo"
+              style={{ width: 25, marginRight: 8 }}
             />
-            PayPal
+            Thanh toán VNPay
           </Button>
         </Grid>
       </Grid>
