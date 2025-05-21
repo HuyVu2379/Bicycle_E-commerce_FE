@@ -1,6 +1,7 @@
 import axiosConfig from "./axiosConfig";
 const api_CartItems = "/api/v1/cart-items"
 const api_Cart = "/api/v1/carts"
+import { MessageResponse, CartResponse } from "@/types/cart";
 export const createCartItemSerive = async (data: any) => {
     try {
         const url = `${api_CartItems}/create`;
@@ -52,5 +53,25 @@ export const bulkDeleteCartItems = async (cartItemIds: string[]) => {
     } catch (error) {
         console.error("Error bulk delete cart items:", error);
         return { success: false, message: error };
+    }
+}
+export const createCart = async (): Promise<MessageResponse<CartResponse>> => {
+    try {
+        const url = `${api_Cart}/create`;
+        const response =
+            await axiosConfig.post<MessageResponse<CartResponse>>(url);
+        console.log("Check raw response from API: ", response.data);
+        return response;
+    } catch (error: any) {
+        console.error("Error create cart for user :", error);
+        if (error.response && error.response.data) {
+            return error.response.data;
+        }
+        return {
+            statusCode: error.statusCode || error.response?.status || 500,
+            message: error.message || "An unexpected error occurred in service.",
+            success: false,
+            data: { cartId: "", userId: "", items: [] },
+        };
     }
 }

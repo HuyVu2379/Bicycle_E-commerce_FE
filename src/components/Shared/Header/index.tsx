@@ -149,11 +149,11 @@ const Header: React.FC = () => {
                   sx={{
                     fontWeight: "bold",
                     fontSize: "13px",
-                    borderColor: "black",
-                    color: "black", 
+                    borderColor: "black", // ✅ viền đen
+                    color: "black", // ✅ chữ đen
                     "&:hover": {
-                      borderColor: "black", 
-                      backgroundColor: "#f2f2f2",
+                      borderColor: "black", // ✅ viền đen khi hover
+                      backgroundColor: "#f2f2f2", // tùy ý thêm hiệu ứng hover
                     },
                   }}
                 >

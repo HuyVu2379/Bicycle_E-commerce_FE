@@ -15,7 +15,6 @@ const GOOGLE_CLIENT_ID =
   "645395717431-u9b1d2r1tfh6mhlei2uaf66qltcoqkkd.apps.googleusercontent.com";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <ThemeProvider theme={theme}>
         <Provider store={store}>
@@ -31,5 +30,4 @@ createRoot(document.getElementById("root")!).render(
         </Provider>
       </ThemeProvider>
     </GoogleOAuthProvider>
-  </StrictMode>
 );

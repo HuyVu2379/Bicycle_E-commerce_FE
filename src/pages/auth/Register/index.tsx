@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import useUser from "@/hook/api/useUser";
 import { useSnackbar } from 'notistack';
+import useCart from "@/hook/api/useCart";
 
 const RegisterTemplate = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -15,9 +16,11 @@ const RegisterTemplate = () => {
     const [fullName, setFullName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [address,setAddress] = useState("");
     const { handleRegister } = useUser();
     const { enqueueSnackbar } = useSnackbar();
-    // Hàm kiểm tra định dạng
+    const { createCarts } = useCart();
+  // Hàm kiểm tra định dạng
     const validateFullName = (name) => {
         if (!name) return "Name is required.";
         return "";
@@ -86,6 +89,7 @@ const RegisterTemplate = () => {
             "avatar": null, // Không gửi file, khớp với JSON mẫu
             "role":role,
             "gender":gender,
+            "address": null
         };
         console.log("Data sent to register:", data);
         handleRegister(data);

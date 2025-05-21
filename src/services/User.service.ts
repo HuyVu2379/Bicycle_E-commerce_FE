@@ -8,17 +8,15 @@ export const register = async (data: any) => {
         const url = `${api}/register`;
         const response = await axiosConfig.post(url, data);
         console.log("Register response:", response);
-        return response.data;
+        return response;
     } catch (error) {
         console.error("Error registering user:", error);
-        return { success: false };
+        return error;
     }
 }
 export const getUserById = async (userId: string) => {
     try {
         const url = `${api}/${userId}`;
-        console.log("check url: ", url);
-
         const result = await axiosConfig.get(url);
         return result;
     } catch (error) {
