@@ -13,12 +13,12 @@ import {
 import useAuth from "@/hook/api/useAuth";
 import { getValueFromLocalStorage } from "@/utils/localStorage";
 import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
-import { useCart } from "@/hook/api/useCart";
+import useCart from "@/hook/api/useCart";
 const Header: React.FC = () => {
   const { handleLogout } = useAuth();
   const [showShopDropdown, setShowShopDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { cartItemCount } = useCart();
+  const { countItem} = useCart();
   const [accessToken, setAccessToken] = useState(getValueFromLocalStorage("accessToken"));
 
   useEffect(() => {
@@ -118,7 +118,7 @@ const Header: React.FC = () => {
                 {/* Giỏ hàng */}
                 <Link to="/home/cart" className="cart icons">
                   <FaShoppingCart className="icon" />
-                  <span className="cart-badge">{cartItemCount || 0}</span>
+                  <span className="cart-badge">{countItem || 0}</span>
                 </Link>
 
                 {/* Logout */}

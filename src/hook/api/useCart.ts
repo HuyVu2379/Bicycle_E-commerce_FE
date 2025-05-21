@@ -1,7 +1,6 @@
 import { setCart, addCartItemInCart, updateQuantity, removeItem, removeItems } from '@/store/slices/cart.slice'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSnackbar } from 'notistack';
-import { useNavigate } from "react-router"
 import { RootState } from '@/store';
 import { findCartByUserId, createCartItemSerive, removeCartItemService, bulkDeleteCartItems } from '@/services/Cart.service';
 import { updateQuantityCartItems } from "@/services/Cart.service"
@@ -9,9 +8,9 @@ import { useEffect } from 'react';
 
 function useCart() {
     const userStore = useSelector((state: RootState) => state.userSlice);
-    const { me } = userStore
+    const { me } = userStore;
+    const countItem = useSelector((state: RootState) => state.cartSlice.cart.items.length);
     const dispatch = useDispatch();
-    const navigate = useNavigate()
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -39,7 +38,7 @@ function useCart() {
     const removeCartItem = async (cartItemId: string) => {
         const result = await removeCartItemService(cartItemId);
         console.log("check result remove cart item: ", result);
-        
+
         if (result && typeof result === 'object' && 'success' in result ? (result as any).success !== false : true) {
             enqueueSnackbar("Removed product from cart successfully", { variant: 'success' });
             dispatch(removeItem(cartItemId));
@@ -56,6 +55,6 @@ function useCart() {
             console.log("check result bulk delete cart items: ", result);
         }
     }
-    return { fetchCartByUserId, createCartItem, updateQuantityCartItem, removeCartItem, removeCartItems };
+    return { fetchCartByUserId, createCartItem, updateQuantityCartItem, removeCartItem, removeCartItems, countItem };
 }
 export default useCart;

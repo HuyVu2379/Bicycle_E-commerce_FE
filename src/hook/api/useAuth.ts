@@ -71,7 +71,7 @@ function useAuth() {
             removeValueInLocalStorage("refreshToken");
             removeValueInLocalStorage("userId");
             dispatch(setMe(null));
-            // navigate(`${APP_ROUTES.AUTH_ROUTE}${APP_ROUTES.USER.LOGIN}`);
+            navigate(`${APP_ROUTES.AUTH_ROUTE}${APP_ROUTES.USER.LOGIN}`);
             enqueueSnackbar({ message: 'Logout successful!', variant: 'success' });
         } catch (error) {
             enqueueSnackbar({ message: 'Logout failed!', variant: 'error' });
