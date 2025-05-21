@@ -60,6 +60,16 @@ export const cartSlice = createSlice({
                 );
             }
         },
+        removeItems: (
+            state: InitStateType,
+            { payload }: PayloadAction<string[]>
+        ) => {
+            if (state.cart.items) {
+                state.cart.items = state.cart.items.filter(
+                    (item) => !payload.includes(item.cartItemId)
+                );
+            }
+        },
     },
 });
 
@@ -68,6 +78,7 @@ export const {
     addCartItemInCart,
     updateQuantity,
     removeItem,
+    removeItems,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

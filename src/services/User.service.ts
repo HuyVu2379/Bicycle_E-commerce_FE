@@ -1,12 +1,14 @@
 import axiosConfig from "./axiosConfig";
 
-const api = "/api/v1/users"
+const api = "/api/v1/users";
 const api_address = "/api/v1/address"
 
 export const register = async (data: any) => {
     try {
         const url = `${api}/register`;
-        return await axiosConfig.post(url, data);
+        const response = await axiosConfig.post(url, data);
+        console.log("Register response:", response);
+        return response.data;
     } catch (error) {
         console.error("Error registering user:", error);
         return { success: false };

@@ -171,7 +171,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-
   // Admin Route
   {
     path: APP_ROUTES.ADMIN_ROUTE,

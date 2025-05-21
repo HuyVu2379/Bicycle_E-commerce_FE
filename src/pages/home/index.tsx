@@ -6,34 +6,6 @@ import { Box, CircularProgress, Button, Typography, Pagination } from "@mui/mate
 import { getAllProduct } from "@/services/Product.service";
 import { ProductResponse } from "@/types/product";
 
-// Optional: Remove this if not needed
-// const sampleProducts = [
-//   {
-//     name: "Urban Explorer",
-//     type: "Enduro",
-//     originalPrice: 21599.0,
-//     discountedPrice: 14599.0,
-//     imageUrl:
-//       "/public/assets/images/hero-swiper-3.png",
-//   },
-//   {
-//     name: "Mountain Blazer",
-//     type: "Trail",
-//     originalPrice: 18999.0,
-//     discountedPrice: 12999.0,
-//     imageUrl:
-//       "/public/assets/images/hero-swiper-3.png",
-//   },
-//   {
-//     name: "City Sprinter",
-//     type: "Urban",
-//     originalPrice: 15999.0,
-//     discountedPrice: 9999.0,
-//     imageUrl:
-//       "/public/assets/images/hero-swiper-3.png",
-//   },
-// ];
-
 
 export default function HomeTemplate() {
   const [featuredProducts, setFeaturedProducts] = useState<ProductResponse[]>([]);

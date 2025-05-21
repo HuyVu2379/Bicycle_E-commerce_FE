@@ -1,8 +1,15 @@
 import axiosConfig from "./axiosConfig";
 import { ProductResponse } from "../types/product";
-
 const api = "/api/v1/products"
 
+const api_product = "/api/v1/products"
+const api_category = "/api/v1/categories"
+const api_supplier = "/api/v1/suppliers"
+const api_inventories = "/api/v1/inventories"
+const api_specification = "/api/v1/specifications"
+const api_promotions = "/api/v1/promotions"
+
+//===========Products============
 
 interface PaginatedResponse<T> {
     content: T[];
@@ -57,12 +64,17 @@ export const getAllProduct = async (
     }
 };
 
-const api_product = "/api/v1/products"
-const api_category = "/api/v1/categories"
-const api_supplier = "/api/v1/suppliers"
-const api_inventories = "/api/v1/inventories"
-const api_specification = "/api/v1/specifications"
-const api_promotions = "/api/v1/promotions"
+export const getInvetoryByProductId = async (productId: string) => {
+    try {
+        const url = `${api_product}/public/productId`;
+        const result = await axiosConfig.get(url);
+        return result;
+    } catch (error) {
+        console.error("Error get Product:", error);
+        return { success: false };
+    }
+}
+
 export const getProductWithPage = async (data: any) => {
     try {
         const url = `${api_product}/public/getProductsWithPage`;
@@ -75,6 +87,8 @@ export const getProductWithPage = async (data: any) => {
         return { success: false };
     }
 }
+
+//===========Category============
 export const getAllCategory = async () => {
     try {
         const url = `${api_category}/public/getAll`;
@@ -85,9 +99,23 @@ export const getAllCategory = async () => {
         return { success: false };
     }
 }
+
+//===========Supplier============
 export const getAllSupplier = async () => {
     try {
         const url = `${api_supplier}/getAllSupplier`;
+        const result = await axiosConfig.get(url);
+        return result;
+    } catch (error) {
+        console.error("Error get supplier:", error);
+        return { success: false };
+    }
+}
+
+//===========Specifications============
+export const getSpecificationByProductId = async (productId: string) => {
+    try {
+        const url = `${api_specification}/public/find/${productId}`;
         const result = await axiosConfig.get(url);
         return result;
     } catch (error) {
