@@ -1,108 +1,60 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/store';
-import { CartItemsResponse, CartResponse } from '@/types/cart';
-import { setCart, setCartItem, setNoCart, removeCartItem, clearCart } from '@/store/slices/cart.slice';
-import { CartService } from '@/services/Cart.service';
-import { useState } from 'react';
+import { setCart, addCartItemInCart, updateQuantity, removeItem, removeItems } from '@/store/slices/cart.slice'
+import { useDispatch, useSelector } from 'react-redux'
+import { useSnackbar } from 'notistack';
+import { RootState } from '@/store';
+import { findCartByUserId, createCartItemSerive, removeCartItemService, bulkDeleteCartItems } from '@/services/Cart.service';
+import { updateQuantityCartItems } from "@/services/Cart.service"
+import { useEffect } from 'react';
 
-export const useCart = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const { currentCart, cartItemCount } = useSelector((state: RootState) => state.cartSlice);
-    const [loading, setLoading] = useState(false); // Thêm trạng thái loading
+function useCart() {
+    const userStore = useSelector((state: RootState) => state.userSlice);
+    const { me } = userStore;
+    const countItem = useSelector((state: RootState) => state.cartSlice.cart.items.length);
+    const dispatch = useDispatch();
+    const { enqueueSnackbar } = useSnackbar();
 
+    useEffect(() => {
+        if (me && me.userId) {
+            fetchCartByUserId(me.userId);
+        }
+    }, [me]);
+
+    const createCartItem = async (data: any) => {
+        const cart = await createCartItemSerive(data);
+        const cartItemData = cart && typeof cart === 'object' && 'data' in cart ? (cart as any).data : cart;
+        enqueueSnackbar("Add product to cart successfully", { variant: 'success' });
+        dispatch(addCartItemInCart(cartItemData))
+    }
     const fetchCartByUserId = async (userId: string) => {
-        setLoading(true); // Bắt đầu tải dữ liệu
-        try {
-            console.log("Check data userId in useCart: ", userId);
-            const response = await CartService.findCartByUserId(userId);
-            console.log("Check data in useCart: ", response);
-            return response;
-        } catch (error) {
-            console.error("Failed to fetch cart:", error);
-        } finally {
-            setLoading(false); 
-        }
-    };
+        const cart = await findCartByUserId(userId);
+        const cartData = cart && typeof cart === 'object' && 'data' in cart ? (cart as any).data : cart;
+        dispatch(setCart(cartData));
+    }
+    const updateQuantityCartItem = async (cartItemId: string, quantity: number) => {
+        const cart_item = await updateQuantityCartItems(cartItemId, quantity);
+        const cartItemData = cart_item && typeof cart_item === 'object' && 'data' in cart_item ? (cart_item as any).data : cart_item;
+        dispatch(updateQuantity(cartItemData));
+    }
+    const removeCartItem = async (cartItemId: string) => {
+        const result = await removeCartItemService(cartItemId);
+        console.log("check result remove cart item: ", result);
 
-    const createCarts = async () => {
-        try {
-            const response = await CartService.createCart();
-            console.log("Check data create Cart: ",response);
-            
-            if (response.success) {
-                dispatch(setCart(response.data));
-            } else {
-                console.error('Failed to create cart :', response.message);
-            }
-            return response;
-        } catch (error) {
-            console.error('Failed to create cart :', error);
+        if (result && typeof result === 'object' && 'success' in result ? (result as any).success !== false : true) {
+            enqueueSnackbar("Removed product from cart successfully", { variant: 'success' });
+            dispatch(removeItem(cartItemId));
+        } else {
+            enqueueSnackbar("Failed to remove product from cart", { variant: 'error' });
         }
-    };
-
-    const addCartItems = async (item: CartItemsResponse & { cartId: string }) => {
-        try {
-            const response = await CartService.createCartItem(item);
-            if (response.success) {
-                dispatch(setCartItem(response.data));
-            } else {
-                console.error('Failed to add cart item:', response.message);
-            }
-            return response;
-        } catch (error) {
-            console.error('Failed to add cart item:', error);
+    }
+    const removeCartItems = async (cartItemIds: string[]) => {
+        const result = await bulkDeleteCartItems(cartItemIds);
+        console.log("check result bulk delete cart items: ", result);
+        if (result && typeof result === 'object' && 'success' in result ? (result as any).success !== false : true) {
+            dispatch(removeItems(cartItemIds));
+        } else {
+            console.log("check result bulk delete cart items: ", result);
         }
-    };
-
-    const removeCartItems = async (cartId: string, productId: string) => {
-        try {
-            const response = await CartService.deleteCartItem(cartId, productId);
-            if (response.success) {
-                dispatch(removeCartItem(productId));
-            } else {
-                console.error('Failed to remove cart item:', response.message);
-            }
-        } catch (error) {
-            console.error('Failed to remove cart item:', error);
-        }
-    };
-
-    const updateItemQuantity = async (cartId: string, productId: string, quantity: number) => {
-        try {
-            const response = await CartService.updateQuantity(cartId, productId, quantity);
-            if (response.success) {
-                dispatch(setCartItem(response.data));
-            } else {
-                console.error('Failed to update quantity:', response.message);
-            }
-        } catch (error) {
-            console.error('Failed to update quantity:', error);
-        }
-    };
-
-    const clearCarts = async (cartId: string) => {
-        try {
-            const response = await CartService.deleteAllCartItems(cartId);
-            if (response.success) {
-                dispatch(setNoCart());
-                dispatch(clearCart());
-            } else {
-                console.error('Failed to clear cart:', response.message);
-            }
-        } catch (error) {
-            console.error('Failed to clear cart:', error);
-        }
-    };
-
-    return {
-        currentCart,
-        cartItemCount,
-        loading, // Trả về trạng thái loading
-        fetchCartByUserId,
-        createCarts,
-        addCartItems,
-        removeCartItems,
-        updateItemQuantity,
-        clearCarts,
-    };
-};
+    }
+    return { fetchCartByUserId, createCartItem, updateQuantityCartItem, removeCartItem, removeCartItems, countItem };
+}
+export default useCart;

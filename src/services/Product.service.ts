@@ -22,9 +22,9 @@ interface PaginatedResponse<T> {
 }
 
 export const getAllProduct = async (
-    pageNo = 0, 
-    pageSize = 4, 
-    sortBy = "name", 
+    pageNo = 0,
+    pageSize = 4,
+    sortBy = "name",
     sortDirection = "ASC"
 ): Promise<PaginatedResponse<ProductResponse>> => {
     try {
@@ -37,9 +37,9 @@ export const getAllProduct = async (
                 sortDirection
             }
         });
-        
+
         console.log("API response object:", response);
-        
+
         return response.data;
     } catch (error: any) {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);

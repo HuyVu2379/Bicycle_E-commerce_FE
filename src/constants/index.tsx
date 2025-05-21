@@ -35,7 +35,7 @@ export const APP_ROUTES = {
   CONTACT: "/contact",
   NEWS: "/news",
   SHOP: "/shop",
-  CART: "/cart",
+  CART: "cart",
   ORDER: "/orders",
   USER_ORDER_HISTORY: "/my-orders",
 

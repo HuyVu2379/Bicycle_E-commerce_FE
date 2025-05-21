@@ -5,26 +5,14 @@ import LandingSection from "@/components/Shared/Landing/index";
 import { Box, CircularProgress, Button, Typography, Pagination } from "@mui/material";
 import { getAllProduct } from "@/services/Product.service";
 import { ProductResponse } from "@/types/product";
-import { getValueFromLocalStorage } from "@/utils/localStorage";
-import { Navigate } from "react-router-dom";
+
 
 export default function HomeTemplate() {
-  const [ featuredProducts, setFeaturedProducts] = useState<ProductResponse[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<ProductResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const accessToken = getValueFromLocalStorage("accessToken");
-
-  useEffect(()=>{
-    console.log("Check in Home: ",accessToken);
-    
-    if(accessToken == ""){
-      <Navigate to={("/auth/login")} replace />;
-    }else {
-      fetchHomeDate(page);
-    }
-  },[page])
 
   const fetchHomeDate = async (pageNo = 0) => {
     setLoading(true);
@@ -32,10 +20,10 @@ export default function HomeTemplate() {
     try {
       const response = await getAllProduct(pageNo);
       console.log("Full response:", JSON.stringify(response));
-      
-      if (response && response.content){
+
+      if (response && response.content) {
         setFeaturedProducts(response.content);
-        if (response.page){
+        if (response.page) {
           setTotalPages(response.page.totalPages);
         }
       } else {
@@ -56,7 +44,7 @@ export default function HomeTemplate() {
   }, [page]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value - 1); 
+    setPage(value - 1);
   };
 
   if (loading) {
@@ -85,11 +73,11 @@ export default function HomeTemplate() {
       <AdvertisementSection />
       <ProductList products={featuredProducts} />
       {totalPages > 1 && (
-        <Pagination 
-          count={totalPages} 
-          page={page + 1} 
-          onChange={handlePageChange} 
-          color="primary" 
+        <Pagination
+          count={totalPages}
+          page={page + 1}
+          onChange={handlePageChange}
+          color="primary"
           sx={{ mt: 4, mb: 4 }}
         />
       )}

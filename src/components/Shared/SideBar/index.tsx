@@ -29,7 +29,7 @@ interface FilterSidebarProps {
 }
 
 const brands = ["BATCH", "ELECTRA", "HUFFY", "JETT", "TERN", "TREK", "UNITED BIKE"];
-const types = ["Road-Bike","Touring-Bike","Hybrid-Bike","Fixed-Gear-Bike","BMX-Bike","Folding-Bike","Moutain Bike"];
+const types = ["Enduro", "Trail", "Urban"];
 const priceRanges = [
   { label: "Under 5,000,000₫", min: 0, max: 5000000 },
   { label: "5,000,000₫ - 10,000,000₫", min: 5000000, max: 10000000 },

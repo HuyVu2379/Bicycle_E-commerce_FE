@@ -13,16 +13,24 @@ import {
 import useAuth from "@/hook/api/useAuth";
 import { getValueFromLocalStorage } from "@/utils/localStorage";
 import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
-import { useCart } from "@/hook/api/useCart";
+import useCart from "@/hook/api/useCart";
 const Header: React.FC = () => {
   const { handleLogout } = useAuth();
   const [showShopDropdown, setShowShopDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { cartItemCount } = useCart();
-  const accessToken = getValueFromLocalStorage("accessToken");
+  const { countItem} = useCart();
+  const [accessToken, setAccessToken] = useState(getValueFromLocalStorage("accessToken"));
 
-  console.log(accessToken);
+  useEffect(() => {
+    const handleTokenChange = () => {
+      const token = getValueFromLocalStorage("accessToken");
+      setAccessToken(token);
+    };
 
+    window.addEventListener("tokenChanged", handleTokenChange);
+    return () => window.removeEventListener("tokenChanged", handleTokenChange);
+  }, []);
+  
   return (
     <header className="header">
       <div className="header-container">
@@ -95,7 +103,34 @@ const Header: React.FC = () => {
 
           {/* Action Icons */}
           <div className="actions">
-            {accessToken === "" ? (
+            {accessToken !== "" ? (
+              <>
+                {/* Hồ sơ cá nhân */}
+                <Link to="/auth/profile" className="icons">
+                  <FaUser className="icon" />
+                </Link>
+
+                {/* Đơn hàng */}
+                <Link to="/my-orders" className="icons">
+                  <LiaFileInvoiceDollarSolid color="black" size={20} />
+                </Link>
+
+                {/* Giỏ hàng */}
+                <Link to="/home/cart" className="cart icons">
+                  <FaShoppingCart className="icon" />
+                  <span className="cart-badge">{countItem || 0}</span>
+                </Link>
+
+                {/* Logout */}
+                <Link
+                  to="/auth/login"
+                  onClick={handleLogout}
+                  className="logout"
+                >
+                  Logout
+                </Link>
+              </>
+            ) : (
               <>
                 {/* Nếu chưa login thì hiển thị Login & Register */}
                 <Button
@@ -114,43 +149,16 @@ const Header: React.FC = () => {
                   sx={{
                     fontWeight: "bold",
                     fontSize: "13px",
-                    borderColor: "black", // ✅ viền đen
-                    color: "black", // ✅ chữ đen
+                    borderColor: "black",
+                    color: "black", 
                     "&:hover": {
-                      borderColor: "black", // ✅ viền đen khi hover
-                      backgroundColor: "#f2f2f2", // tùy ý thêm hiệu ứng hover
+                      borderColor: "black", 
+                      backgroundColor: "#f2f2f2",
                     },
                   }}
                 >
                   Register
                 </Button>
-              </>
-            ) : (
-              <>
-                {/* Hồ sơ cá nhân */}
-                <Link to="/auth/profile" className="icons">
-                  <FaUser className="icon" />
-                </Link>
-
-                {/* Đơn hàng */}
-                <Link to="/my-orders" className="icons">
-                  <LiaFileInvoiceDollarSolid color="black" size={20} />
-                </Link>
-
-                {/* Giỏ hàng */}
-                <Link to="/home/cart" className="cart icons">
-                  <FaShoppingCart className="icon" />
-                  <span className="cart-badge">{cartItemCount || 0}</span>
-                </Link>
-
-                {/* Logout */}
-                <Link
-                  to="/auth/login"
-                  onClick={handleLogout}
-                  className="logout"
-                >
-                  Logout
-                </Link>
               </>
             )}
           </div>

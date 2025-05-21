@@ -15,20 +15,22 @@ import {
 } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import { useCart } from "@/hook/api/useCart";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/index";
-import { CartItemsResponse } from "@/types/cart";
-
-const ProductInformation = ({ product }) => {
+import useCart from "@/hook/api/useCart";
+const ProductInformation = ({ product }: any) => {
   if (!product) return null;
+  const { createCartItem } = useCart();
+  const cartSlice = useSelector((state: RootState) => state.cartSlice);
+  const currentCart = cartSlice.cart;
 
+  console.log("Product Information: ", product);
   // Lọc các inventory có số lượng > 0
   const availableInventories =
-    product.inventory?.filter((inv) => inv.quantity > 0) || [];
+    product.inventory?.filter((inv: any) => inv.quantity > 0) || [];
 
   // Danh sách màu từ các inventory còn hàng
-  const colors = availableInventories.map((inv) => inv.color);
+  const colors = availableInventories.map((inv: any) => inv.color);
 
   // State: chọn inventory đầu tiên còn hàng làm mặc định
   const [selectedColor, setSelectedColor] = useState(colors[0]);
@@ -36,52 +38,36 @@ const ProductInformation = ({ product }) => {
 
   // Lấy inventory tương ứng với màu đang chọn
   const selectedInventory = availableInventories.find(
-    (inv) => inv.color === selectedColor
+    (inv: any) => inv.color === selectedColor
   );
   const images = selectedInventory?.imageUrls || [];
 
   const [mainImage, setMainImage] = useState(images[0] || "");
 
   // Khi người dùng chọn màu
-  const handleColorChange = (event) => {
+  const handleColorChange = (event: any) => {
     const color = event.target.value;
     setSelectedColor(color);
     const inv = availableInventories.find((i) => i.color === color);
     setMainImage(inv?.imageUrls?.[0] || "");
   };
 
-  const handleImageChange = (image) => setMainImage(image);
+  const handleImageChange = (image: any) => setMainImage(image);
   const handleIncrease = () => setQuantity(quantity + 1);
   const handleDecrease = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
 
-  const { currentCart, addCartItems, fetchCartByUserId } = useCart();
-  // const currentCart = useSelector(
-  //   (state: RootState) => state.cartSlice.currentCart
-  // );
 
-  const handleAddToCart = () => {
-    console.log("Check data in product info: ", currentCart);
-
-    console.log(
-      `Added to cart: ${product.product.productId}, Name: ${product.product.name}, Color: ${selectedColor}, Quantity: ${quantity}`
-    );
-
-    if (!currentCart) {
-      console.error(
-        "No cart available. Please log in or fetch the cart first."
-      );
-      return;
-    }
-    const cartItem: CartItemsResponse = {
+  const handleAddToCart = async () => {
+    const cartItem = {
       productId: product.product.productId,
-      price: product.product.priceReduced,
+      cartId: currentCart.cartId,
       color: selectedColor,
-      quantity,
+      quantity: quantity
     };
-
     console.log("Check cart item in Product Info: ", cartItem);
-    addCartItems(cartItem);
+    await createCartItem(cartItem);
   };
+  console.log("check cart: ", currentCart);
 
   return (
     <Box sx={{ padding: 4, maxWidth: 1200, margin: "auto" }}>
