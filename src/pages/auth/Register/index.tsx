@@ -93,9 +93,6 @@ const RegisterTemplate = () => {
         };
         console.log("Data sent to register:", data);
         handleRegister(data);
-        // console.log("Data sent to register:", response);
-        // const dataCreate = await createCarts();
-        // console.log("Check data cart in useAuth: ", dataCreate);
     };
 
     return (

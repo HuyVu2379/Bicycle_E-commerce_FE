@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useSnackbar } from 'notistack';
 import { RootState } from '@/store';
 import { findCartByUserId, createCartItemSerive, removeCartItemService, bulkDeleteCartItems } from '@/services/Cart.service';
-import { updateQuantityCartItems } from "@/services/Cart.service"
+import { updateQuantityCartItems,createCart} from "@/services/Cart.service"
 import { useEffect } from 'react';
 
 function useCart() {
@@ -55,21 +55,21 @@ function useCart() {
             console.log("check result bulk delete cart items: ", result);
         }
     }
-    // const createCarts = async () => {
-    //     try {
-    //         const response = await CartService.createCart();
-    //         console.log("Check data create Cart: ",response);
+    const createCarts = async () => {
+        try {
+            const response = await createCart();
+            console.log("Check data create Cart: ",response);
             
-    //         if (response.success) {
-    //             dispatch(setCart(response.data));
-    //         } else {
-    //             console.error('Failed to create cart :', response.message);
-    //         }
-    //         return response;
-    //     } catch (error) {
-    //         console.error('Failed to create cart :', error);
-    //     }
-    // };
-    return { fetchCartByUserId, createCartItem, updateQuantityCartItem, removeCartItem, removeCartItems, countItem};
+            if (response.success) {
+                dispatch(setCart(response.data));
+            } else {
+                console.error('Failed to create cart :', response.message);
+            }
+            return response;
+        } catch (error) {
+            console.error('Failed to create cart :', error);
+        }
+    };
+    return { fetchCartByUserId, createCartItem, updateQuantityCartItem, removeCartItem, removeCartItems, countItem,createCarts};
 }
 export default useCart;
