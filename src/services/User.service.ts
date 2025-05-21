@@ -17,8 +17,6 @@ export const register = async (data: any) => {
 export const getUserById = async (userId: string) => {
     try {
         const url = `${api}/${userId}`;
-        console.log("check url: ", url);
-
         const result = await axiosConfig.get(url);
         return result;
     } catch (error) {

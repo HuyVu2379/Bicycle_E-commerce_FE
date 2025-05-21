@@ -7,18 +7,18 @@ import {
 } from "@/services/User.service";
 import { useSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 function useUser() {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar(); 
-  const navigate = useLocation();
+  const navigate = useNavigate();
 
   const handleRegister = async (user: any) => {
     const response = await register(user);
     console.log("Check response in user service: ", response);
-
     dispatch(setMe(response));
     enqueueSnackbar(`${"Register Success"}.`, { variant: "success" });
+    navigate('/auth/login');
   };
   const handleEditAddress = async (address: any) => {
     const response = await editAddress(address);

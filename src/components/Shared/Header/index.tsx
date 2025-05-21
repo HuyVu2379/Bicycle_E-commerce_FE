@@ -19,18 +19,10 @@ const Header: React.FC = () => {
   const [showShopDropdown, setShowShopDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { cartItemCount } = useCart();
-  const [accessToken, setAccessToken] = useState(getValueFromLocalStorage("accessToken"));
+  const accessToken = getValueFromLocalStorage("accessToken");
 
-  useEffect(() => {
-    const handleTokenChange = () => {
-      const token = getValueFromLocalStorage("accessToken");
-      setAccessToken(token);
-    };
+  console.log(accessToken);
 
-    window.addEventListener("tokenChanged", handleTokenChange);
-    return () => window.removeEventListener("tokenChanged", handleTokenChange);
-  }, []);
-  
   return (
     <header className="header">
       <div className="header-container">
@@ -103,34 +95,7 @@ const Header: React.FC = () => {
 
           {/* Action Icons */}
           <div className="actions">
-            {accessToken !== "" ? (
-              <>
-                {/* Hồ sơ cá nhân */}
-                <Link to="/auth/profile" className="icons">
-                  <FaUser className="icon" />
-                </Link>
-
-                {/* Đơn hàng */}
-                <Link to="/my-orders" className="icons">
-                  <LiaFileInvoiceDollarSolid color="black" size={20} />
-                </Link>
-
-                {/* Giỏ hàng */}
-                <Link to="/home/cart" className="cart icons">
-                  <FaShoppingCart className="icon" />
-                  <span className="cart-badge">{cartItemCount || 0}</span>
-                </Link>
-
-                {/* Logout */}
-                <Link
-                  to="/auth/login"
-                  onClick={handleLogout}
-                  className="logout"
-                >
-                  Logout
-                </Link>
-              </>
-            ) : (
+            {accessToken === "" ? (
               <>
                 {/* Nếu chưa login thì hiển thị Login & Register */}
                 <Button
@@ -159,6 +124,33 @@ const Header: React.FC = () => {
                 >
                   Register
                 </Button>
+              </>
+            ) : (
+              <>
+                {/* Hồ sơ cá nhân */}
+                <Link to="/auth/profile" className="icons">
+                  <FaUser className="icon" />
+                </Link>
+
+                {/* Đơn hàng */}
+                <Link to="/my-orders" className="icons">
+                  <LiaFileInvoiceDollarSolid color="black" size={20} />
+                </Link>
+
+                {/* Giỏ hàng */}
+                <Link to="/home/cart" className="cart icons">
+                  <FaShoppingCart className="icon" />
+                  <span className="cart-badge">{cartItemCount || 0}</span>
+                </Link>
+
+                {/* Logout */}
+                <Link
+                  to="/auth/login"
+                  onClick={handleLogout}
+                  className="logout"
+                >
+                  Logout
+                </Link>
               </>
             )}
           </div>
