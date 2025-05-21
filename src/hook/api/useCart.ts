@@ -55,6 +55,21 @@ function useCart() {
             console.log("check result bulk delete cart items: ", result);
         }
     }
-    return { fetchCartByUserId, createCartItem, updateQuantityCartItem, removeCartItem, removeCartItems, countItem };
+    const createCarts = async () => {
+        try {
+            const response = await CartService.createCart();
+            console.log("Check data create Cart: ",response);
+            
+            if (response.success) {
+                dispatch(setCart(response.data));
+            } else {
+                console.error('Failed to create cart :', response.message);
+            }
+            return response;
+        } catch (error) {
+            console.error('Failed to create cart :', error);
+        }
+    };
+    return { fetchCartByUserId, createCartItem, updateQuantityCartItem, removeCartItem, removeCartItems, countItem, createCarts};
 }
 export default useCart;

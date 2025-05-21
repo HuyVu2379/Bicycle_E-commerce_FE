@@ -5,7 +5,8 @@ import LandingSection from "@/components/Shared/Landing/index";
 import { Box, CircularProgress, Button, Typography, Pagination } from "@mui/material";
 import { getAllProduct } from "@/services/Product.service";
 import { ProductResponse } from "@/types/product";
-
+import { getValueFromLocalStorage } from "@/utils/localStorage";
+import { Navigate } from "react-router-dom";
 
 export default function HomeTemplate() {
   const [featuredProducts, setFeaturedProducts] = useState<ProductResponse[]>([]);
@@ -13,6 +14,17 @@ export default function HomeTemplate() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const accessToken = getValueFromLocalStorage("accessToken");
+
+  useEffect(()=>{
+    console.log("Check in Home: ",accessToken);
+    
+    if(accessToken == ""){
+      <Navigate to={("/auth/login")} replace />;
+    }else {
+      fetchHomeDate(page);
+    }
+  },[page])
 
   const fetchHomeDate = async (pageNo = 0) => {
     setLoading(true);
