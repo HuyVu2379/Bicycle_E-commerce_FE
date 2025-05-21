@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { Order, SpringPage } from "../../types/order";
 import { getOrdersByUserId } from "../../services/Order.service";
-import OrderRow from "../../components/Shared/Order"; 
+import OrderRow from "../../components/Shared/Order";
 
 
 type OrderSortBy = "orderDate" | "totalPrice";
@@ -41,7 +41,7 @@ const OrderHistoryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10); 
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
 
   const [sortBy, setSortBy] = useState<OrderSortBy>("orderDate");
   const [sortDirection, setSortDirection] = useState<OrderSortDirection>("desc");
@@ -49,15 +49,37 @@ const OrderHistoryPage: React.FC = () => {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     setError(null);
-    console.log("Fetching orders with params:", {currentPage, rowsPerPage, sortBy, sortDirection});
+    console.log("Fetching orders with params:", { currentPage, rowsPerPage, sortBy, sortDirection });
     const receivedOrdersPage = await getOrdersByUserId(currentPage, rowsPerPage, sortBy, sortDirection);
     console.log("Response from service in order page", receivedOrdersPage);
-    
+
     if (receivedOrdersPage && receivedOrdersPage.success && receivedOrdersPage.data && Array.isArray(receivedOrdersPage.data.content)) {
       setOrdersPage(receivedOrdersPage.data);
       console.log(receivedOrdersPage.data);
+    } else if (receivedOrdersPage?.message === "Request failed with status code 400") {
+      setOrdersPage({ 
+        content: [], 
+        totalPages: 0, 
+        totalElements: 0, 
+        size: rowsPerPage, 
+        number: currentPage,
+        pageable: {
+          sort: { sorted: false, unsorted: true, empty: true },
+          pageNumber: currentPage,
+          pageSize: rowsPerPage,
+          offset: 0,
+          paged: true,
+          unpaged: false
+        },
+        last: true,
+        sort: { sorted: false, unsorted: true, empty: true },
+        numberOfElements: 0,
+        first: true,
+        empty: true
+      });
+      setError(null);
     } else {
-      setError(receivedOrdersPage?.message ||"Lấy danh sách đơn hàng thất bại hoặc dữ liệu không đúng định dạng.");
+      setError(receivedOrdersPage?.message || "Lấy danh sách đơn hàng thất bại hoặc dữ liệu không đúng định dạng.");
       setOrdersPage(null);
     }
     setLoading(false);
@@ -75,7 +97,7 @@ const OrderHistoryPage: React.FC = () => {
     const isAsc = sortBy === property && sortDirection === "asc";
     setSortDirection(isAsc ? "desc" : "asc");
     setSortBy(property);
-    setCurrentPage(0); 
+    setCurrentPage(0);
   };
 
   if (loading && !ordersPage) {
@@ -86,7 +108,7 @@ const OrderHistoryPage: React.FC = () => {
     );
   }
 
-  if (error && !loading) { // Chỉ hiển thị lỗi nếu không còn loading
+  if (error && !loading) { 
     return (
       <Container sx={{ mt: 2 }}>
         <Alert severity="error">{error}</Alert>
@@ -105,20 +127,20 @@ const OrderHistoryPage: React.FC = () => {
       {ordersPage?.content.length === 0 && (
         <Typography sx={{ textAlign: 'center', mt: 3 }}>Bạn chưa có đơn hàng nào.</Typography>
       )}
-      
+
       {orders.length > 0 && (
         <>
           <TableContainer component={Paper} sx={{ mt: 2 }}>
             <Table aria-label="order history table">
               <TableHead>
-                <TableRow sx={{ backgroundColor: (theme) => theme.palette.grey[100]}}>
-                  <TableCell sx={{fontWeight: 'bold'}}>Mã đơn hàng</TableCell>
+                <TableRow sx={{ backgroundColor: (theme) => theme.palette.grey[100] }}>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Mã đơn hàng</TableCell>
                   {headCells.map((headCell) => (
                     <TableCell
                       key={headCell.id}
                       align={headCell.numeric ? "right" : "left"}
                       sortDirection={sortBy === headCell.id ? sortDirection : false}
-                      sx={{fontWeight: 'bold'}}
+                      sx={{ fontWeight: 'bold' }}
                     >
                       <TableSortLabel
                         active={sortBy === headCell.id}
@@ -129,8 +151,8 @@ const OrderHistoryPage: React.FC = () => {
                       </TableSortLabel>
                     </TableCell>
                   ))}
-                  <TableCell sx={{fontWeight: 'bold'}}>Mã khuyến mãi</TableCell>
-                  <TableCell align="center" sx={{fontWeight: 'bold'}}>Chi tiết</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Mã khuyến mãi</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Chi tiết</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
