@@ -4,7 +4,7 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import useUser from "@/hook/api/useUser";
 import { useSnackbar } from 'notistack';
-import { useCart } from "@/hook/api/useCart";
+import useCart from "@/hook/api/useCart";
 
 const RegisterTemplate = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -93,9 +93,6 @@ const RegisterTemplate = () => {
         };
         console.log("Data sent to register:", data);
         handleRegister(data);
-        // console.log("Data sent to register:", response);
-        // const dataCreate = await createCarts();
-        // console.log("Check data cart in useAuth: ", dataCreate);
     };
 
     return (
