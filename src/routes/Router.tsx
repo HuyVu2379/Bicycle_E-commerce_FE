@@ -29,9 +29,7 @@ import PromotionTemplate from "@/pages/admin/Promotion";
 import OrderList from "@/pages/admin/Order";
 import SupplierList from "@/components/Shared/SupplierList";
 import StatisticTemplate from "@/pages/admin/Statistics";
-import ProductManagement from "@/pages/Admin/Product";
-import CartLayout from "@/layouts/CartLayout";
-import CartTemplate from "@/pages/cart/index";
+import ProductManagement from "@/pages/admin/Product";
 import OrderLayout from "@/layouts/OrderLayout";
 import OrderHistoryPage from "@/pages/order";
 import GoogleCallbackLayout from "@/layouts/GoogleCallbackLayout";
@@ -172,16 +170,6 @@ const router = createBrowserRouter([
         Component: ShopTemplate,
       },
     ],
-  },
-  {
-    path: APP_ROUTES.CART,
-    Component: CartLayout,
-    children: [
-      {
-        path: "",
-        Component: CartTemplate
-      }
-    ]
   },
   // Admin Route
   {
