@@ -19,6 +19,7 @@ import {
   Select,
   MenuItem,
   Pagination,
+  CircularProgress,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -68,6 +69,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const userId = getValueFromLocalStorage("userId").replace(/^"|"$/g, '');
   const navigate = useNavigate();
 
@@ -205,6 +207,7 @@ export default function CheckoutPage() {
       if (pendingPayment) {
         const { selectedItems } = JSON.parse(pendingPayment);
         try {
+          setIsProcessingPayment(true);
           // Kiểm tra kết quả thanh toán từ URL parameters
           const urlParams = new URLSearchParams(window.location.search);
           const vnpParams: { [key: string]: string } = {};
@@ -241,6 +244,7 @@ export default function CheckoutPage() {
           enqueueSnackbar("Có lỗi xảy ra khi xử lý kết quả thanh toán", { variant: 'error' });
           navigate('/home/cart', { replace: true });
         } finally {
+          setIsProcessingPayment(false);
           // Xóa thông tin pending payment
           localStorage.removeItem('pendingPayment');
         }
@@ -252,6 +256,34 @@ export default function CheckoutPage() {
 
   return (
     <Box p={4}>
+      {isProcessingPayment && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: 'white',
+              padding: 3,
+              borderRadius: 2,
+              textAlign: 'center',
+            }}
+          >
+            <CircularProgress />
+            <Typography sx={{ mt: 2 }}>Đang xử lý thanh toán...</Typography>
+          </Box>
+        </Box>
+      )}
       <Grid container spacing={4}>
         {/* Left side: Cart */}
         <Grid item xs={12} md={8}>

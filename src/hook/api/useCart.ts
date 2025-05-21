@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 function useCart() {
     const userStore = useSelector((state: RootState) => state.userSlice);
     const { me } = userStore;
-    const countItem = useSelector((state: RootState) => state.cartSlice.cart.items.length);
+    const countItem = useSelector((state: RootState) => state.cartSlice?.cart?.items?.length);
     const dispatch = useDispatch();
     const { enqueueSnackbar } = useSnackbar();
 
