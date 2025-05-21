@@ -6,13 +6,36 @@ const API_CART_ITEM = "/api/v1/cart-items";
 
 export const CartService = {
   // Find cart by user ID
+  createCart: async (): Promise<MessageResponse<CartResponse>> => {
+    try {
+      const url = `${API_CART}/create`;
+      const response =
+        await axiosConfig.post<MessageResponse<CartResponse>>(url);
+      console.log("Check raw response from API: ", response.data);
+      return response;
+    } catch (error: any) {
+      console.error("Error create cart for user :", error);
+      if (error.response && error.response.data) {
+        return error.response.data;
+      }
+      return {
+        statusCode: error.statusCode || error.response?.status || 500,
+        message: error.message || "An unexpected error occurred in service.",
+        success: false,
+        data: { cartId: "", userId: "", items: [] },
+      };
+    }
+  },
+
+  // Find cart by user ID
   findCartByUserId: async (
     userId: string
   ): Promise<MessageResponse<CartResponse>> => {
     try {
       console.log("Check data UserId: ", userId);
       const url = `${API_CART}/find-cart-by-userId/${userId}`;
-      const response = await axiosConfig.get<MessageResponse<CartResponse>>(url);
+      const response =
+        await axiosConfig.get<MessageResponse<CartResponse>>(url);
       console.log("Check raw response from API: ", response.data);
       return response.data;
     } catch (error: any) {
@@ -36,16 +59,15 @@ export const CartService = {
     try {
       const url = `${API_CART_ITEM}/create`;
       const { productId, quantity, cartId, color } = item;
-      const response = await axiosConfig.post<MessageResponse<CartItemsResponse>>(
-        url,
-        {
-          productId,
-          quantity,
-          cartId,
-          color,
-        }
-      );
-      console.log("Check data in Cart service: ",response);
+      const response = await axiosConfig.post<
+        MessageResponse<CartItemsResponse>
+      >(url, {
+        productId,
+        quantity,
+        cartId,
+        color,
+      });
+      console.log("Check data in Cart service: ", response);
       return response.data;
     } catch (error: any) {
       console.error("Error creating cart item:", error);
@@ -92,10 +114,9 @@ export const CartService = {
   ): Promise<MessageResponse<CartItemsResponse>> => {
     try {
       const url = `${API_CART_ITEM}/update-quantity/${cartId}/${productId}`;
-      const response = await axiosConfig.put<MessageResponse<CartItemsResponse>>(
-        url,
-        { quantity }
-      );
+      const response = await axiosConfig.put<
+        MessageResponse<CartItemsResponse>
+      >(url, { quantity });
       return response.data;
     } catch (error: any) {
       console.error("Error updating cart item quantity:", error);
@@ -112,7 +133,9 @@ export const CartService = {
   },
 
   // Delete all items in a cart
-  deleteAllCartItems: async (cartId: string): Promise<MessageResponse<string>> => {
+  deleteAllCartItems: async (
+    cartId: string
+  ): Promise<MessageResponse<string>> => {
     try {
       const url = `${API_CART_ITEM}/delete-all/${cartId}`;
       const response = await axiosConfig.delete<MessageResponse<string>>(url);
@@ -132,7 +155,9 @@ export const CartService = {
   },
 
   // Bulk delete cart items
-  bulkDeleteCartItem: async (cartId: string): Promise<MessageResponse<string>> => {
+  bulkDeleteCartItem: async (
+    cartId: string
+  ): Promise<MessageResponse<string>> => {
     try {
       const url = `${API_CART_ITEM}/bulk-delete/${cartId}`;
       const response = await axiosConfig.delete<MessageResponse<string>>(url);
@@ -152,10 +177,13 @@ export const CartService = {
   },
 
   // Get all cart items
-  getAllCartItems: async (cartId: string): Promise<MessageResponse<CartItemsResponse[]>> => {
+  getAllCartItems: async (
+    cartId: string
+  ): Promise<MessageResponse<CartItemsResponse[]>> => {
     try {
       const url = `${API_CART_ITEM}/all/${cartId}`;
-      const response = await axiosConfig.get<MessageResponse<CartItemsResponse[]>>(url);
+      const response =
+        await axiosConfig.get<MessageResponse<CartItemsResponse[]>>(url);
       return response.data;
     } catch (error: any) {
       console.error("Error getting all cart items:", error);
