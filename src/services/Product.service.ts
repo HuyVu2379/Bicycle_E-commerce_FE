@@ -1,12 +1,6 @@
 import axiosConfig from "./axiosConfig";
 import { ProductResponse } from "../types/product";
 const api = "/api/v1/products"
-interface MessageResponse<T> {
-    statusCode: number;
-    message: string;
-    success: boolean;
-    data: T;
-}
 
 const api_product = "/api/v1/products"
 const api_category = "/api/v1/categories"

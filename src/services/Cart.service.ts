@@ -35,18 +35,17 @@ export const CartService = {
   ): Promise<MessageResponse<CartItemsResponse>> => {
     try {
       const url = `${API_CART_ITEM}/create`;
-      const { productId, productName, quantity, cartId, color, imageUrl } = item;
+      const { productId, quantity, cartId, color } = item;
       const response = await axiosConfig.post<MessageResponse<CartItemsResponse>>(
         url,
         {
           productId,
-          productName,
           quantity,
           cartId,
           color,
-          imageUrl,
         }
       );
+      console.log("Check data in Cart service: ",response);
       return response.data;
     } catch (error: any) {
       console.error("Error creating cart item:", error);

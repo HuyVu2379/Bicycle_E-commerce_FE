@@ -23,6 +23,7 @@ function useAuth() {
             enqueueSnackbar({ message: 'Login successful!', variant: 'success' });
             navigate(`${APP_ROUTES.DASHBOARD}`);
             setValueInLocalStorage('accessToken', response.data.accessToken);
+            window.dispatchEvent(new Event("tokenChanged"));
             setValueInLocalStorage('refreshToken', response.data.refreshToken);
             const userId = response.data.userId;
             setValueInLocalStorage('userId', userId);
@@ -38,6 +39,7 @@ function useAuth() {
     const handleLogout = async () => {
         try {
             removeValueInLocalStorage("accessToken");
+            window.dispatchEvent(new Event("tokenChanged"));
             removeValueInLocalStorage("refreshToken");
             removeValueInLocalStorage("userId");
             dispatch(setMe(null));

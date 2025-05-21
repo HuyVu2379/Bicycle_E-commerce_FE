@@ -74,12 +74,9 @@ const ProductInformation = ({ product }) => {
     }
     const cartItem: CartItemsResponse = {
       productId: product.product.productId,
-      // cartItemId: "",
-      productName: product.product.name,
       price: product.product.priceReduced,
       color: selectedColor,
       quantity,
-      imageUrl: images[0] || "",
     };
 
     console.log("Check cart item in Product Info: ", cartItem);

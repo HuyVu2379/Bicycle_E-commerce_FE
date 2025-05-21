@@ -17,11 +17,6 @@ export const useCart = () => {
             const response = await CartService.findCartByUserId(userId);
             console.log("Check data in useCart: ", response);
             return response;
-            if (response) {
-                dispatch(setCart(response));
-            } else {
-                console.error("Failed to fetch cart: ", response);
-            }
         } catch (error) {
             console.error("Failed to fetch cart:", error);
         } finally {
@@ -37,6 +32,7 @@ export const useCart = () => {
             } else {
                 console.error('Failed to add cart item:', response.message);
             }
+            return response;
         } catch (error) {
             console.error('Failed to add cart item:', error);
         }

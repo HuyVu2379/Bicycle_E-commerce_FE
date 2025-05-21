@@ -1,11 +1,8 @@
 export interface CartItemsResponse {
     productId: string;
-    // cartItemId: string;
-    productName: string;
     price: number;
     color: string; 
     quantity: number;
-    imageUrl: string; 
 }
 
 export interface CartResponse {
