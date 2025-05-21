@@ -74,6 +74,7 @@ function useProductDetail() {
     const fetchProduct = async (productId: string) => {
         try {
             const res = await getProductById(productId);
+            console.log("Product: ",res.data);
             if (res.data) {
                 setProductInfo(res.data);
             }

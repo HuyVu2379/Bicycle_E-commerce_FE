@@ -3,15 +3,15 @@ import Footer from "@/components/Shared/Footer/index";
 import Header from "@/components/Shared/Header/index";
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
-function AuthLayout() {
+function CartLayout() {
     return (
         <Box>
             <Header />
-            <Banner PageName="Login" PlaceHolder="Login" />
+            <Banner PageName="Cart" PlaceHolder="Cart" />
             <Outlet />
             <Footer />
         </Box>
     );
 }
 
-export default AuthLayout;
+export default CartLayout;
