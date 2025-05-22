@@ -1,6 +1,6 @@
 import { getValueFromLocalStorage, setValueInLocalStorage } from "@/utils/localStorage";
 import axios, { AxiosResponse, AxiosError } from "axios";
-
+import useAuth from "@/hook/api/useAuth";
 const BASE_URL = "http://localhost:8080"
 const axiosConfig = axios.create({
   baseURL: BASE_URL,
@@ -93,8 +93,10 @@ axiosConfig.interceptors.response.use(
         const newToken = await refreshAccessToken();
 
         if (!newToken) {
-          setValueInLocalStorage("accessToken", "");
-          setValueInLocalStorage("refreshToken", "");
+          const { handleLogout } = useAuth();
+          handleLogout();
+          // setValueInLocalStorage("accessToken", "");
+          // setValueInLocalStorage("refreshToken", "");
           // window.location.href = "/auth/login";
           processQueue(new Error('Failed to refresh token'));
           return Promise.reject(error);
