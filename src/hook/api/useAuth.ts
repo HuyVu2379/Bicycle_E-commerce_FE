@@ -36,7 +36,8 @@ function useAuth() {
                 if (response.data.userId) {
                     await handleGetMe(response.data.userId);
                 }
-
+                await fetchCartByUserId(response.data.userId);
+                
                 return { success: true, data: response.data }
             } else {
                 const errorMsg = response.message || 'Đăng nhập thất bại';

@@ -8,7 +8,7 @@ export const getPromotions = async () => {
         const response = await axiosConfig.get(url);
 
         if (response && response.data.success === true && Array.isArray(response.data)) {
-            return { success: true, data: response.data };
+            return { success: true, data: response.data.data };
         } else {
             console.warn("API response structure is unexpected:", response);
             return { success: true, data: response };
