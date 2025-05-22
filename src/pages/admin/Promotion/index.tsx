@@ -84,8 +84,8 @@ const PromotionTemplate: React.FC = () => {
     try {
       setLoading(true);
       const response = await getPromotions();
-      if (response.success && Array.isArray(response.data)) {
-        setPromotions(response.data);
+      if (response.success) {
+        setPromotions(response.data.data);
       } else {
         setPromotions([]);
         console.error("Error fetching promotions:", response);
@@ -94,7 +94,7 @@ const PromotionTemplate: React.FC = () => {
       console.error("Error fetching promotions:", error);
       setPromotions([]);
     } finally {
-      setLoading(false);
+      setLoading(false);  
     }
   };
 

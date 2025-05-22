@@ -64,6 +64,17 @@ export const getAllProduct = async (
     }
 };
 
+export const getProductAll = async () => {
+    try {
+        const url = `${api_product}/public/all`;
+        const result = await axiosConfig.get(url);
+        return result;
+    } catch (error) {
+        console.error("Error get Product:", error);
+        return { success: false };
+    }
+}
+
 export const getInvetoryByProductId = async (productId: string) => {
     try {
         const url = `${api_product}/public/productId`;

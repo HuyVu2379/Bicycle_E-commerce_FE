@@ -4,7 +4,7 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import useUser from "@/hook/api/useUser";
 import { useSnackbar } from 'notistack';
-import useCart from "@/hook/api/useCart";
+import  useCart  from "@/hook/api/useCart";
 
 const RegisterTemplate = () => {
     const [showPassword, setShowPassword] = useState(false);
