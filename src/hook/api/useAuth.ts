@@ -8,9 +8,10 @@ import { data, useNavigate } from "react-router"
 import { removeValueInLocalStorage, setValueInLocalStorage } from '@/utils/localStorage';
 import { RootState } from '@/store';
 import useCart from './useCart';
+import { createAddress } from '@/services/User.service';
 function useAuth() {
     const userStore = useSelector((state: RootState) => state.userSlice);
-    const { fetchCartByUserId } = useCart();
+    const { fetchCartByUserId, createCarts } = useCart();
     const { me } = userStore
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -34,6 +35,17 @@ function useAuth() {
                 setValueInLocalStorage('role', response.data.role);
 
                 if (response.data.userId) {
+                    await createCarts();
+                    const data = {
+                        district: "Quan Go Vap",
+                        fullAddress: "12 Nguyen Van Bao, Go Vap, thanh pho Ho Chi Minh",
+                        city: "Ho Chi Minh",
+                        street: "12 Nguyen Van Bao",
+                        ward: "Phuong 4",
+                        country: "Viet Nam",
+                        userId: response.data.userId
+                    }
+                    await createAddress(data);
                     await handleGetMe(response.data.userId);
                 }
 
