@@ -9,18 +9,15 @@ import useCart from "@/hook/api/useCart";
 const RegisterTemplate = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [avatar, setAvatar] = useState(null);
     const [role, setRole] = useState("USER");
     const [gender, setGender] = useState("MALE");
     const [email, setEmail] = useState("");
     const [fullName, setFullName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [address,setAddress] = useState("");
     const { handleRegister } = useUser();
     const { enqueueSnackbar } = useSnackbar();
-    const { createCarts } = useCart();
-  // Hàm kiểm tra định dạng
+
     const validateFullName = (name) => {
         if (!name) return "Name is required.";
         return "";
@@ -81,18 +78,26 @@ const RegisterTemplate = () => {
             return;
         }
 
-        const data = {
+        const user = {
             "email":email,
             "password":password,
             "fullName":fullName,
             "phoneNumber":phoneNumber,
-            "avatar": null, // Không gửi file, khớp với JSON mẫu
+            "avatar": null, 
             "role":role,
             "gender":gender,
-            "address": null
         };
-        console.log("Data sent to register:", data);
-        handleRegister(data);
+        const address = {
+            district: "",
+            fullAddress: "",
+            city: "",
+            street: "",
+            ward: "",
+            country: "",
+            userId: "",
+          }
+        console.log("Data sent to register:", user);
+        handleRegister(user,address);
     };
 
     return (
@@ -237,27 +242,6 @@ const RegisterTemplate = () => {
                         "& .MuiOutlinedInput-root": {
                             height: "50px",
                         },
-                    }}
-                />
-
-                {/* Avatar Input */}
-                <Typography align="left" fontWeight="bold" mt={2}>
-                    Avatar
-                </Typography>
-                <TextField
-                    fullWidth
-                    variant="outlined"
-                    type="file"
-                    margin="dense"
-                    onChange={(e) => setAvatar(e.target.files[0])}
-                    sx={{
-                        height: "50px",
-                        "& .MuiOutlinedInput-root": {
-                            height: "50px",
-                        },
-                    }}
-                    InputProps={{
-                        inputProps: { accept: "image/*" },
                     }}
                 />
 

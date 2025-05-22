@@ -21,16 +21,6 @@ const Header: React.FC = () => {
   const { countItem} = useCart();
   const [accessToken, setAccessToken] = useState(getValueFromLocalStorage("accessToken"));
 
-  useEffect(() => {
-    const handleTokenChange = () => {
-      const token = getValueFromLocalStorage("accessToken");
-      setAccessToken(token);
-    };
-
-    window.addEventListener("tokenChanged", handleTokenChange);
-    return () => window.removeEventListener("tokenChanged", handleTokenChange);
-  }, []);
-  
   return (
     <header className="header">
       <div className="header-container">

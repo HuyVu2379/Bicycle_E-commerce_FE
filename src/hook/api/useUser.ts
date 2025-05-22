@@ -5,9 +5,11 @@ import {
   editProfile,
   updateAvatar,
   getUserById,
+  createAddress,
+  getAddressById,
 } from "@/services/User.service";
 import { useSnackbar } from "notistack";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "@/constants/index";
 import { setValueInLocalStorage } from "@/utils/localStorage";
@@ -21,14 +23,13 @@ function useUser() {
   const cartStore = useSelector((state: RootState) => state.cartSlice);
   const { setCart } = cartStore;
 
-    
   const handleGetMe = async (userId: string) => {
     console.log("Inside handleGetMe, received userId:", userId);
     const user = await getUserById(userId);
     dispatch(setMe(user.data));
   };
 
-  const handleRegister = async (user: any) => {
+  const handleRegister = async (user: any,address: any) => {
     const response = await register(user);
     console.log("Check response in user service: ", response);
     if ("success" in response && response.success === true) {
@@ -37,7 +38,7 @@ function useUser() {
       setValueInLocalStorage("accessToken", response.data.accessToken);
       setValueInLocalStorage("refreshToken", response.data.refreshToken);
       const userId = response.data.userId;
-      console.log("Check data user id in useUser: ",userId);
+      console.log("Check data user id in useUser: ", userId);
       setValueInLocalStorage("userId", userId);
 
       if (userId) {
@@ -45,12 +46,18 @@ function useUser() {
       } else {
         console.error("userId is undefined before calling handleGetMe");
       }
-      
-      const data =  createCarts();
-      console.log("Check data create Cart in useUser: ", data);
-      const dataUser =  fetchCartByUserId(userId);
-      console.log("Check data cart User in useUser: ", dataUser);
 
+      const data = await createCarts();
+      console.log("Check data create Cart in useUser: ", data);
+      const responseAddress = await createAddress(address);
+      console.log("Check data create address in useUser: ",responseAddress);
+      
+      const dataUser = await fetchCartByUserId(userId);
+      console.log("Check data cart User in useUser: ", dataUser);
+      const dataAddress = await getAddressById(responseAddress.data.addressId);
+      console.log("Check data address User in useUser: ", dataAddress);
+      
+      await handleEditAddress(dataAddress);
     } else {
       enqueueSnackbar(
         `${response.response?.data?.message || "Register failed"}.`,

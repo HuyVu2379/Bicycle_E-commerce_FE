@@ -24,6 +24,26 @@ export const getUserById = async (userId: string) => {
         return { success: false };
     }
 }
+export const getAddressById = async (userId: string) => {
+    try {
+        const url = `${api_address}/${userId}`;
+        const result = await axiosConfig.get(url);
+        return result;
+    } catch (error) {
+        console.error("Error fetching address:", error);
+        return { success: false };
+    }
+}
+export const createAddress = async (address: any) => {
+    try {
+        const url = `${api_address}/create`;
+        const result = await axiosConfig.post(url, address);
+        return result;
+    } catch (error) {
+        console.error("Error create address:", error);
+        return { success: false };
+    }
+}
 export const editAddress = async (address: any) => {
     try {
         const url = `${api_address}/update`;
