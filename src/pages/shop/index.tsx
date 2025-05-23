@@ -57,8 +57,9 @@ export default function ShopTemplate() {
             name: product.name,
             image: inventory.imageUrls[0],
             price: product.price || 0,
-            priceReduce: product.priceReduced || 0,           // Lưu lại thông tin gốc nếu cần thiết cho các bộ lọc
-            originalData: item
+            priceReduced: product.priceReduced,           // Lưu lại thông tin gốc nếu cần thiết cho các bộ lọc
+            originalData: product,
+            productId: product.productId
           };
         });
 
