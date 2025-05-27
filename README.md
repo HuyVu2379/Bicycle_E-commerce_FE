@@ -53,7 +53,7 @@ Dự án xây dựng một website thương mại điện tử chuyên dụng d�
   ![Profile](public/assets/markdownImgs/Profile.png)
 
 - **Lịch sử mua hàng**  
-  ![Order history](public/assets/markdownImgs/Order-history)
+  ![Order history](public/assets/markdownImgs/Order-history.png)
 
 - **Giỏ hàng**  
   ![Cart](public/assets/markdownImgs/cart.png)
