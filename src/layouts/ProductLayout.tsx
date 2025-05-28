@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 function AuthLayout() {
   window.scrollTo(0, 0);
-    return (
         <Box>
             <Header />
             <Banner PageName="Login" PlaceHolder="Login" />

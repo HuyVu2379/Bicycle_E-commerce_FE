@@ -12,6 +12,7 @@ import { createAddress } from '@/services/User.service';
 function useAuth() {
     const userStore = useSelector((state: RootState) => state.userSlice);
     const { fetchCartByUserId, createCarts } = useCart();
+
     const { me } = userStore
     const dispatch = useDispatch();
     const navigate = useNavigate()
