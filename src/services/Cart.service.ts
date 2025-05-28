@@ -1,201 +1,77 @@
-import { CartItemsResponse, CartResponse, MessageResponse } from "@/types/cart";
 import axiosConfig from "./axiosConfig";
-
-const API_CART = "/api/v1/carts";
-const API_CART_ITEM = "/api/v1/cart-items";
-
-export const CartService = {
-  // Find cart by user ID
-  createCart: async (): Promise<MessageResponse<CartResponse>> => {
+const api_CartItems = "/api/v1/cart-items"
+const api_Cart = "/api/v1/carts"
+import { MessageResponse, CartResponse } from "@/types/cart";
+export const createCartItemSerive = async (data: any) => {
     try {
-      const url = `${API_CART}/create`;
-      const response =
-        await axiosConfig.post<MessageResponse<CartResponse>>(url);
-      console.log("Check raw response from API: ", response.data);
-      return response;
-    } catch (error: any) {
-      console.error("Error create cart for user :", error);
-      if (error.response && error.response.data) {
-        return error.response.data;
-      }
-      return {
-        statusCode: error.statusCode || error.response?.status || 500,
-        message: error.message || "An unexpected error occurred in service.",
-        success: false,
-        data: { cartId: "", userId: "", items: [] },
-      };
+        const url = `${api_CartItems}/create`;
+        console.log("check url: ", url);
+        let result = await axiosConfig.post(url, data);
+        return result;
+    } catch (error) {
+        console.error("Error logging in user:", error);
+        return { success: false, message: error };
     }
-  },
-
-  // Find cart by user ID
-  findCartByUserId: async (
-    userId: string
-  ): Promise<MessageResponse<CartResponse>> => {
+}
+export const findCartByUserId = async (userId: string) => {
     try {
-      console.log("Check data UserId: ", userId);
-      const url = `${API_CART}/find-cart-by-userId/${userId}`;
-      const response =
-        await axiosConfig.get<MessageResponse<CartResponse>>(url);
-      console.log("Check raw response from API: ", response.data);
-      return response.data;
-    } catch (error: any) {
-      console.error("Error finding cart by user ID:", error);
-      if (error.response && error.response.data) {
-        return error.response.data;
-      }
-      return {
-        statusCode: error.statusCode || error.response?.status || 500,
-        message: error.message || "An unexpected error occurred in service.",
-        success: false,
-        data: { cartId: "", userId: "", items: [] },
-      };
+        const url = `${api_Cart}/find-cart-by-userId/${userId}`;
+        let result = await axiosConfig.get(url);
+        console.log("check cart after fetch cart by userId: ", result);
+        return result;
+    } catch (error) {
+        console.error("Error get cart by userId:", error);
+        return { success: false, message: error };
     }
-  },
-
-  // Create a cart item
-  createCartItem: async (
-    item: CartItemsResponse & { cartId: string }
-  ): Promise<MessageResponse<CartItemsResponse>> => {
+}
+export const updateQuantityCartItems = async (cartItemId: string, quantity: number) => {
     try {
-      const url = `${API_CART_ITEM}/create`;
-      const { productId, quantity, cartId, color } = item;
-      const response = await axiosConfig.post<
-        MessageResponse<CartItemsResponse>
-      >(url, {
-        productId,
-        quantity,
-        cartId,
-        color,
-      });
-      console.log("Check data in Cart service: ", response);
-      return response.data;
-    } catch (error: any) {
-      console.error("Error creating cart item:", error);
-      if (error.response && error.response.data) {
-        return error.response.data;
-      }
-      return {
-        statusCode: error.statusCode || error.response?.status || 500,
-        message: error.message || "An unexpected error occurred in service.",
-        success: false,
-        data: {} as CartItemsResponse,
-      };
+        const url = `${api_CartItems}/update-quantity/${cartItemId}`;
+        let result = await axiosConfig.put(url, quantity);
+        console.log("check cart after fetch cart by userId: ", result);
+        return result;
+    } catch (error) {
+        console.error("Error get cart by userId:", error);
+        return { success: false, message: error };
     }
-  },
-
-  // Delete a cart item
-  deleteCartItem: async (
-    cartId: string,
-    productId: string
-  ): Promise<MessageResponse<string>> => {
+}
+export const removeCartItemService = async (cartItemId: string) => {
     try {
-      const url = `${API_CART_ITEM}/remove/${cartId}/${productId}`;
-      const response = await axiosConfig.delete<MessageResponse<string>>(url);
-      return response.data;
-    } catch (error: any) {
-      console.error("Error deleting cart item:", error);
-      if (error.response && error.response.data) {
-        return error.response.data;
-      }
-      return {
-        statusCode: error.statusCode || error.response?.status || 500,
-        message: error.message || "An unexpected error occurred in service.",
-        success: false,
-        data: "",
-      };
+        const url = `${api_CartItems}/remove/${cartItemId}`;
+        let result = await axiosConfig.delete(url);
+        return result;
+    } catch (error) {
+        console.error("Error removing cart item:", error);
+        return { success: false, message: error };
     }
-  },
-
-  // Update quantity of a cart item
-  updateQuantity: async (
-    cartId: string,
-    productId: string,
-    quantity: number
-  ): Promise<MessageResponse<CartItemsResponse>> => {
+}
+export const bulkDeleteCartItems = async (cartItemIds: string[]) => {
     try {
-      const url = `${API_CART_ITEM}/update-quantity/${cartId}/${productId}`;
-      const response = await axiosConfig.put<
-        MessageResponse<CartItemsResponse>
-      >(url, { quantity });
-      return response.data;
-    } catch (error: any) {
-      console.error("Error updating cart item quantity:", error);
-      if (error.response && error.response.data) {
-        return error.response.data;
-      }
-      return {
-        statusCode: error.statusCode || error.response?.status || 500,
-        message: error.message || "An unexpected error occurred in service.",
-        success: false,
-        data: {} as CartItemsResponse,
-      };
+        const url = `${api_CartItems}/bulk-delete`;
+        let result = await axiosConfig.delete(url, { data: cartItemIds });
+        return result;
+    } catch (error) {
+        console.error("Error bulk delete cart items:", error);
+        return { success: false, message: error };
     }
-  },
-
-  // Delete all items in a cart
-  deleteAllCartItems: async (
-    cartId: string
-  ): Promise<MessageResponse<string>> => {
+}
+export const createCart = async (): Promise<MessageResponse<CartResponse>> => {
     try {
-      const url = `${API_CART_ITEM}/delete-all/${cartId}`;
-      const response = await axiosConfig.delete<MessageResponse<string>>(url);
-      return response.data;
+        const url = `${api_Cart}/create`;
+        const response =
+            await axiosConfig.post<MessageResponse<CartResponse>>(url);
+        console.log("Check raw response from API: ", response.data);
+        return response;
     } catch (error: any) {
-      console.error("Error deleting all cart items:", error);
-      if (error.response && error.response.data) {
-        return error.response.data;
-      }
-      return {
-        statusCode: error.statusCode || error.response?.status || 500,
-        message: error.message || "An unexpected error occurred in service.",
-        success: false,
-        data: "",
-      };
+        console.error("Error create cart for user :", error);
+        if (error.response && error.response.data) {
+            return error.response.data;
+        }
+        return {
+            statusCode: error.statusCode || error.response?.status || 500,
+            message: error.message || "An unexpected error occurred in service.",
+            success: false,
+            data: { cartId: "", userId: "", items: [] },
+        };
     }
-  },
-
-  // Bulk delete cart items
-  bulkDeleteCartItem: async (
-    cartId: string
-  ): Promise<MessageResponse<string>> => {
-    try {
-      const url = `${API_CART_ITEM}/bulk-delete/${cartId}`;
-      const response = await axiosConfig.delete<MessageResponse<string>>(url);
-      return response.data;
-    } catch (error: any) {
-      console.error("Error bulk deleting cart items:", error);
-      if (error.response && error.response.data) {
-        return error.response.data;
-      }
-      return {
-        statusCode: error.statusCode || error.response?.status || 500,
-        message: error.message || "An unexpected error occurred in service.",
-        success: false,
-        data: "",
-      };
-    }
-  },
-
-  // Get all cart items
-  getAllCartItems: async (
-    cartId: string
-  ): Promise<MessageResponse<CartItemsResponse[]>> => {
-    try {
-      const url = `${API_CART_ITEM}/all/${cartId}`;
-      const response =
-        await axiosConfig.get<MessageResponse<CartItemsResponse[]>>(url);
-      return response.data;
-    } catch (error: any) {
-      console.error("Error getting all cart items:", error);
-      if (error.response && error.response.data) {
-        return error.response.data;
-      }
-      return {
-        statusCode: error.statusCode || error.response?.status || 500,
-        message: error.message || "An unexpected error occurred in service.",
-        success: false,
-        data: [],
-      };
-    }
-  },
-};
+}

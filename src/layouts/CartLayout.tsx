@@ -4,6 +4,7 @@ import Header from "@/components/Shared/Header/index";
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 function CartLayout() {
+  window.scrollTo(0, 0);
     return (
         <Box>
             <Header />

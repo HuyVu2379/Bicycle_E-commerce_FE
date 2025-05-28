@@ -1,63 +1,84 @@
-import { CartItemsResponse, CartResponse } from '@/types/cart';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
+interface CartItem {
+    cartId: string;
+    cartItemId: string;
+    productId: string;
+    productName: string;
+    imageUrl: string;
+    color: string;
+    quantity: number;
+}
+
+interface Cart {
+    cartId: string;
+    userId: string;
+    items: CartItem[];
+}
+
 export interface InitStateType {
-    currentCart: CartResponse; // Loại bỏ null, luôn có giá trị khởi tạo
-    cartItemCount: number;
+    cart: Partial<Cart>;
 }
 
 const initState: InitStateType = {
-    currentCart: {
+    cart: {
         cartId: '',
         userId: '',
         items: [],
-    }, // Khởi tạo mặc định để không bị null
-    cartItemCount: 0,
+    },
 };
 
 export const cartSlice = createSlice({
     name: 'cartSlice',
     initialState: initState,
     reducers: {
-        setCart: (state: InitStateType, { payload }: PayloadAction<CartResponse>) => {
-            state.currentCart = payload;
-            state.cartItemCount = payload.items?.length > 0 
-                ? payload.items.reduce((total, item) => total + item.quantity, 0) 
-                : 0;
+        setCart: (state: InitStateType, { payload }: PayloadAction<Cart>) => {
+            state.cart = payload;
         },
-        setCartItem: (state: InitStateType, { payload }: PayloadAction<CartItemsResponse>) => {
-            const existingItemIndex = state.currentCart.items.findIndex(item => item.productId === payload.productId);
-            if (existingItemIndex >= 0) {
-                const oldQuantity = state.currentCart.items[existingItemIndex].quantity;
-                state.currentCart.items[existingItemIndex] = payload;
-                state.cartItemCount = state.cartItemCount - oldQuantity + payload.quantity;
-            } else {
-                state.currentCart.items.push(payload);
-                state.cartItemCount += payload.quantity;
+        addCartItemInCart: (state: InitStateType, { payload }: PayloadAction<CartItem>) => {
+            state.cart.items = [...(state.cart.items || []), payload];
+        },
+        updateQuantity: (
+            state: InitStateType,
+            { payload }: PayloadAction<{ cartItemId: string; quantity: number }>
+        ) => {
+            if (state.cart.items) {
+                state.cart.items = state.cart.items.map((item) =>
+                    item.cartItemId === payload.cartItemId
+                        ? { ...item, quantity: Math.max(1, payload.quantity) }
+                        : item
+                );
             }
         },
-        removeCartItem: (state: InitStateType, { payload }: PayloadAction<string>) => {
-            const itemToRemove = state.currentCart.items.find(item => item.productId === payload);
-            if (itemToRemove) {
-                state.cartItemCount -= itemToRemove.quantity;
-                state.currentCart.items = state.currentCart.items.filter(item => item.productId !== payload);
+        removeItem: (
+            state: InitStateType,
+            { payload }: PayloadAction<string>
+        ) => {
+            if (state.cart.items) {
+                state.cart.items = state.cart.items.filter(
+                    (item) => item.cartItemId !== payload
+                );
             }
         },
-        clearCart: (state: InitStateType) => {
-            state.currentCart.items = [];
-            state.cartItemCount = 0;
-        },
-        setNoCart: (state: InitStateType) => {
-            state.currentCart = {
-                cartId: '',
-                userId: '',
-                items: [],
-            };
-            state.cartItemCount = 0;
+        removeItems: (
+            state: InitStateType,
+            { payload }: PayloadAction<string[]>
+        ) => {
+            if (state.cart.items) {
+                state.cart.items = state.cart.items.filter(
+                    (item) => !payload.includes(item.cartItemId)
+                );
+            }
         },
     },
 });
 
-export const { setCart, setCartItem, removeCartItem, clearCart, setNoCart } = cartSlice.actions;
+export const {
+    setCart,
+    addCartItemInCart,
+    updateQuantity,
+    removeItem,
+    removeItems,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;

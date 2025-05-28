@@ -22,9 +22,9 @@ interface PaginatedResponse<T> {
 }
 
 export const getAllProduct = async (
-    pageNo = 0, 
-    pageSize = 4, 
-    sortBy = "name", 
+    pageNo = 0,
+    pageSize = 4,
+    sortBy = "name",
     sortDirection = "ASC"
 ): Promise<PaginatedResponse<ProductResponse>> => {
     try {
@@ -37,9 +37,9 @@ export const getAllProduct = async (
                 sortDirection
             }
         });
-        
+
         console.log("API response object:", response);
-        
+
         return response.data;
     } catch (error: any) {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
@@ -63,6 +63,17 @@ export const getAllProduct = async (
         }
     }
 };
+
+export const getProductAll = async () => {
+    try {
+        const url = `${api_product}/public/all`;
+        const result = await axiosConfig.get(url);
+        return result;
+    } catch (error) {
+        console.error("Error get Product:", error);
+        return { success: false };
+    }
+}
 
 export const getInvetoryByProductId = async (productId: string) => {
     try {

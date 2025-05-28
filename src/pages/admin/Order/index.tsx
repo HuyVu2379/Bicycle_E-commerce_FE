@@ -51,11 +51,11 @@ const OrderList: React.FC = () => {
             onChange={(e) => setSearchType(e.target.value as any)}
           >
             <MenuItem value="orderId">Order ID</MenuItem>
-            <MenuItem value="userEmail">User Email</MenuItem>
+            <MenuItem value="userId">User ID</MenuItem>
           </Select>
         </FormControl>
         <TextField
-          label={`Nhập ${searchType === 'orderId' ? 'OrderId ID' : 'User Email'}`}
+          label={`Nhập ${searchType === 'orderId' ? 'OrderId ID' : 'User ID'}`}
           sx={{ flexGrow: 1, '& .MuiInputBase-root': { height: 56 } }}
           variant="outlined"
           value={searchInput}
@@ -79,7 +79,7 @@ const OrderList: React.FC = () => {
             <TableRow>
               <TableCell>STT</TableCell>
               <TableCell>Order ID</TableCell>
-              <TableCell>User Email</TableCell>
+              <TableCell>User ID</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Total Price</TableCell>
               <TableCell>Details</TableCell>

@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import ProductList from "@/components/Shared/ProductList/index";
 import FilterSidebar from "@/components/Shared/SideBar/index";
 import { Box, Grid, CircularProgress, Button, Typography, Pagination } from "@mui/material";
-import { getAllProduct } from "@/services/Product.service";
+import { getAllProduct, getProductWithPage } from "@/services/Product.service";
 import { ProductResponse } from "@/types/product";
 import { getValueFromLocalStorage } from "@/utils/localStorage";
 
@@ -18,24 +18,55 @@ export default function ShopTemplate() {
   useEffect(() => {
     console.log("Check in Shop: ", accessToken);
 
-    if (!accessToken) {
-      return <Navigate to="/auth/login" replace />;
-    } else {
-      fetchProducts(page);
-    }
+
+
+    fetchProducts(page);
+
   }, [page, accessToken]);
 
   const fetchProducts = async (pageNo = 0) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getAllProduct(pageNo);
-      console.log("Full response:", JSON.stringify(response));
+      const response = await getProductWithPage({
+        pageNo: pageNo,
+        pageSize: 8,
+        sortBy: "name",
+        sortDirection: "ASC"
+      });
 
-      if (response && response.content) {
-        setFilteredProducts(response.content);
-        if (response.page) {
-          setTotalPages(response.page.totalPages);
+      console.log("Full response:", response);
+
+      if (response && response.data && response.data.content) {
+
+        const rawProducts = Array.isArray(response.data.content) ? response.data.content : [];
+        
+        // Biến đổi dữ liệu để chỉ lấy các trường cần thiết
+        const simplifiedProducts = rawProducts.map(item => {
+          // Lấy thông tin từ product
+          const product = item.product || {};
+          
+          // Lấy thông tin giá từ inventory (giả sử lấy phần tử đầu tiên nếu có nhiều)
+          const inventory = Array.isArray(item.inventory) && item.inventory.length > 0 
+            ? item.inventory[0] 
+            : {};
+            
+          // Tạo đối tượng sản phẩm đơn giản hóa
+          return {
+            id: product.productId,
+            name: product.name,
+            image: inventory.imageUrls[0],
+            price: product.price || 0,
+            priceReduced: product.priceReduced,           // Lưu lại thông tin gốc nếu cần thiết cho các bộ lọc
+            originalData: product,
+            productId: product.productId
+          };
+        });
+
+        setFilteredProducts(simplifiedProducts);
+
+        if (response.data.page) {
+          setTotalPages(response.data.page.totalPages || 1);
         }
       } else {
         setFilteredProducts([]);

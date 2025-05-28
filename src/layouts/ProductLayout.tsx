@@ -4,17 +4,16 @@ import Header from "@/components/Shared/Header/index";
 import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-
-function OrderLayout() {
+function AuthLayout() {
   window.scrollTo(0, 0);
     return (
         <Box>
             <Header />
-            <Banner PageName="OrderList" PlaceHolder="OrderList" />
+            <Banner PageName="Login" PlaceHolder="Login" />
             <Outlet />
             <Footer />
         </Box>
     );
 }
 
-export default OrderLayout;
+export default AuthLayout;

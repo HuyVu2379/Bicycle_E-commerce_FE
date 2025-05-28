@@ -64,7 +64,6 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
   product
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  console.log("check product component: ", product);
   useEffect(() => {
     if (cardRef.current) {
       VanillaTilt.init(cardRef.current, {
@@ -75,6 +74,8 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
         scale: 1.03,
       });
     }
+    console.log("Check prop: ", product);
+
     return () => {
       if (cardRef.current && (cardRef.current as any).vanillaTilt) {
         (cardRef.current as any).vanillaTilt.destroy();
