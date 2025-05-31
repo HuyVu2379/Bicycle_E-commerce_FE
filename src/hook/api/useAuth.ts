@@ -49,7 +49,7 @@ function useAuth() {
                     await handleGetMe(response.data.userId);
                 }
                 await fetchCartByUserId(response.data.userId);
-                
+
                 return { success: true, data: response.data }
             } else {
                 const errorMsg = response.message || 'Đăng nhập thất bại';
@@ -84,7 +84,7 @@ function useAuth() {
             removeValueInLocalStorage("refreshToken");
             removeValueInLocalStorage("userId");
             dispatch(setMe(null));
-            navigate(`${APP_ROUTES.AUTH_ROUTE}${APP_ROUTES.USER.LOGIN}`);
+            navigate(`${APP_ROUTES.AUTH_ROUTE}/${APP_ROUTES.USER.LOGIN}`);
             enqueueSnackbar({ message: 'Logout successful!', variant: 'success' });
         } catch (error) {
             enqueueSnackbar({ message: 'Logout failed!', variant: 'error' });

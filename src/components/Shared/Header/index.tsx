@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { flushSync } from "react-dom";
 import "./header.css";
-import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
   FaUser,
@@ -11,20 +11,18 @@ import {
   FaChevronDown,
 } from "react-icons/fa";
 import useAuth from "@/hook/api/useAuth";
-import { getValueFromLocalStorage } from "@/utils/localStorage";
 import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
 import useCart from "@/hook/api/useCart";
+import { Button } from "@mui/material";
 const Header: React.FC = () => {
   const { handleLogout } = useAuth();
   const [showShopDropdown, setShowShopDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { countItem} = useCart();
-  const [accessToken, setAccessToken] = useState(getValueFromLocalStorage("accessToken"));
-
+  const { countItem } = useCart();
+  const { accessToken } = localStorage;
   return (
     <header className="header">
       <div className="header-container">
-        {/* Logo */}
         <Link to="/" style={{ textDecoration: "none", color: "black" }}>
           <div className="logo">
             <img
@@ -38,15 +36,10 @@ const Header: React.FC = () => {
             </span>
           </div>
         </Link>
-
-        {/* Hamburger Icon */}
         <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <FaTimes /> : <FaBars />}
         </div>
-
-        {/* Menu */}
         <div className={`menu ${menuOpen ? "open" : ""}`}>
-          {/* Navigation Links */}
           <nav className="nav">
             <Link to="/" className="nav-link">
               HOME
@@ -57,8 +50,6 @@ const Header: React.FC = () => {
             <Link to="/service" className="nav-link">
               SERVICES
             </Link>
-
-            {/* SHOP Dropdown */}
             <Link
               className="dropdown"
               to="/shop"
@@ -84,72 +75,34 @@ const Header: React.FC = () => {
               CONTACT
             </Link>
           </nav>
-
-          {/* Search Box */}
           <div className="search-box">
             <input type="text" placeholder="Search..." />
             <FaSearch className="search-icon" />
-          </div>
-
-          {/* Action Icons */}
+          </div>          {/* Action Icons */}
           <div className="actions">
-            {accessToken !== "" ? (
+            {accessToken ? (
               <>
-                {/* Hồ sơ cá nhân */}
                 <Link to="/auth/profile" className="icons">
                   <FaUser className="icon" />
                 </Link>
-
-                {/* Đơn hàng */}
+                {/* Đơn hàng - chỉ hiển thị khi đã login */}
                 <Link to="/my-orders" className="icons">
                   <LiaFileInvoiceDollarSolid color="black" size={20} />
                 </Link>
 
-                {/* Giỏ hàng */}
+                {/* Giỏ hàng - chỉ hiển thị khi đã login */}
                 <Link to="/home/cart" className="cart icons">
                   <FaShoppingCart className="icon" />
                   <span className="cart-badge">{countItem || 0}</span>
                 </Link>
-
-                {/* Logout */}
-                <Link
-                  to="/auth/login"
-                  onClick={handleLogout}
-                  className="logout"
-                >
+                < Link to="/auth/login" onClick={handleLogout} className="logout">
                   Logout
                 </Link>
               </>
             ) : (
-              <>
-                {/* Nếu chưa login thì hiển thị Login & Register */}
-                <Button
-                  component={Link}
-                  to="/auth/login"
-                  variant="contained"
-                  color="error"
-                  sx={{ fontWeight: "bold", fontSize: "13px" }}
-                >
-                  Login
-                </Button>
-                <Button
-                  component={Link}
-                  to="/auth/register"
-                  variant="outlined"
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "13px",
-                    borderColor: "black", // ✅ viền đen
-                    color: "black", // ✅ chữ đen
-                    "&:hover": {
-                      borderColor: "black", // ✅ viền đen khi hover
-                      backgroundColor: "#f2f2f2", // tùy ý thêm hiệu ứng hover
-                    },
-                  }}
-                >
-                  Register
-                </Button>
-              </>
+              <Link to="/auth/login" className="login">
+                <FaUser className="icon" />
+              </Link>
             )}
           </div>
         </div>

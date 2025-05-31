@@ -6,7 +6,7 @@ import HomeLayout from "@/layouts/HomeLayout";
 import UserProfile from "@/pages/auth/Profile";
 import HomeTemplate from "@/pages/home";
 import ServiceLayout from "@/layouts/ServiceLayout";
-import CheckoutPage from "@/components/Shared/YourCart/index";
+import CheckoutPage from "@/components/Shared/YourCart";
 import ServiceTemplate from "@/pages/service";
 import PaymentLayout from "@/layouts/PaymentLayout";
 import PaymentTemplate from "@/pages/payment";
