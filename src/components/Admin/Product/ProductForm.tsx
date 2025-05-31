@@ -4,19 +4,18 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
-import { Product, colorsList } from '@/pages/Admin/Product';
+import { Product, colorsList } from '@/pages/admin/Product';
 import { SelectChangeEvent } from '@mui/material';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
-
-marked.setOptions({ gfm: true, breaks: true, smartLists: true, xhtml: true });
+marked.setOptions({ gfm: true, breaks: true });
 const purify = DOMPurify(window);
 
 interface ProductFormProps {
     product: Product;
-    categories?: { categoryId: string; name: string }[];
-    suppliers?: { supplierId: string; name: string }[];
-    promotions?: { _id: string; name: string }[];
+    categories?: any;
+    suppliers?: any;
+    promotions?: any;
     openPromotionDialog: boolean;
     errors?: Partial<Record<keyof Product, string>>;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent<string>, immediate?: boolean) => void;
@@ -40,19 +39,17 @@ const ProductForm: React.FC<ProductFormProps> = ({
     handleAddPromotion,
 }) => {
     const [localDescription, setLocalDescription] = useState(product.description);
-
     // Đồng bộ localDescription với product.description
     useEffect(() => {
         setLocalDescription(product.description);
     }, [product.description]);
 
     // Hàm log cho môi trường development
-    const log = (key: string, data: any) => process.env.NODE_ENV === 'development' && console.log(key, data);
-
-    // Chuyển Markdown thành HTML
+    const log = (key: string, data: any) => process.env.NODE_ENV === 'development' && console.log(key, data);    // Chuyển Markdown thành HTML
     const renderHTML = useCallback((text: string) => {
         try {
-            return purify.sanitize(marked.parse(text));
+            const parsed = marked.parse(text);
+            return purify.sanitize(typeof parsed === 'string' ? parsed : '');
         } catch (error) {
             console.error('Error rendering Markdown:', error);
             return '<p>Error rendering Markdown</p>';
@@ -68,21 +65,17 @@ const ProductForm: React.FC<ProductFormProps> = ({
             debouncedInputChange(text);
         },
         [renderHTML],
-    );
-
-    // Debounce cho handleInputChange để giảm gọi API
+    );    // Debounce cho handleInputChange để giảm gọi API
     const debouncedInputChange = useCallback(
         debounce((text: string) => {
-            handleInputChange({ target: { name: 'description', value: text } }, true);
+            handleInputChange({ target: { name: 'description', value: text } } as any, true);
         }, 300),
         [handleInputChange],
-    );
-
-    // Xử lý blur cho Markdown
+    );    // Xử lý blur cho Markdown
     const handleMarkdownBlur = useCallback(() => {
         const html = renderHTML(localDescription);
         log('handleMarkdownBlur:', { text: localDescription, html });
-        handleInputChange({ target: { name: 'description', value: localDescription } }, true);
+        handleInputChange({ target: { name: 'description', value: localDescription } } as any, true);
     }, [handleInputChange, localDescription, renderHTML]);
 
     // Hủy debounce khi component unmount
@@ -92,11 +85,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
     const handleSelectChange = useCallback(
         (e: SelectChangeEvent<string>, field: string, openDialog?: () => void) => {
             const { value } = e.target;
-            log(`handle${field}Change:`, { name: field, value });
-            if (value === 'add_new' && openDialog) {
+            log(`handle${field}Change:`, { name: field, value }); if (value === 'add_new' && openDialog) {
                 openDialog();
             } else if (value && value !== 'undefined') {
-                handleInputChange({ target: { name: field, value } }, true);
+                handleInputChange({ target: { name: field, value } } as any, true);
             } else {
                 console.warn(`Invalid ${field} value:`, value);
             }
@@ -146,12 +138,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
                         value={product.categoryId || ''}
                         onChange={(e) => handleSelectChange(e, 'categoryId', () => setOpenCategoryDialog(true))}
                         label="Danh mục"
-                        required
-                    >
-                        {categories.length ? categories.map((cat) => (
+                        required                    >                        {categories.length ? categories.filter((cat: any) => cat && cat.categoryId).map((cat: any) => (
                             <MenuItem key={cat.categoryId} value={cat.categoryId}>{cat.name}</MenuItem>
                         )) : <MenuItem disabled>Không có danh mục</MenuItem>}
-                        <MenuItem value="add_new">+ Thêm danh mục mới</MenuItem>
+                        <MenuItem onClick={() => setOpenCategoryDialog(true)} value="add_new">+ Thêm danh mục mới</MenuItem>
                     </Select>
                     {errors.categoryId && <FormHelperText>{errors.categoryId}</FormHelperText>}
                 </FormControl>
@@ -164,9 +154,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                         value={product.supplierId || ''}
                         onChange={(e) => handleSelectChange(e, 'supplierId')}
                         label="Nhà cung cấp"
-                        required
-                    >
-                        {suppliers.length ? suppliers.map((sup) => (
+                        required                    >                        {suppliers.length ? suppliers.filter((sup: any) => sup && sup.supplierId).map((sup: any) => (
                             <MenuItem key={sup.supplierId} value={sup.supplierId}>{sup.name}</MenuItem>
                         )) : <MenuItem disabled>Không có nhà cung cấp</MenuItem>}
                     </Select>
@@ -180,16 +168,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     onClick={() => setOpenPromotionDialog(true)}
                     sx={{ py: '14px' }}
                 >
-                    {product.promotionId ? `Khuyến mãi: ${promotions.find((p) => p._id === product.promotionId)?.name || product.promotionId}` : 'Chọn khuyến mãi'}
+                    {product.promotionId ? `Khuyến mãi: ${promotions.find((p: any) => p._id === product.promotionId)?.name || product.promotionId}` : 'Chọn khuyến mãi'}
                 </Button>
                 <Dialog open={openPromotionDialog} onClose={() => setOpenPromotionDialog(false)}>
                     <DialogTitle>Chọn mã khuyến mãi</DialogTitle>
                     <DialogContent>
                         <List>
-                            {promotions.length ? promotions.map((promotion) => (
+                            {promotions.length ? promotions.map((promotion: any) => (
                                 <ListItem
                                     key={promotion.promotionId}
-                                    button
+                                    component="button"
                                     onClick={() => {
                                         log('Selected promotion:', { promotionId: promotion.promotionId });
                                         handleAddPromotion(promotion.promotionId);

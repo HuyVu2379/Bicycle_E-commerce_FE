@@ -1,5 +1,5 @@
-import { setCategories, setProducts, setPromotions, setSpecifications, setSuppliers } from '@/store/slices/product.slice'
-import { getAllCategory, getAllSupplier, getAllPromotions, createSpecifications, getAllProduct, getSpecificationByProductId } from "@/services/Product.service";
+import { setCategories, setProducts, setPromotions, setSpecifications, setSuppliers, addCategory } from '@/store/slices/product.slice'
+import { getAllCategory, getAllSupplier, getAllPromotions, createSpecifications, getAllProduct, getSpecificationByProductId, createCategory } from "@/services/Product.service";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 function useProduct() {
@@ -25,13 +25,22 @@ function useProduct() {
     const handleFetchSpecifications = async (productId: string) => {
         const response = await getSpecificationByProductId(productId);
         dispatch(setSpecifications(response));
-    }
+    };
+
     const handleCreateSpecifications = async (data: any) => {
         const response = await createSpecifications(data);
         return response;
-    }
+    };
 
-    return { handleFetchCategories, handleFetchSupplier, handleFetchProducts, handleFetchPromotion,handleFetchSpecifications, categories, suppliers, products, promotions, handleCreateSpecifications };
+    const handleAddCategory = async (data: any) => {
+        const response = await createCategory(data);
+        if (response) {
+            dispatch(addCategory(response));
+        }
+        return response;
+    };
+
+    return { handleFetchCategories, handleFetchSupplier, handleFetchProducts, handleFetchPromotion, handleFetchSpecifications, handleAddCategory, categories, suppliers, products, promotions, handleCreateSpecifications };
 }
 
 export default useProduct;

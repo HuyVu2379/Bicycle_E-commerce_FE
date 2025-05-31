@@ -23,7 +23,7 @@ export interface Specification {
 
 export interface Product {
     name: string;
-    description: string; // Stores Markdown
+    description: string;
     price: string;
     promotionId: string;
     categoryId: string;
@@ -34,6 +34,11 @@ export interface Product {
     specifications: Specification[];
 }
 
+export interface Category {
+    categoryId: string;
+    name: string;
+    description: string;
+}
 export interface GalleryPhoto {
     src: string;
     width: number;
@@ -65,7 +70,7 @@ const ProductManagement: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [dataFetched, setDataFetched] = useState<boolean>(false);
 
-    const { handleFetchCategories, handleFetchSupplier, handleFetchPromotion, categories, suppliers, promotions, handleCreateSpecifications } = useProduct();
+    const { handleFetchCategories, handleFetchSupplier, handleFetchPromotion, categories, suppliers, promotions, handleCreateSpecifications, handleAddCategory: createCategoryAPI } = useProduct();
 
     useEffect(() => {
         productRef.current = product;
@@ -96,16 +101,18 @@ const ProductManagement: React.FC = () => {
         fetchData();
     }, [dataFetched]);
 
-    const [newCategory, setNewCategory] = useState<string>('');
+    const [newCategory, setNewCategory] = useState<Category>({
+        categoryId: '',
+        name: '',
+        description: '',
+    });
     const [openCategoryDialog, setOpenCategoryDialog] = useState<boolean>(false);
     const [openSpecDialog, setOpenSpecDialog] = useState<boolean>(false);
     const [openPromotionDialog, setOpenPromotionDialog] = useState<boolean>(false);
     const [newSpec, setNewSpec] = useState<Specification>({ key: '', value: '' });
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [currentImage, setCurrentImage] = useState<number>(0);
-
-    const handleInputChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent<string>) => {
+    const [currentImage, setCurrentImage] = useState<number>(0); const handleInputChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent<string> | { target: { name: string; value: unknown } }, _immediate?: boolean) => {
             const { name, value } = e.target;
             setProduct((prev) => {
                 const updatedProduct = { ...prev, [name as string]: value };
@@ -208,18 +215,34 @@ const ProductManagement: React.FC = () => {
             }
         },
         []
-    );
+    ); const handleAddCategory = useCallback(async () => {
+        if (newCategory.name && newCategory.description && !categories.find((cat: any) => cat.name === newCategory.name)) {
+            try {
+                const response = await createCategoryAPI({
+                    name: newCategory.name,
+                    description: newCategory.description
+                });
 
-    const handleAddCategory = useCallback(() => {
-        if (newCategory && !categories.find((cat: any) => cat.name === newCategory)) {
-            setProduct((prev) => ({ ...prev, categoryId: newCategory }));
-            setNewCategory('');
-            setOpenCategoryDialog(false);
-            enqueueSnackbar('Thêm danh mục mới thành công', { variant: 'success' });
+                if (response) {
+                    setProduct((prev) => ({ ...prev, categoryId: response.categoryId }));
+                    setNewCategory({
+                        categoryId: '',
+                        name: '',
+                        description: '',
+                    });
+                    setOpenCategoryDialog(false);
+                    enqueueSnackbar('Thêm danh mục mới thành công', { variant: 'success' });
+                }
+            } catch (error) {
+                enqueueSnackbar('Lỗi khi thêm danh mục', { variant: 'error' });
+                console.error('Error adding category:', error);
+            }
+        } else if (categories.find((cat: any) => cat.name === newCategory.name)) {
+            enqueueSnackbar('Danh mục đã tồn tại', { variant: 'error' });
         } else {
-            enqueueSnackbar('Danh mục đã tồn tại hoặc không hợp lệ', { variant: 'error' });
+            enqueueSnackbar('Vui lòng điền đầy đủ thông tin danh mục', { variant: 'error' });
         }
-    }, [newCategory, categories, enqueueSnackbar]);
+    }, [newCategory, categories, enqueueSnackbar, createCategoryAPI]);
 
     const handleAddPromotion = useCallback(
         (promotionId: string) => {
@@ -353,9 +376,7 @@ const ProductManagement: React.FC = () => {
             }
         },
         [enqueueSnackbar, handleCreateSpecifications]
-    );
-
-    const openLightbox = useCallback((event: React.MouseEvent, { index }: { index: number }) => {
+    ); const openLightbox = useCallback((_event: React.MouseEvent, { index }: { index: number }) => {
         setCurrentImage(index);
         setIsOpen(true);
     }, []);

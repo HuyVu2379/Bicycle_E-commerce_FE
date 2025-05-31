@@ -147,7 +147,7 @@ export const createSpecifications = async (data: any) => {
 }
 export const createCategory = async (data: any) => {
     try {
-        const url = `${api_supplier}/create`;
+        const url = `${api_category}/create`;
         const result = await axiosConfig.post(url, data);
         return result.data;
     } catch (error) {

@@ -96,6 +96,9 @@ export const useProduct = createSlice({
         setSpecifications: (state: InitStateType, { payload }: PayloadAction<any>) => {
             state.specifications = payload;
         },
+        addCategory: (state: InitStateType, { payload }: PayloadAction<Category>) => {
+            state.categories.push(payload);
+        }
     },
 });
 export const {
@@ -104,6 +107,7 @@ export const {
     setProducts,
     setPromotions,
     setSpecifications,
+    addCategory
 } = useProduct.actions;
 
 export default useProduct.reducer;

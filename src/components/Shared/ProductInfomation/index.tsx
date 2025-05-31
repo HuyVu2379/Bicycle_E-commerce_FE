@@ -68,19 +68,34 @@ const ProductInformation = ({ product }: any) => {
     await createCartItem(cartItem);
   };
   console.log("check cart: ", currentCart);
-
   return (
-    <Box sx={{ padding: 4, maxWidth: 1200, margin: "auto" }}>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <CardMedia
-            component="img"
-            image={mainImage}
-            alt={product.product.name}
-            sx={{ width: "100%", height: "auto", borderRadius: 2 }}
-          />
+    <Box sx={{ padding: 4, maxWidth: 1400, margin: "auto" }}>
+      <Grid container spacing={6}>
+        <Grid item xs={12} md={7}>
+          <Box sx={{ position: "relative", width: "100%" }}>
+            <CardMedia
+              component="img"
+              image={mainImage}
+              alt={product.product.name}
+              sx={{
+                width: 700,
+                height: 450,
+                objectFit: "cover",
+                borderRadius: 2,
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+              }}
+            />
+          </Box>
           <Box
-            sx={{ display: "flex", gap: 1, mt: 2, justifyContent: "center" }}
+            sx={{
+              display: "flex",
+              gap: 1,
+              mt: 3,
+              justifyContent: "center",
+              flexWrap: "wrap",
+              maxWidth: "100%",
+              overflowX: "auto"
+            }}
           >
             {images.map((image, index) => (
               <CardMedia
@@ -89,140 +104,139 @@ const ProductInformation = ({ product }: any) => {
                 image={image}
                 alt={`Thumbnail ${index + 1}`}
                 sx={{
-                  width: 80,
-                  height: 80,
+                  width: 90,
+                  height: 90,
+                  objectFit: "cover",
                   borderRadius: 1,
                   cursor: "pointer",
-                  border: mainImage === image ? "2px solid #1976d2" : "none",
+                  border: mainImage === image ? "3px solid #1976d2" : "2px solid #e0e0e0",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    border: "3px solid #1976d2",
+                    transform: "scale(1.05)"
+                  }
                 }}
                 onClick={() => handleImageChange(image)}
               />
             ))}
           </Box>
-        </Grid>
+        </Grid>        <Grid item xs={12} md={5}>
+          <Box sx={{ pl: { md: 2 }, height: "100%" }}>
+            <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }} gutterBottom>
+              {product.product.name}
+            </Typography>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
+              Category: {product.category?.name || "Không rõ danh mục"}
+            </Typography>
+            <Typography variant="h4" color="primary" sx={{ fontWeight: "bold", mb: 3 }}>
+              {product.product.priceReduced.toLocaleString()} đ
+            </Typography>
 
-        <Grid item xs={12} md={6}>
-          <Typography variant="h4" sx={{ fontWeight: "bold" }} gutterBottom>
-            {product.product.name}
-          </Typography>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            Category: {product.category?.name || "Không rõ danh mục"}
-          </Typography>
-          <Typography variant="h5" color="primary" gutterBottom>
-            {product.product.priceReduced.toLocaleString()} đ
-          </Typography>
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ mt: 2, mb: 2, fontWeight: "bold" }}
-          >
-            Supplier:
-          </Typography>
-          {product.supplier?.name || "UNKNOWN"}
+            <Divider sx={{ my: 2 }} />
 
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ mt: 2, fontWeight: "bold" }}
-          >
-            Color
-          </Typography>
-          <RadioGroup row value={selectedColor} onChange={handleColorChange}>
-            {colors.map((color) => (
-              <FormControlLabel
-                key={color}
-                value={color}
-                control={
-                  <Radio
-                    sx={{
-                      color: color.toLowerCase(),
-                      "&.Mui-checked": { color: color.toLowerCase() },
-                    }}
-                  />
-                }
-                label=""
+            <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold" }}>
+              Supplier:
+            </Typography>
+            <Typography variant="body1" sx={{ mb: 3, color: "text.secondary" }}>
+              {product.supplier?.name || "UNKNOWN"}
+            </Typography>
+
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+              Color
+            </Typography>
+            <RadioGroup row value={selectedColor} onChange={handleColorChange} sx={{ mb: 3 }}>
+              {colors.map((color) => (
+                <FormControlLabel
+                  key={color}
+                  value={color}
+                  control={
+                    <Radio
+                      sx={{
+                        color: color.toLowerCase(),
+                        "&.Mui-checked": { color: color.toLowerCase() },
+                      }}
+                    />
+                  }
+                  label=""
+                />
+              ))}
+            </RadioGroup>
+
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+              Quantity:
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
+              <IconButton
+                onClick={handleDecrease}
+                sx={{
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 1,
+                  "&:hover": { backgroundColor: "#f5f5f5" }
+                }}
+              >
+                <Remove />
+              </IconButton>
+              <TextField
+                value={quantity}
+                inputProps={{ style: { textAlign: "center" } }}
+                sx={{
+                  width: 80,
+                  mx: 1,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 1
+                  }
+                }}
+                disabled
               />
-            ))}
-          </RadioGroup>
+              <IconButton
+                onClick={handleIncrease}
+                sx={{
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 1,
+                  "&:hover": { backgroundColor: "#f5f5f5" }
+                }}
+              >
+                <Add />
+              </IconButton>
+            </Box>
 
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ mt: 2, fontWeight: "bold" }}
-          >
-            Quantity:
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <IconButton onClick={handleDecrease}>
-              <Remove />
-            </IconButton>
-            <TextField
-              value={quantity}
-              inputProps={{ style: { textAlign: "center" } }}
-              sx={{ width: 60, mx: 1 }}
-              disabled
-            />
-            <IconButton onClick={handleIncrease}>
-              <Add />
-            </IconButton>
+            <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                  flexGrow: 1,
+                  py: 1.5,
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                  borderRadius: 2
+                }}
+                onClick={handleAddToCart}
+              >
+                Add to Cart
+              </Button>
+
+              <Button
+                variant="outlined"
+                sx={{
+                  flexGrow: 1,
+                  py: 1.5,
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                  borderRadius: 2
+                }}
+                component={Link}
+                to={`/payment/${product.product.productId}/${selectedColor}/${quantity}`}
+              >
+                Buy Now
+              </Button>
+            </Box>
+
+            <Divider sx={{ my: 3 }} />
+            <Typography variant="body2" color="text.secondary">
+              Orders ship within 5 to 10 business days
+            </Typography>
           </Box>
-
-          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ flexGrow: 1 }}
-              onClick={handleAddToCart}
-            >
-              Add to Cart
-            </Button>
-
-            <Button
-              variant="outlined"
-              sx={{ flexGrow: 1 }}
-              component={Link}
-              to={`/payment/${product.product.productId}/${selectedColor}/${quantity}`}
-            >
-              Buy Now
-            </Button>
-          </Box>
-
-          <Typography
-            variant="subtitle1"
-            gutterBottom
-            sx={{ fontWeight: "bold" }}
-          >
-            Guaranteed Safe Checkout:
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, mb: 2, alignItems: "center" }}>
-            <img
-              src="/assets/images/logo_VISA.png"
-              width="40"
-              height="24"
-              alt="Visa"
-            />
-            <img
-              src="/assets/images/logo_MOMO.png"
-              width="30"
-              height="30"
-              alt="MoMo"
-            />
-            <img
-              src="/assets/images/logo_ZALOPAY.png"
-              width="45"
-              height="14"
-              alt="ZaloPay"
-            />
-            <img
-              src="/assets/images/logo_COD.png"
-              width="30"
-              height="30"
-              alt="COD"
-            />
-          </Box>
-          <Typography variant="body2" color="text.secondary">
-            Orders ship within 5 to 10 business days
-          </Typography>
         </Grid>
       </Grid>
     </Box>
