@@ -20,6 +20,7 @@ interface ProductFormProps {
     errors?: Partial<Record<keyof Product, string>>;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent<string>, immediate?: boolean) => void;
     handleColorChange: (e: SelectChangeEvent<string[]>) => void;
+    handleCategoryChange: (e: SelectChangeEvent<string[]>) => void;
     setOpenCategoryDialog: (open: boolean) => void;
     setOpenPromotionDialog: (open: boolean) => void;
     handleAddPromotion: (promotionId: string) => void;
@@ -34,6 +35,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     errors = {},
     handleInputChange,
     handleColorChange,
+    handleCategoryChange,
     setOpenCategoryDialog,
     setOpenPromotionDialog,
     handleAddPromotion,
@@ -129,21 +131,31 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     helperText={errors.price}
                     sx={inputSx}
                 />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <FormControl fullWidth variant="outlined" error={!!errors.categoryId}>
+            </Grid>            <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined" error={!!errors.categoryIds}>
                     <InputLabel>Danh mục</InputLabel>
                     <Select
-                        name="categoryId"
-                        value={product.categoryId || ''}
-                        onChange={(e) => handleSelectChange(e, 'categoryId', () => setOpenCategoryDialog(true))}
+                        name="categoryIds"
+                        multiple
+                        value={product.categoryIds || []}
+                        onChange={handleCategoryChange}
                         label="Danh mục"
-                        required                    >                        {categories.length ? categories.filter((cat: any) => cat && cat.categoryId).map((cat: any) => (
+                        required
+                        renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {(selected as string[]).map((value) => {
+                                    const category = categories.find((cat: any) => cat.categoryId === value);
+                                    return <Chip key={value} label={category?.name || value} />;
+                                })}
+                            </Box>
+                        )}
+                    >
+                        {categories.length ? categories.filter((cat: any) => cat && cat.categoryId).map((cat: any) => (
                             <MenuItem key={cat.categoryId} value={cat.categoryId}>{cat.name}</MenuItem>
                         )) : <MenuItem disabled>Không có danh mục</MenuItem>}
                         <MenuItem onClick={() => setOpenCategoryDialog(true)} value="add_new">+ Thêm danh mục mới</MenuItem>
                     </Select>
-                    {errors.categoryId && <FormHelperText>{errors.categoryId}</FormHelperText>}
+                    {errors.categoryIds && <FormHelperText>{errors.categoryIds}</FormHelperText>}
                 </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -229,7 +241,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 export default React.memo(ProductForm, (prev, next) => (
     prev.product.name === next.product.name &&
     prev.product.price === next.product.price &&
-    prev.product.categoryId === next.product.categoryId &&
+    isEqual(prev.product.categoryIds, next.product.categoryIds) &&
     prev.product.supplierId === next.product.supplierId &&
     prev.product.promotionId === next.product.promotionId &&
     prev.product.description === next.product.description &&

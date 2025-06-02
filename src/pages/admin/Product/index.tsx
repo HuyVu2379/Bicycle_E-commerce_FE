@@ -26,7 +26,7 @@ export interface Product {
     description: string;
     price: string;
     promotionId: string;
-    categoryId: string;
+    categoryIds: string[];
     supplierId: string;
     colors: string[];
     images: { [color: string]: string[] };
@@ -49,13 +49,12 @@ export interface GalleryPhoto {
 export const colorsList = ['Blue', 'Red', 'Green', 'Yellow', 'Pink', 'Purple', 'Black', 'White', 'Brown', 'Orange'];
 
 const ProductManagement: React.FC = () => {
-    const { enqueueSnackbar } = useSnackbar();
-    const productRef = useRef<Product>({
+    const { enqueueSnackbar } = useSnackbar(); const productRef = useRef<Product>({
         name: '',
         description: '',
         price: '',
         promotionId: '',
-        categoryId: '',
+        categoryIds: [],
         supplierId: '',
         colors: [],
         images: {},
@@ -151,6 +150,21 @@ const ProductManagement: React.FC = () => {
         setImageFiles(updatedImageFiles);
     }, []);
 
+    const handleCategoryChange = useCallback((e: SelectChangeEvent<string[]>) => {
+        const selectedCategories = e.target.value as string[];
+
+        // Handle the "add_new" option
+        if (selectedCategories.includes('add_new')) {
+            setOpenCategoryDialog(true);
+            return;
+        }
+
+        setProduct((prev) => ({
+            ...prev,
+            categoryIds: selectedCategories,
+        }));
+    }, []);
+
     const handleImageChange = useCallback(
         (color: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
             const files = e.target.files;
@@ -221,10 +235,11 @@ const ProductManagement: React.FC = () => {
                 const response = await createCategoryAPI({
                     name: newCategory.name,
                     description: newCategory.description
-                });
-
-                if (response) {
-                    setProduct((prev) => ({ ...prev, categoryId: response.categoryId }));
+                }); if (response) {
+                    setProduct((prev) => ({
+                        ...prev,
+                        categoryIds: [...prev.categoryIds, response.categoryId]
+                    }));
                     setNewCategory({
                         categoryId: '',
                         name: '',
@@ -294,6 +309,13 @@ const ProductManagement: React.FC = () => {
             const currentImageFiles = imageFilesRef.current;
 
             try {
+                // Validate categories
+                if (!currentProduct.categoryIds || currentProduct.categoryIds.length === 0) {
+                    enqueueSnackbar('Vui lòng chọn ít nhất một danh mục', { variant: 'error' });
+                    setSubmitting(false);
+                    return;
+                }
+
                 const missingQuantities = currentProduct.colors.filter(
                     (color) => !currentProduct.quantities[color] && currentProduct.quantities[color] !== 0
                 );
@@ -307,13 +329,12 @@ const ProductManagement: React.FC = () => {
                 const parsedDescription = await marked.parse(currentProduct.description);
                 const descriptionHtml = DOMPurify.sanitize(parsedDescription);
 
-                enqueueSnackbar('Đang tạo sản phẩm...', { variant: 'info' });
-                const productData = {
+                enqueueSnackbar('Đang tạo sản phẩm...', { variant: 'info' }); const productData = {
                     name: currentProduct.name,
                     description: descriptionHtml,
                     price: parseFloat(currentProduct.price),
                     promotionId: currentProduct.promotionId || undefined,
-                    categoryId: currentProduct.categoryId,
+                    categoryIds: currentProduct.categoryIds,
                     supplierId: currentProduct.supplierId,
                 };
                 const createdProduct = await createProduct(productData);
@@ -353,13 +374,12 @@ const ProductManagement: React.FC = () => {
 
                 Object.values(currentProduct.images).forEach((images) => {
                     images.forEach((image) => URL.revokeObjectURL(image));
-                });
-                const resetProduct = {
+                }); const resetProduct = {
                     name: '',
                     description: '',
                     price: '',
                     promotionId: '',
-                    categoryId: '',
+                    categoryIds: [],
                     supplierId: '',
                     colors: [],
                     images: {},
@@ -445,19 +465,19 @@ const ProductManagement: React.FC = () => {
     return (
         <Container disableGutters sx={{ width: '100%', height: '100%', py: 4 }}>
             <Box component="form" onSubmit={handleSubmit} className="space-y-6">
-                <Grid container spacing={3}>
-                    <ProductForm
-                        product={product}
-                        categories={categories}
-                        suppliers={suppliers}
-                        promotions={promotions}
-                        openPromotionDialog={openPromotionDialog}
-                        handleInputChange={handleInputChange}
-                        handleColorChange={handleColorChange}
-                        setOpenCategoryDialog={setOpenCategoryDialog}
-                        setOpenPromotionDialog={setOpenPromotionDialog}
-                        handleAddPromotion={handleAddPromotion}
-                    />
+                <Grid container spacing={3}>                    <ProductForm
+                    product={product}
+                    categories={categories}
+                    suppliers={suppliers}
+                    promotions={promotions}
+                    openPromotionDialog={openPromotionDialog}
+                    handleInputChange={handleInputChange}
+                    handleColorChange={handleColorChange}
+                    handleCategoryChange={handleCategoryChange}
+                    setOpenCategoryDialog={setOpenCategoryDialog}
+                    setOpenPromotionDialog={setOpenPromotionDialog}
+                    handleAddPromotion={handleAddPromotion}
+                />
                     <ColorVariantManager
                         colors={product.colors}
                         quantities={product.quantities}
