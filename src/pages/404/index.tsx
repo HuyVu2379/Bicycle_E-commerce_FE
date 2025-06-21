@@ -20,19 +20,19 @@ export default function NotFoundTemplate() {
   return (
     <Container>
       <Box sx={{ position: 'relative', mb: 4 }}>
-        <img 
-          src="/public/assets/images/error-banner.png" 
-          alt="404" 
-          style={{ width: '400px', maxWidth: '90%' }} 
+        <img
+          src="/assets/images/error-banner.png"
+          alt="404"
+          style={{ width: '400px', maxWidth: '90%' }}
         />
       </Box>
-      
+
       <Typography variant="h4" component="h1" fontWeight="bold" mb={2}>
         Page Not Found
       </Typography>
 
       <Typography variant="body1" color="textSecondary" mb={4}>
-        404 Error: Oops! The page you're looking for doesn't exist.<br/>
+        404 Error: Oops! The page you're looking for doesn't exist.<br />
         Please check the URL or return to the homepage.
       </Typography>
 

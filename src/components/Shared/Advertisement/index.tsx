@@ -114,7 +114,7 @@ const AdvertisementSection = () => {
             <Button variant="text">Learn More</Button>
           </Box>
           <StyledImage
-            src="/public/assets/images/hero-swiper-3.png"
+            src="/assets/images/hero-swiper-3.png"
             sx={{ width: "800px", height: "auto" }}
             alt="Bike"
           />
@@ -130,7 +130,7 @@ const AdvertisementSection = () => {
             </Typography>
             <StyledButton variant="contained">Shop Now</StyledButton>
             <StyledImage
-              src="/public/assets/images/hero-swiper-3.png"
+              src="/assets/images/hero-swiper-3.png"
               alt="Helmet"
             />
           </CardHelmet>
@@ -144,7 +144,7 @@ const AdvertisementSection = () => {
             </Typography>
             <StyledButton variant="contained">Shop Now</StyledButton>
             <StyledImage
-              src="/public/assets/images/hero-swiper-3.png"
+              src="/assets/images/hero-swiper-3.png"
               alt="Gloves"
             />
           </CardGloves>

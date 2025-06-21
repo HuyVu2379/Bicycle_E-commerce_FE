@@ -58,7 +58,7 @@ function LeftSideBar() {
         >
             {/* Logo Section */}
             <Box sx={{ display: "flex", alignItems: "center", padding: "16px" }}>
-                <img src="/public/assets/images/logo.jpg" alt="logo" className="logo-img" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                <img src="/assets/images/logo.jpg" alt="logo" className="logo-img" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
                 <Typography variant="h6" sx={{ fontWeight: "bold", color: "#000" }}>
                     <span>Cycle</span>
                     <span style={{ color: "red" }}>City</span>

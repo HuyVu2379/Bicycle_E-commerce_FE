@@ -86,7 +86,7 @@ const LandingSection = () => {
     <Container>
       <SplitSection>
         <ImageSection>
-          <CyclistImage src="/public/assets/images/landing-banner.png" alt="Cyclist" /> {/* 👈 Bạn đổi path thành ảnh bạn upload */}
+          <CyclistImage src="/assets/images/landing-banner.png" alt="Cyclist" /> {/* 👈 Bạn đổi path thành ảnh bạn upload */}
         </ImageSection>
         <TextSection>
           <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2, color: '#212121' }}>
