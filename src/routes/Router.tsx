@@ -1,9 +1,9 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import LoginTemplate from "@/pages/Auth/Login/index.tsx";
-import RegisterTemplate from "@/pages/Auth/Register/index.tsx";
+import LoginTemplate from "@/pages/auth/Login/index.tsx";
+import RegisterTemplate from "@/pages/auth/Register/index.tsx";
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
-import UserProfile from "@/pages/Auth/Profile/index.tsx";
+import UserProfile from "@/pages/auth/Profile/index.tsx";
 import HomeTemplate from "@/pages/home/index.tsx";
 import ServiceLayout from "@/layouts/ServiceLayout";
 import CheckoutPage from "@/components/Shared/YourCart";
