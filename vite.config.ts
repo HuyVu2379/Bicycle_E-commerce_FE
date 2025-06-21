@@ -16,12 +16,10 @@ export default defineConfig({
         quality: 75,
       },
     }),
-  ],
-  resolve: {
-    alias: [
-      { find: "@", replacement: path.resolve(__dirname, "src") },
-      { find: 'markdown-to-jsx', replacement: 'markdown-to-jsx' }
-    ],
+  ], resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
   },
   define: {
     "process.env": {},
