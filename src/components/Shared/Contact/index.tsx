@@ -4,16 +4,16 @@ import { MapPin, Mail, Phone, User, MessageSquare, ChevronDown } from 'lucide-re
 
 const Contact = () => {
   return (
-    <Box sx={{width:'100%',py:4,display:'flex',flexDirection:'column',jusstifyContent:'center',alignItems:'center'}}>
+    <Box sx={{ width: '100%', py: 4, display: 'flex', flexDirection: 'column', jusstifyContent: 'center', alignItems: 'center' }}>
       {/* Section 1: Contact Info */}
-      <Grid sx={{width:'97%',py:9}} container spacing={4} justifyContent="center">
+      <Grid sx={{ width: '97%', py: 9 }} container spacing={4} justifyContent="center">
         {[
           {
-            icon: <MapPin size={40} color="black"/>, title: 'Our Location',
+            icon: <MapPin size={40} color="black" />, title: 'Our Location',
             content: 'House #5, Street Number #98, brasilia-70000-000, Brazil'
           },
           {
-            icon: <Mail size={40} color="black"/>, title: 'Email Address',
+            icon: <Mail size={40} color="black" />, title: 'Email Address',
             content: (
               <>
                 <Typography>Contact@cyclecity.com</Typography>
@@ -22,7 +22,7 @@ const Contact = () => {
             )
           },
           {
-            icon: <Phone size={40} color="black"/>, title: 'Contact Number',
+            icon: <Phone size={40} color="black" />, title: 'Contact Number',
             content: (
               <>
                 <Typography>Phone: (+55) 654-456-5417</Typography>
@@ -32,7 +32,7 @@ const Contact = () => {
           }
         ].map((item, idx) => (
           <Grid item xs={12} md={4} key={idx}>
-            <Card  sx={{ textAlign: 'center', py: 9,px:6 }}>
+            <Card sx={{ textAlign: 'center', py: 9, px: 6 }}>
               <Avatar sx={{ bgcolor: '#f6faf6', m: 'auto', mb: 2 }}>{item.icon}</Avatar>
               <Typography variant="h5" fontWeight="bold">{item.title}</Typography>
               <Typography mt={1}>{item.content}</Typography>
@@ -42,10 +42,10 @@ const Contact = () => {
       </Grid>
 
       {/* Section 2: Contact Form */}
-      <Grid sx={{width:'97%'}} container spacing={4} alignItems="center" mt={6}>
+      <Grid sx={{ width: '97%' }} container spacing={4} alignItems="center" mt={6}>
         <Grid item xs={12} md={6}>
           <img
-            src="public/assets/images/contact-banner.png"
+            src="/assets/images/contact-banner.png"
             alt="Biker"
             style={{ width: '100%', borderRadius: '8px' }}
           />
@@ -80,7 +80,7 @@ const Contact = () => {
       </Grid>
 
       {/* Section 3: FAQ */}
-      <Box sx={{width:'97%'}} mt={8}>
+      <Box sx={{ width: '97%' }} mt={8}>
         <Typography variant="h5" fontWeight="bold" textAlign="center" mb={4}>
           FREQUENTLY ASKED QUESTIONS
         </Typography>

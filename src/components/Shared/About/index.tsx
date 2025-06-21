@@ -78,22 +78,22 @@ const AboutComponent = () => {
     {
       name: "Vũ Quốc Huy",
       role: "Leader",
-      imageSrc: "public/assets/images/person1.png",
+      imageSrc: "/assets/images/person1.png",
     },
     {
       name: "Nguyễn Trọng Bảo",
       role: "Design UI FrontEnd",
-      imageSrc: "public/assets/images/person2.png",
+      imageSrc: "/assets/images/person2.png",
     },
     {
       name: "Lương Tấn Đạt",
       role: "BackEnd",
-      imageSrc: "public/assets/images/person3.png",
+      imageSrc: "/assets/images/person3.png",
     },
     {
       name: "Phạm Lê Thanh Nhiệt",
       role: "BackEnd",
-      imageSrc: "public/assets/images/person4.png",
+      imageSrc: "/assets/images/person4.png",
     },
   ];
 
@@ -144,7 +144,7 @@ const AboutComponent = () => {
         <Grid item xs={12} md={8}>
           <Box sx={{ position: "relative" }}>
             <img
-              src="public/assets/images/banner-1.png"
+              src="/assets/images/banner-1.png"
               alt="Person on Electric Bike"
               style={{ width: "100%", height: "auto", borderRadius: "8px" }}
             />
@@ -255,7 +255,7 @@ const AboutComponent = () => {
         <Grid item xs={12} md={4}>
           <Box sx={{ position: "relative" }}>
             <img
-              src="public/assets/images/banner-2.png"
+              src="/assets/images/banner-2.png"
               alt="Cyclist in Gear"
               style={{ width: "100%", height: "auto", borderRadius: "8px" }}
             />

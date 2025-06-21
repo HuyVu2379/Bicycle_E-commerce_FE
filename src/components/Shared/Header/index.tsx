@@ -26,7 +26,7 @@ const Header: React.FC = () => {
         <Link to="/" style={{ textDecoration: "none", color: "black" }}>
           <div className="logo">
             <img
-              src="/assets/images/logo.jpg"
+              src="/assets/images/Logo.jpg"
               alt="logo"
               className="logo-img"
             />
