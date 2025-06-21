@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import LoginTemplate from "@/pages/Auth/Login/index";
+import LoginTemplate from "@/pages/Auth/Login";
 import RegisterTemplate from "@/pages/Auth/Register";
 import AuthLayout from "@/layouts/AuthLayout";
 import HomeLayout from "@/layouts/HomeLayout";
@@ -21,7 +21,7 @@ import NewsTemplate from "@/pages/news";
 import NewsDetailsTemplate from "@/pages/news/NewsDetail";
 import ShopLayout from "@/layouts/ShopLayout";
 import ShopTemplate from "@/pages/shop";
-import NotFoundPage from "@/pages/404/index";
+import NotFoundPage from "@/pages/404";
 import { APP_ROUTES } from "@/constants";
 import AdminLayout from "@/layouts/Admin/AdminLayout";
 import Dashboard from "@/pages/admin/Dashboard";
