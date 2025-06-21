@@ -41,14 +41,13 @@ const News = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 9 }}>
-      <Grid container sx={{ py: 5 }} spacing={4}>
-        {articles.map((article, idx) => (
-          <Grid item xs={12} sm={6} md={4} key={idx}>
-            <NewsCard article={article} />
-          </Grid>
-        ))}
-      </Grid>
+    <Container maxWidth="lg" sx={{ py: 9 }}>      <Grid container sx={{ py: 5 }} spacing={4}>
+      {articles.map((article, idx) => (
+        <Grid item xs={12} sm={6} md={4} key={idx}>
+          <NewsCard article={article} onClick={() => { }} />
+        </Grid>
+      ))}
+    </Grid>
     </Container>
   );
 };

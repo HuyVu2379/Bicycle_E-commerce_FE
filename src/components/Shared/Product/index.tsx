@@ -63,7 +63,16 @@ const BikeImage = styled("img")(({ theme }) => ({
 const ProductComponent: React.FC<ProductComponentProps> = ({
   product
 }) => {
+  console.log("check product: ", product);
   const cardRef = useRef<HTMLDivElement>(null);
+  const checkProductStatus = () => {
+    const createdAtDate = new Date(product.originalData.createdAt);
+    const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+    if (createdAtDate >= twoWeeksAgo) {
+      return true;
+    }
+    return false;
+  };
   useEffect(() => {
     if (cardRef.current) {
       VanillaTilt.init(cardRef.current, {
@@ -85,7 +94,7 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
 
   return (
     <ProductCard ref={cardRef}>
-      <NewBadge>NEW</NewBadge>
+      {checkProductStatus() && <NewBadge>NEW</NewBadge>}
       <BikeImage src={product?.image} alt={`${product?.name} Bike`} />
       <CardContent sx={{ padding: 2 }}>
         <Typography
@@ -104,27 +113,9 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
           sx={{ paddingTop: 1 }}
         >
           <PriceStack>
-            <OriginalPrice>${product.price?.toFixed(2)} USD</OriginalPrice>
-            <DiscountPrice>${product.priceReduced?.toFixed(2)} USD</DiscountPrice>
+            <OriginalPrice>{product.price?.toLocaleString('vi-VN')} VND</OriginalPrice>
+            <DiscountPrice>{product.priceReduced?.toLocaleString('vi-VN')} VND</DiscountPrice>
           </PriceStack>
-          <Button
-            variant="outlined"
-            sx={{
-              backgroundColor: "#ffffff",
-              color: "black",
-              border: "1px solid black",
-              textTransform: "uppercase",
-              fontWeight: "bold",
-              padding: "8px 16px",
-              "&:hover": {
-                backgroundColor: "#EF675F",
-                color: "white",
-                borderColor: "#EF675F",
-              },
-            }}
-          >
-            Add to Cart
-          </Button>
         </Stack>
       </CardContent>
     </ProductCard>

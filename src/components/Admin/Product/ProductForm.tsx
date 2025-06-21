@@ -41,13 +41,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
     handleAddPromotion,
 }) => {
     const [localDescription, setLocalDescription] = useState(product.description);
+
     // Đồng bộ localDescription với product.description
     useEffect(() => {
         setLocalDescription(product.description);
     }, [product.description]);
 
-    // Hàm log cho môi trường development
-    const log = (key: string, data: any) => process.env.NODE_ENV === 'development' && console.log(key, data);    // Chuyển Markdown thành HTML
+    // Chuyển Markdown thành HTML
     const renderHTML = useCallback((text: string) => {
         try {
             const parsed = marked.parse(text);
@@ -56,27 +56,29 @@ const ProductForm: React.FC<ProductFormProps> = ({
             console.error('Error rendering Markdown:', error);
             return '<p>Error rendering Markdown</p>';
         }
-    }, []);
-
-    // Xử lý thay đổi Markdown (không debounce để cập nhật tức thì)
+    }, []);    // Xử lý thay đổi Markdown (không debounce để cập nhật tức thì)
     const handleMarkdownChange = useCallback(
         ({ text }: { text: string }) => {
             const html = renderHTML(text);
-            log('handleMarkdownChange:', { text, html });
+            // Debug: handleMarkdownChange
             setLocalDescription(text);
             debouncedInputChange(text);
         },
         [renderHTML],
-    );    // Debounce cho handleInputChange để giảm gọi API
+    );
+
+    // Debounce cho handleInputChange để giảm gọi API
     const debouncedInputChange = useCallback(
         debounce((text: string) => {
             handleInputChange({ target: { name: 'description', value: text } } as any, true);
         }, 300),
         [handleInputChange],
-    );    // Xử lý blur cho Markdown
+    );
+
+    // Xử lý blur cho Markdown
     const handleMarkdownBlur = useCallback(() => {
         const html = renderHTML(localDescription);
-        log('handleMarkdownBlur:', { text: localDescription, html });
+        // Debug: handleMarkdownBlur
         handleInputChange({ target: { name: 'description', value: localDescription } } as any, true);
     }, [handleInputChange, localDescription, renderHTML]);
 
@@ -87,7 +89,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
     const handleSelectChange = useCallback(
         (e: SelectChangeEvent<string>, field: string, openDialog?: () => void) => {
             const { value } = e.target;
-            log(`handle${field}Change:`, { name: field, value }); if (value === 'add_new' && openDialog) {
+            // Debug: handle field change
+            if (value === 'add_new' && openDialog) {
                 openDialog();
             } else if (value && value !== 'undefined') {
                 handleInputChange({ target: { name: field, value } } as any, true);
@@ -191,7 +194,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                                     key={promotion.promotionId}
                                     component="button"
                                     onClick={() => {
-                                        log('Selected promotion:', { promotionId: promotion.promotionId });
+                                        // Debug: Selected promotion
                                         handleAddPromotion(promotion.promotionId);
                                     }}
                                 >

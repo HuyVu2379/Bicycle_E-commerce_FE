@@ -61,7 +61,7 @@ export const createCart = async (): Promise<MessageResponse<CartResponse>> => {
         const response =
             await axiosConfig.post<MessageResponse<CartResponse>>(url);
         console.log("Check raw response from API: ", response.data);
-        return response;
+        return response.data;
     } catch (error: any) {
         console.error("Error create cart for user :", error);
         if (error.response && error.response.data) {

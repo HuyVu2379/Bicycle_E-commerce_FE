@@ -14,7 +14,7 @@ import {
 import { styled } from "@mui/material/styles";
 import dayjs from 'dayjs';
 import { useParams } from "react-router-dom";
-import useProductDetail  from "@/hook/api/useProductDetail";
+import useProductDetail from "@/hook/api/useProductDetail";
 
 interface Review {
   reviewId: string;
@@ -63,105 +63,105 @@ const StyledRating = styled(Rating)({
 });
 
 const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
-    console.log("ReviewsComponent rendered with reviews:", reviews);
-    const {handleSendReview, fetchReviews, reviewsData} = useProductDetail();
-    const [newReviews, setNewReviews] = useState<Review[]>(reviews || []);
-    const [sortOption, setSortOption] = useState<"newest" | "highest" | "lowest">("newest");
-    const { accessToken, userId } = localStorage;
-    const { productId } = useParams<{ productId: string }>();
+  console.log("ReviewsComponent rendered with reviews:", reviews);
+  const { handleSendReview, fetchReviews, reviewsData } = useProductDetail();
+  const [newReviews, setNewReviews] = useState<Review[]>(reviews || []);
+  const [sortOption, setSortOption] = useState<"newest" | "highest" | "lowest">("newest");
+  const { accessToken, userId } = localStorage;
+  const { productId } = useParams<{ productId: string }>();
 
-    useEffect(() => {
-      setNewReviews(reviewsData);
-    }, [reviewsData]);
+  useEffect(() => {
+    setNewReviews(reviewsData);
+  }, [reviewsData]);
 
-    useEffect(() => {
-      setNewReviews(reviews);
-    }, [reviews]);
+  useEffect(() => {
+    setNewReviews(reviews);
+  }, [reviews]);
 
 
-    const sortedReviews = useMemo(() => {
-      const cloned = [...newReviews];
-      switch (sortOption) {
-        case "highest":
-          return cloned.sort((a, b) => b.rating - a.rating);
-        case "lowest":
-          return cloned.sort((a, b) => a.rating - b.rating);
-        case "newest":
-        default:
-          return cloned.sort((a, b) => dayjs(b.createdAt).unix() - dayjs(a.createdAt).unix());
-      }
-    }, [newReviews, sortOption]);
-    
+  const sortedReviews = useMemo(() => {
+    const cloned = [...newReviews];
+    switch (sortOption) {
+      case "highest":
+        return cloned.sort((a, b) => b.rating - a.rating);
+      case "lowest":
+        return cloned.sort((a, b) => a.rating - b.rating);
+      case "newest":
+      default:
+        return cloned.sort((a, b) => dayjs(b.createdAt).unix() - dayjs(a.createdAt).unix());
+    }
+  }, [newReviews, sortOption]);
 
-    const [formReview, setFormReview] = useState({
-      userId,
-      productId,
-      content: "",
-      rating: 5,
-    });
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const calculateRatingDistribution = (reviews: Review[]): RatingDistribution[] => {
-      const total = reviews.length;
-      const ratingCountMap = new Map<number, number>();
-      // Khởi tạo count = 0 cho các mức từ 1 đến 5
-      for (let i = 1; i <= 5; i++) {
-        ratingCountMap.set(i, 0);
-      }
-      // Đếm số lượng mỗi loại rating
-      for (const review of reviews) {
-        ratingCountMap.set(review.rating, (ratingCountMap.get(review.rating) || 0) + 1);
-      }
-      // Chuyển thành mảng và tính phần trăm
-      const distribution: RatingDistribution[] = Array.from(ratingCountMap.entries()).map(
-        ([rating, count]) => ({
-          rating,
-          count,
-          percentage: total > 0 ? (count / total) * 100 : 0,
-        })
-      );
-      // Sắp xếp từ 5 sao xuống 1 sao
-      return distribution.sort((a, b) => b.rating - a.rating);
-    };
+  const [formReview, setFormReview] = useState({
+    userId,
+    productId,
+    content: "",
+    rating: 5,
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const averageRating = newReviews?.length
-      ? newReviews.reduce((sum, r) => sum + r.rating, 0) / newReviews.length : 0;
+  const calculateRatingDistribution = (reviews: Review[]): RatingDistribution[] => {
+    const total = reviews.length;
+    const ratingCountMap = new Map<number, number>();
+    // Khởi tạo count = 0 cho các mức từ 1 đến 5
+    for (let i = 1; i <= 5; i++) {
+      ratingCountMap.set(i, 0);
+    }
+    // Đếm số lượng mỗi loại rating
+    for (const review of reviews) {
+      ratingCountMap.set(review.rating, (ratingCountMap.get(review.rating) || 0) + 1);
+    }
+    // Chuyển thành mảng và tính phần trăm
+    const distribution: RatingDistribution[] = Array.from(ratingCountMap.entries()).map(
+      ([rating, count]) => ({
+        rating,
+        count,
+        percentage: total > 0 ? (count / total) * 100 : 0,
+      })
+    );
+    // Sắp xếp từ 5 sao xuống 1 sao
+    return distribution.sort((a, b) => b.rating - a.rating);
+  };
 
-    const handleOpenModal = () => {
-      setIsModalOpen(true);
-    };
+  const averageRating = newReviews?.length
+    ? newReviews.reduce((sum, r) => sum + r.rating, 0) / newReviews.length : 0;
 
-    const handleCloseModal = () => {
-      setIsModalOpen(false);
-    };
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setFormReview((prev) => ({
-        ...prev,
-        [name]: name === "rating" ? Number(value) : value,
-      }));
-    };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
-    const handleSubmitReview = async () => {
-      if (!formReview.content || formReview.rating < 1 || formReview.rating > 5) {
-        alert("Please fill in all fields correctly.");
-        return;
-      }
-      try {
-        await handleSendReview(formReview);
-        console.log("Review submitted:", formReview);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormReview((prev) => ({
+      ...prev,
+      [name]: name === "rating" ? Number(value) : value,
+    }));
+  };
 
-        console.log("Fetching updated reviews...");
-        await fetchReviews(productId); // Gọi lại fetchReviews để cập nhật reviewsData
-        console.log("Reviews updated successfully!");
-        setNewReviews(reviewsData); // Cập nhật newReviews với reviewsData mới
-        handleCloseModal();
-      } catch (error) {
-        console.error("Error in handleSubmitReview:", error);
-        alert("Failed to submit review. Please try again.");
-      }
-    };
+  const handleSubmitReview = async () => {
+    if (!formReview.content || formReview.rating < 1 || formReview.rating > 5) {
+      alert("Please fill in all fields correctly.");
+      return;
+    }
+    try {
+      await handleSendReview(formReview);
+      console.log("Review submitted:", formReview);
+
+      console.log("Fetching updated reviews...");
+      await fetchReviews(productId); // Gọi lại fetchReviews để cập nhật reviewsData
+      console.log("Reviews updated successfully!");
+      setNewReviews(reviewsData); // Cập nhật newReviews với reviewsData mới
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error in handleSubmitReview:", error);
+      alert("Failed to submit review. Please try again.");
+    }
+  };
 
   return (
     <ReviewContainer>
@@ -205,7 +205,16 @@ const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
               gap: 1,
             }}
           >
-            <StyledRating value={averageRating} precision={0.5} readOnly />
+            <StyledRating
+              value={averageRating}
+              precision={0.5}
+              readOnly
+              sx={{
+                "& .MuiRating-iconFilled": {
+                  color: "#ff9800", // Màu cam
+                },
+              }}
+            />
             <Typography component="div" sx={{ fontSize: "0.875rem" }}>
               {averageRating.toFixed(1)} out of 5
             </Typography>
@@ -221,7 +230,12 @@ const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
               key={item.rating}
               sx={{ display: "flex", alignItems: "center", mb: 1 }}
             >
-              <StyledRating value={item.rating} size="small" readOnly />
+              <StyledRating value={item.rating} size="small" readOnly
+                sx={{
+                  "& .MuiRating-iconFilled": {
+                    color: "#ff9800", // Màu cam
+                  },
+                }} />
               <RatingBar variant="determinate" value={item.percentage} />
               <Typography variant="body2" sx={{ minWidth: 30 }}>
                 {item.count}
@@ -387,7 +401,12 @@ const ReviewsComponent: React.FC<Props> = ({ reviews }) => {
               mb: 1
             }}
           >
-            <StyledRating value={review.rating} size="small" readOnly />
+            <StyledRating value={review.rating} size="small" readOnly
+              sx={{
+                "& .MuiRating-iconFilled": {
+                  color: "#ff9800", // Màu cam
+                },
+              }} />
             <Typography variant="caption" color="text.secondary">
               {dayjs(review.createdAt).format("DD/MM/YYYY HH:mm:ss")}
             </Typography>

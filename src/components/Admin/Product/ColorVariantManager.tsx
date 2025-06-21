@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography, Box, Button, TextField } from '@mui/material';
 import Gallery from 'react-photo-gallery';
-import { GalleryPhoto } from '@/pages/Admin/Product';
+import { GalleryPhoto } from '@/pages/admin/Product';
 
 interface ColorVariantManagerProps {
     colors: string[];

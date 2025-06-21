@@ -13,9 +13,10 @@ import {
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { BenefitItemProps, CoreValueItemProps, TeamMemberItemProps } from "@/types/components";
 
 // Benefit Item Component
-const BenefitItem = ({ icon, title, description }) => (
+const BenefitItem: React.FC<BenefitItemProps> = ({ icon, title, description }) => (
   <Box sx={{ display: "flex", gap: "15px", px: 2, my: 7 }}>
     <Box sx={{ mb: 2, color: "#000", fontSize: 40 }}>{icon}</Box>
     <Box>
@@ -30,7 +31,7 @@ const BenefitItem = ({ icon, title, description }) => (
 );
 
 // Core Value Item Component
-const CoreValueItem = ({ icon, title, description }) => (
+const CoreValueItem: React.FC<CoreValueItemProps> = ({ icon, title, description }) => (
   <Box
     sx={{
       bgcolor: "#fff",
@@ -55,12 +56,12 @@ const CoreValueItem = ({ icon, title, description }) => (
 );
 
 // Team Member Item Component
-const TeamMemberItem = ({ imageSrc, name, role }) => (
+const TeamMemberItem: React.FC<TeamMemberItemProps> = ({ imageSrc, name, role }) => (
   <Box sx={{ px: 1.5 }}>
     <img
       src={imageSrc}
       alt={name}
-      style={{ width: "100%", height: "auto", borderRadius: "8px", mb: 1 }}
+      style={{ width: "100%", height: "auto", borderRadius: "8px", marginBottom: 8 }}
     />
     <Typography variant="h6" sx={{ fontWeight: "bold" }}>
       {name}

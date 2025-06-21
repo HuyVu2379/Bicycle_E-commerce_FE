@@ -1,4 +1,3 @@
-import React from 'react';
 import {
     Card,
     CardMedia,
@@ -8,8 +7,9 @@ import {
     Button,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { NewsCardProps } from '@/types/components';
 
-const NewsCard = ({ article, onClick }) => {
+const NewsCard: React.FC<NewsCardProps> = ({ article, onClick }) => {
     const navigate = useNavigate();
 
     return (

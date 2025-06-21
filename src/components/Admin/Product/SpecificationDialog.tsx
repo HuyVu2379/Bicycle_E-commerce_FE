@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
-import { Specification } from '@/pages/Admin/Product';
+import { Specification } from '@/pages/admin/Product';
 
 interface SpecificationDialogProps {
     open: boolean;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Box, Button, Typography, Chip } from '@mui/material';
-import { Specification } from '@/pages/Admin/Product';
+import { Specification } from '@/pages/admin/Product';
 
 interface SpecificationManagerProps {
     specifications: Specification[];

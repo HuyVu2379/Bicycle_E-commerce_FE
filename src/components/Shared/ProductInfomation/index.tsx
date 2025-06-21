@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Typography,
-  Rating,
   Button,
   IconButton,
   Radio,
@@ -48,7 +47,7 @@ const ProductInformation = ({ product }: any) => {
   const handleColorChange = (event: any) => {
     const color = event.target.value;
     setSelectedColor(color);
-    const inv = availableInventories.find((i) => i.color === color);
+    const inv = availableInventories.find((i: any) => i.color === color);
     setMainImage(inv?.imageUrls?.[0] || "");
   };
 
@@ -70,7 +69,7 @@ const ProductInformation = ({ product }: any) => {
   console.log("check cart: ", currentCart);
   return (
     <Box sx={{ padding: 4, maxWidth: 1400, margin: "auto" }}>
-      <Grid container spacing={6}>
+      <Grid container spacing={16}>
         <Grid item xs={12} md={7}>
           <Box sx={{ position: "relative", width: "100%" }}>
             <CardMedia
@@ -97,7 +96,7 @@ const ProductInformation = ({ product }: any) => {
               overflowX: "auto"
             }}
           >
-            {images.map((image, index) => (
+            {images.map((image: any, index: any) => (
               <CardMedia
                 key={index}
                 component="img"
@@ -120,7 +119,8 @@ const ProductInformation = ({ product }: any) => {
               />
             ))}
           </Box>
-        </Grid>        <Grid item xs={12} md={5}>
+        </Grid>
+        <Grid item xs={12} md={5}>
           <Box sx={{ pl: { md: 2 }, height: "100%" }}>
             <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }} gutterBottom>
               {product.product.name}
@@ -145,7 +145,7 @@ const ProductInformation = ({ product }: any) => {
               Color
             </Typography>
             <RadioGroup row value={selectedColor} onChange={handleColorChange} sx={{ mb: 3 }}>
-              {colors.map((color) => (
+              {colors.map((color: any) => (
                 <FormControlLabel
                   key={color}
                   value={color}

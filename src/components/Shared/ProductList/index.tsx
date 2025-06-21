@@ -46,13 +46,13 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
     >
       <HeaderContainer>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          NEW ARRIVALS
+          PRODUCT LIST
         </Typography>
         <MoreShopButton variant="outlined">More Shop</MoreShopButton>
       </HeaderContainer>
       <Grid container justifyContent="center" sx={{ padding: "0 32px" }}>
         {products.map((product, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
+          <Grid item xs={12} sm={6} md={4} lg={4} key={index} sx={{ padding: "0px 12px 12px 12px" }}>
             <Link style={{ textDecoration: 'none' }} to={`/product/detail/${product.productId}`}>
               <ProductComponent product={product} />
             </Link>

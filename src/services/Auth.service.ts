@@ -27,8 +27,8 @@ interface AuthResponse {
 export const loginWithGoogle = async (token: string): Promise<AuthResponse> => {
     try {
         const url = `${api}/google`;
-        const result = await axiosConfig.post(url, { token });
-        return result;
+        const result = await axiosConfig.post<AuthResponse>(url, { token });
+        return result.data;
     } catch (error: any) {
         console.error("Error logging in with Google:", error);
         return { success: false, message: error.message, data: null };

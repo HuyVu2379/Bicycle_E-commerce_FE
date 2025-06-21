@@ -17,9 +17,6 @@ export default function ShopTemplate() {
 
   useEffect(() => {
     console.log("Check in Shop: ", accessToken);
-
-
-
     fetchProducts(page);
 
   }, [page, accessToken]);
@@ -40,17 +37,17 @@ export default function ShopTemplate() {
       if (response && response.data && response.data.content) {
 
         const rawProducts = Array.isArray(response.data.content) ? response.data.content : [];
-        
+
         // Biến đổi dữ liệu để chỉ lấy các trường cần thiết
         const simplifiedProducts = rawProducts.map(item => {
           // Lấy thông tin từ product
           const product = item.product || {};
-          
+
           // Lấy thông tin giá từ inventory (giả sử lấy phần tử đầu tiên nếu có nhiều)
-          const inventory = Array.isArray(item.inventory) && item.inventory.length > 0 
-            ? item.inventory[0] 
+          const inventory = Array.isArray(item.inventory) && item.inventory.length > 0
+            ? item.inventory[0]
             : {};
-            
+
           // Tạo đối tượng sản phẩm đơn giản hóa
           return {
             id: product.productId,

@@ -1,6 +1,6 @@
 import React from 'react';
 import Carousel, { Modal, ModalGateway as ModalGatewayOriginal } from 'react-images';
-import { GalleryPhoto } from '@/pages/Admin/Product';
+import { GalleryPhoto } from '@/pages/admin/Product';
 
 // Create a properly typed version of ModalGateway
 const ModalGateway = (props: { children: React.ReactNode }) => (
