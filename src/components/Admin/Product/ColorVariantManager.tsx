@@ -1,6 +1,5 @@
 import React from 'react';
-import { Grid, Typography, Box, Button, TextField } from '@mui/material';
-import Gallery from 'react-photo-gallery';
+import { Grid, Typography, Box, Button, TextField, ImageList, ImageListItem } from '@mui/material';
 import { GalleryPhoto } from '@/pages/admin/Product';
 
 interface ColorVariantManagerProps {
@@ -88,12 +87,18 @@ const ColorVariantManager: React.FC<ColorVariantManagerProps> = ({
                             <Box>
                                 <Typography variant="body2" sx={{ mb: 1 }}>
                                     Ảnh đã chọn ({images[color].length}):
-                                </Typography>
-                                <Gallery
-                                    photos={photos.filter((photo) => photo.color === color)}
-                                    renderImage={renderImage}
-                                    targetRowHeight={100}
-                                />
+                                </Typography>                                <ImageList cols={4} rowHeight={100}>
+                                    {photos.filter((photo) => photo.color === color).map((photo, index) => (
+                                        <ImageListItem key={index}>
+                                            <img
+                                                src={photo.src}
+                                                alt={`${color} ${index}`}
+                                                style={{ objectFit: 'cover', cursor: 'pointer' }}
+                                                onClick={() => renderImage({ index, photo })}
+                                            />
+                                        </ImageListItem>
+                                    ))}
+                                </ImageList>
                             </Box>
                         )}
                     </Box>

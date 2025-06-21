@@ -1,11 +1,7 @@
 import React from 'react';
-import Carousel, { Modal, ModalGateway as ModalGatewayOriginal } from 'react-images';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 import { GalleryPhoto } from '@/pages/admin/Product';
-
-// Create a properly typed version of ModalGateway
-const ModalGateway = (props: { children: React.ReactNode }) => (
-    <ModalGatewayOriginal {...props as any} />
-);
 
 interface ImageLightboxProps {
     isOpen: boolean;
@@ -15,17 +11,20 @@ interface ImageLightboxProps {
 }
 
 const ImageLightbox: React.FC<ImageLightboxProps> = ({ isOpen, currentImage, photos, closeLightbox }) => {
+    const slides = photos.map((photo, index) => ({
+        src: photo.src,
+        alt: `Image ${index}`,
+        width: photo.width,
+        height: photo.height
+    }));
+
     return (
-        <ModalGateway>
-            {isOpen ? (
-                <Modal onClose={closeLightbox}>
-                    <Carousel
-                        currentIndex={currentImage}
-                        views={photos.map((photo) => ({ source: photo.src }))}
-                    />
-                </Modal>
-            ) : null}
-        </ModalGateway>
+        <Lightbox
+            open={isOpen}
+            close={closeLightbox}
+            slides={slides}
+            index={currentImage}
+        />
     );
 };
 
